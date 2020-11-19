@@ -51,16 +51,25 @@ class Embedder:
         args._escape = False
         self.doc.append(Command('NewDocumentCommand', arguments=Command('fch'), extra_arguments=args))
 
+    def _change_font(self, text, font, color=None):
+        args = Arguments(text, font)
+        args._escape = False
+
+        return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
+
     def print_all_fontfamilies(self, is_colored=False):
         for fontfamily in DUMMY_CODEBOOK.values():
             color = fontfamily['color'] if is_colored else None
 
-            self.doc.append(FontChangeCommand(arguments=Arguments(fontfamily['font'], fontfamily['font']),
-                                              options=color, extra_arguments=[]))
+            self.doc.append(self._change_font(fontfamily['font'], fontfamily['font'], color))
             self.doc.append('\n')
-            self.doc.append(FontChangeCommand(arguments=Arguments(string.ascii_letters, fontfamily['font']),
-                                              options=color, extra_arguments=[]))
+            self.doc.append(self._change_font(string.ascii_letters, fontfamily['font'], color))
             self.doc.append('\n')
+
+        self.doc.append('lmr')
+        self.doc.append('\n')
+        self.doc.append(string.ascii_letters)
+        self.doc.append('\n')
 
     def embed(self, dummy_text, secret_message, is_colored=False):
         secret_ints = [int(c, 2) for c in secret_message]
@@ -74,9 +83,7 @@ class Embedder:
                     i = secret_ints.pop()
                     color = DUMMY_CODEBOOK[i]['color'] if is_colored else None
 
-                    text_to_append = FontChangeCommand(
-                        arguments=Arguments(letter, DUMMY_CODEBOOK[i]['font']),
-                        options=color, extra_arguments=[]).dumps()
+                    text_to_append = self._change_font(letter, DUMMY_CODEBOOK[i]['font'], color).dumps()
 
             perturbed_text += text_to_append
 
@@ -89,12 +96,12 @@ class Embedder:
 
 
 if __name__ == "__main__":
-    text = lorem.paragraph()
-    secret = message_encoder.encode('Hello World', 3)
+    some_text = lorem.paragraph()
+    some_secret = message_encoder.encode('Hello World', 3)
 
     embedder = Embedder()
-    embedder.embed(text, secret)
-    embedder.embed(text, secret, is_colored=True)
+    embedder.embed(some_text, some_secret)
+    embedder.embed(some_text, some_secret, is_colored=True)
     embedder.generate_document('embedded_document')
 
     embedder = Embedder()
