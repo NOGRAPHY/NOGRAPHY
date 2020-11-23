@@ -1,7 +1,7 @@
 import string
 import random
 
-from message_encoder import encode, decode
+from encoder_decoder.encoder_decoder import encode, decode
 
 printable_ascii_string = list(string.printable)
 

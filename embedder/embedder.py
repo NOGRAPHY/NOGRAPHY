@@ -1,10 +1,7 @@
-from pylatex.base_classes import Command, Options, Arguments, CommandBase
+from pylatex.base_classes import Command, Arguments, CommandBase
 from pylatex import Document, Package, NoEscape
-import message_encoder
 
 import string
-
-import lorem
 
 
 DUMMY_CODEBOOK = {
@@ -51,7 +48,8 @@ class Embedder:
         args._escape = False
         self.doc.append(Command('NewDocumentCommand', arguments=Command('fch'), extra_arguments=args))
 
-    def _change_font(self, text, font, color=None):
+    @staticmethod
+    def _change_font(text, font, color=None):
         args = Arguments(text, font)
         args._escape = False
 
@@ -93,17 +91,3 @@ class Embedder:
     def generate_document(self, file_name):
         self.doc.generate_pdf(file_name, clean_tex=True)
         self.doc.generate_tex(file_name)
-
-
-if __name__ == "__main__":
-    some_text = lorem.paragraph()
-    some_secret = message_encoder.encode('Hello World', 3)
-
-    embedder = Embedder()
-    embedder.embed(some_text, some_secret)
-    embedder.embed(some_text, some_secret, is_colored=True)
-    embedder.generate_document('embedded_document')
-
-    embedder = Embedder()
-    embedder.print_all_fontfamilies(is_colored=True)
-    embedder.generate_document('fontfamilies')
