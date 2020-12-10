@@ -1,8 +1,6 @@
 from pylatex.base_classes import Command, Arguments, CommandBase
 from pylatex import Document, Package, NoEscape
-
 import string
-
 
 DUMMY_CODEBOOK = {
     0: {'font': 'qtm', 'color': 'blue'},   # Gyre Termes
@@ -16,35 +14,35 @@ DUMMY_CODEBOOK = {
 }
 
 packages = [
-        Package('xparse'),
-        Package('xcolor'),
-        Package('xparse'),
-        Package('tgtermes'),
-        Package('tgpagella'),
-        Package('tgbonum'),
-        Package('tgschola'),
-        Package('fourier'),
-        Package('palatino'),
-        Package('bookman'),
-        Package('charter'),
-        Package('lmodern'),
-    ]
+    Package('xparse'),
+    Package('xcolor'),
+    Package('tgtermes'),
+    Package('tgpagella'),
+    Package('tgbonum'),
+    Package('tgschola'),
+    Package('fourier'),
+    Package('palatino'),
+    Package('bookman'),
+    Package('charter'),
+    Package('lmodern'),
+]
 
-# How to test this, if it has no return value?
-def embed(dummy_text, secret_message, is_colored=False):
-    doc = Document(document_options='a4paper', lmodern=False)
+class FontChangeCommand(CommandBase):
+    _latex_name = 'fch'
 
+def setup_document():
+    document = Document(document_options='a4paper', lmodern=False)
     for package in packages:
-        doc.packages.append(package)
-
-    doc.append(Command('setlength', arguments=Command('parindent'), extra_arguments='0em'))
+        document.packages.append(package)
+    document.append(Command('setlength', arguments=Command('parindent'), extra_arguments='0em'))
 
     args = Arguments('m m O{black}', r'\fontfamily{#2}{\selectfont\color{#3}\normalsize #1}')
     args._escape = False
-    doc.append(Command('NewDocumentCommand', arguments=Command('fch'), extra_arguments=args))
-    
-    secret_ints = [int(c, 2) for c in secret_message]
+    document.append(Command('NewDocumentCommand', arguments=Command('fch'), extra_arguments=args))
+    return document
 
+def embed(document, dummy_text, secret, is_colored=False):
+    secret_ints = [int(c, 2) for c in secret]
     perturbed_text = r''
     for letter in dummy_text:
         text_to_append = letter
@@ -53,26 +51,19 @@ def embed(dummy_text, secret_message, is_colored=False):
             if secret_ints:
                 i = secret_ints.pop()
                 color = DUMMY_CODEBOOK[i]['color'] if is_colored else None
-
-                text_to_append = _change_font(letter, DUMMY_CODEBOOK[i]['font'], color).dumps()
-
+                text_to_append = change_font(letter, DUMMY_CODEBOOK[i]['font'], color).dumps()
         perturbed_text += text_to_append
 
-    doc.append(NoEscape(perturbed_text))
-    doc.append("\n\n")
-    return doc
+    document.append(NoEscape(perturbed_text))
+    document.append("\n\n")
+    return document
 
- 
-def _change_font(text, font, color=None):
+def change_font(text, font, color=None):
     args = Arguments(text, font)
     args._escape = False
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
-
+# Cannot be tested automatically (travis has no pdf engine)
 def generate_document(self, document, file_name):
     document.generate_pdf(file_name, clean_tex=True)
     document.generate_tex(file_name)
-
-class FontChangeCommand(CommandBase):
-    _latex_name = 'fch'
-    
