@@ -1,2 +1,8 @@
+# embedder
 pylatex
 lorem
+
+# font_trainingsdata_generator
+numpy
+Pillow
+tqdm

@@ -1,5 +1,10 @@
 *.tex
 *.pdf
+
+# font_trainingsdata_generator
+font_trainingsdata_generator/fonts
+font_trainingsdata_generator/images
+
 .idea
 .python-version
 
