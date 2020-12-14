@@ -64,6 +64,6 @@ def change_font(text, font, color=None):
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
 # Cannot be tested automatically (travis has no pdf engine)
-def generate_document(self, document, file_name):
+def generate_document(document, file_name):
     document.generate_pdf(file_name, clean_tex=True)
     document.generate_tex(file_name)
