@@ -1,3 +1,3 @@
 # Steganography Team Project @HTWG WS2020/21
 
-![](https://travis-ci.com/steganographie-HTWG/steganographie.svg?branch=master)
+[![Build Status](https://travis-ci.com/steganographie-HTWG/steganographie.svg?branch=master)](https://travis-ci.com/github/steganographie-HTWG/steganographie)
