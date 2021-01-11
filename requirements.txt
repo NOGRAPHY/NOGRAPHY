@@ -1,4 +1,5 @@
 # embedder
+pytest
 pylatex
 lorem
 
@@ -6,6 +7,10 @@ lorem
 numpy
 Pillow
 tqdm
+
+# ocr
+pytesseract
+opencv-python
 
 # cnn_model
 tensorflow~=2.3.1
