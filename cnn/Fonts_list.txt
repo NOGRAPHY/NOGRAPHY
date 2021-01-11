@@ -1,0 +1,5 @@
+times.ttf
+Unna-Regular.ttf
+EmilysCandy-Regular.ttf
+Vidaloka-Regular.ttf
+PlayfairDisplay-Regular.ttf
