@@ -2,24 +2,37 @@ from cv2 import cv2
 
 import pytesseract
 
-def ocr():
-    img = cv2.imread('ocr/example/test.png')
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hImg, wImg = img.shape
-    return pytesseract.image_to_boxes(img).split(' ')
+def demo():
+    test_image = cv2.cvtColor(cv2.imread('ocr/example/test_01.png'), cv2.COLOR_BGR2GRAY)
+    letters = getLettersFromImage(test_image)
+    image_with_bounding_boxes = drawBoundingBoxedOnImage(test_image, letters)
+    cv2.imwrite('ocr/example/imageimage_with_bounding_boxes.png', image_with_bounding_boxes)
 
-def other():
-    img = cv2.imread('ocr/example/test.png')
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hImg, wImg = img.shape
-    boxes = pytesseract.image_to_boxes(img)
+def getLettersFromImage(image):
+    return list(map(mapLineToLetter, pytesseract.image_to_boxes(image).splitlines()))
 
-    print(boxes)
+def mapLineToLetter(line):
+    partitions = line.split(' ')
+    return Letter(partitions[0], int(partitions[1]), int(partitions[2]), int(partitions[3]), int(partitions[4]))
 
-    for b in boxes.splitlines():
-        b = b.split(' ')
-        x, y, w, h = int(b[1]), int(b[2]), int(b[3]), int(b[4])
-        cv2.rectangle(img, (x, hImg - y), (w, hImg - h), (0, 0, 255), 1)
-    cv2.imshow('Result', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def drawBoundingBoxedOnImage(image, letters):
+    height, width = image.shape
+    for letter in letters:
+        # TODO: Verify this does what it is expected to.
+        cv2.rectangle(image, (letter.x, height - letter.y), (letter.width, height - letter.height), (0, 0, 255), 1)
+    return image
+
+class Letter:
+
+    def __init__(self, letter, x, y, width, height):
+        self.letter = letter
+        self.x = x
+        self.y = y
+        self. width = width
+        self.height = height
+
+    def __str__(self):
+        return '\n' + str(self.letter) + ' at (' + str(self.x) + ',' + str(self.y) +') with ' + str(self.width) + 'x' + str(self.height) + 'px'
+
+    def __repr__(self):
+        return self.__str__()
