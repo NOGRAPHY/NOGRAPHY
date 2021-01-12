@@ -14,4 +14,3 @@ opencv-python
 
 # cnn_model
 scikit-learn~=0.23.2
-numpy~=1.18.5

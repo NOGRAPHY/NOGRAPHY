@@ -16,6 +16,6 @@ for b in boxes.splitlines():
     b = b.split(' ')
     x, y, w, h = int(b[1]), int(b[2]), int(b[3]), int(b[4])
     cv2.rectangle(img, (x, hImg - y), (w, hImg - h), (0, 0, 255), 1)
-
 cv2.imshow('Result', img)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
