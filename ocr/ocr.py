@@ -6,7 +6,7 @@ def ocr():
     img = cv2.imread('ocr/example/test.png')
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hImg, wImg = img.shape
-    return pytesseract.image_to_boxes(img)
+    return pytesseract.image_to_boxes(img).split(' ')
 
 def other():
     img = cv2.imread('ocr/example/test.png')
