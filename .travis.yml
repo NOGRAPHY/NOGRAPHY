@@ -2,8 +2,8 @@ language: python
 python:
   - "3.8.7"
 before_install:
-  - sudo apt install tesseract-ocr
-  - sudo apt install libtesseract-dev
+  - sudo apt-get -y install tesseract-ocr
+  # - sudo apt install libtesseract-dev
   - tesseract --version
 install:
   - pip3 install -r requirements.txt
