@@ -2,9 +2,32 @@ language: python
 python:
   - "3.8.7"
 before_install:
-  - sudo apt install tesseract-ocr
-  - sudo apt install libtesseract-dev
+  - sudo apt-get install -y libleptonica-dev
+  - libleptonica-dev --version
+  - sudo apt-get update -y
+  - sudo apt-get install automake
+  - sudo apt-get install -y pkg-config
+  - sudo apt-get install -y libsdl-pango-dev
+  - sudo apt-get install -y libicu-dev
+  - sudo apt-get install -y libcairo2-dev
+  - sudo apt-get install bc
+  - wget https://github.com/tesseract-ocr/tesseract/archive/4.1.1.zip
+  - unzip 4.1.1.zip
+  - cd tesseract-4.1.1
+  - ./autogen.sh
+  - ./configure
+  - make
+  - sudo make install
+  - sudo ldconfig
+  - make training
+  - sudo make training-install
   - tesseract --version
+  - cd tessdata
+  - wget https://github.com/tesseract-ocr/tessdata/blob/master/eng.traineddata
+  - wget https://github.com/tesseract-ocr/tessdata/blob/master/osd.traineddata
+  - export TESSDATA_PREFIX=/content/tesseract-4.1.1/tessdata
+  - tesseract --list-langs
+
 install:
   - pip3 install -r requirements.txt
 script:
