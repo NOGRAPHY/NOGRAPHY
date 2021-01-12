@@ -1,13 +1,6 @@
 from cv2 import cv2
-
 import pytesseract
-
-def demo():
-    test_image = cv2.cvtColor(cv2.imread('ocr/example/test_01.png'), cv2.COLOR_BGR2GRAY)
-    letters = getLettersFromImage(test_image)
-    image_with_bounding_boxes = drawBoundingBoxedOnImage(test_image, letters)
-    cv2.imwrite('ocr/example/imageimage_with_bounding_boxes.png', image_with_bounding_boxes)
-
+    
 def getLettersFromImage(image):
     return list(map(mapLineToLetter, pytesseract.image_to_boxes(image).splitlines()))
 
