@@ -9,10 +9,10 @@ def mapLineToLetter(line):
     return Letter(partitions[0], int(partitions[1]), int(partitions[2]), int(partitions[3]), int(partitions[4]))
 
 def drawBoundingBoxedOnImage(image, letters):
-    height, width = image.shape
+    image_height = int(image.shape[0])
     for letter in letters:
-        # TODO: Verify this does what it is expected to.
-        cv2.rectangle(image, (letter.x, height - letter.y), (letter.width, height - letter.height), (0, 0, 255), 1)
+        # Rectangle from bottom left to top right
+        cv2.rectangle(image, (letter.x, image_height - letter.y), (letter.width, image_height - letter.height), (0, 0, 255), 1)
     return image
 
 class Letter:
