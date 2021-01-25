@@ -1,17 +1,19 @@
 # embedder
 pytest
-pylatex
+pylatex~=1.4.1
 lorem
 
 # font_trainingsdata_generator
 numpy~=1.18.5
-Pillow
-tqdm
+Pillow~=8.1.0
+tqdm~=4.56.0
 
 # cnn
 tensorflow<=2.2.0
 scikit-learn~=0.23.2
 
 # ocr
-pytesseract
-opencv-python
+pytesseract~=0.3.7
+opencv-python~=4.5.1.48
+imutils~=0.5.4
+tesserocr~=2.5.1
