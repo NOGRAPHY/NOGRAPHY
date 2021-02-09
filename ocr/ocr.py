@@ -7,6 +7,7 @@ import os
 from PIL import Image
 from tesserocr import PyTessBaseAPI, RIL
 
+
 def preprocessImage(image):
     image = imutils.resize(image, width=800, )
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -50,36 +51,47 @@ class Letter:
         return self.__str__()
 
 
-def main():
-    filename = 'demo_04'
-    blacklist = ",-;:_"
-    tmp_img = preprocessImage(cv2.imread('example/' + filename + '.png'))
-    cv2.imwrite('example/' + filename + '_processed.png', tmp_img)
-    img = Image.open('example/' + filename + '_processed.png')
-    img.save('example/' + filename + '.tif')
-    image = Image.open('example/' + filename + '.tif')
+def recognizeCharacters(filename):
     with PyTessBaseAPI() as api:
-        api.SetImage(image)
-        # Blacklist doesnt work yet
-        api.SetVariable("tessedit_char_blacklist", blacklist)
+        api.SetImageFile('example/' + filename + '.png')
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        print('Found {} image components.'.format(len(boxes)))
+        characters = api.GetUTF8Text().replace(" ", "")
+        print(characters)
+        # print('Found {} image components.'.format(len(boxes)))
+        return characters, boxes
 
-    image_array = np.array(image)
+
+def drawBoxes(boxes, img, filename):
+    for box in boxes:
+        box = box[1]
+        x, y, w, h = box['x'], box['y'], box['w'], box['h']
+        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 1)
+    cv2.imwrite('example/result/' + filename + '_result.png', img)
+
+
+def createLetterImages(characters, boxes, img, filename):
     index = 0
     for box in boxes:
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        cv2.rectangle(image_array, (x, y), (x + w, y + h), (255, 0, 0), 1)
-
-        # generate png for each letter
-        letter = tmp_img[y:y + h, x:x + w]
-        cv2.imwrite('example/result/letters/' + filename + '/' + str(index) + '.png', letter)
+        letter = img[y:y + h, x:x + w]
+        cv2.imwrite('example/result/letters/' + filename + '/' + str(index) + '_' + characters[index] + '.png', letter)
         index += 1
 
-    cv2.imwrite('example/result/' + filename + '_result.png', image_array)
-    os.remove('example/' + filename + '.tif')
-    os.remove('example/' + filename + '_processed.png')
+
+def main():
+    filename = 'demo_02'
+
+    characters, boxes = recognizeCharacters(filename)
+
+    # check with other examples if -1 is correct
+    if len(boxes) != len(characters) - 1:
+        raise IndexError("Not all characters were recognized correctly")
+
+    else:
+        img = cv2.imread('example/' + filename + '.png')
+        drawBoxes(boxes, img, filename)
+        createLetterImages(characters, boxes, img, filename)
 
 
 if __name__ == "__main__":
