@@ -1,4 +1,4 @@
-from ocr import recognizeCharacters
+from ocr import recognizeCharacters, createLetterImages
 from cv2 import cv2
 
 def test_recognize_characters():
@@ -10,3 +10,7 @@ def test_recognize_characters():
     assert 71 < firstBox['y'] < 73
     assert 39 < firstBox['w'] < 41
     assert 55 < firstBox['h'] < 57
+
+def test_create_letter_images():
+    characters, boxes = recognizeCharacters('ocr/example/demo_01.png')
+    createLetterImages(characters, boxes, 'ocr/example/demo_01.png', 200)

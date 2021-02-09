@@ -1,38 +1,55 @@
 from cv2 import cv2
 from tesserocr import PyTessBaseAPI, RIL
+import numpy as np
 
 def main():
-    filename = 'demo_02'
-    characters, boxes = recognizeCharacters('example/' + filename + '.png')
-    img = cv2.imread('example/' + filename + '.png')
-    drawBoxes(boxes, img, filename)
-    createLetterImages(characters, boxes, img, filename)
+    filename = 'example/demo_01.png'
+    characters, boxes = recognizeCharacters(filename)
+    drawBoxes(boxes, filename)
+    createLetterImages(characters, boxes, filename, 200)
 
 def recognizeCharacters(filename):
     with PyTessBaseAPI() as api:
         api.SetImageFile(filename)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        characters = api.GetUTF8Text().replace(" ", "").rstrip("\n")
-
+        characters = api.GetUTF8Text().replace(' ', '').rstrip('\n')
         if len(boxes) != len(characters):
-            raise IndexError("Not all characters were recognized correctly")
+            raise IndexError('Not all characters were recognized correctly')
         else:
             return characters, boxes
 
-def drawBoxes(boxes, img, filename):
+def drawBoxes(boxes, filename):
+    img = cv2.imread(filename)
     for box in boxes:
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 1)
-    cv2.imwrite('example/result/' + filename + '_result.png', img)
 
-def createLetterImages(characters, boxes, img, filename):
+    split_filename = filename.split(".")
+    cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
+
+def createLetterImages(characters, boxes, filename, size):
+    img = cv2.imread(filename)
     index = 0
     for box in boxes:
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        letter = img[y:y + h, x:x + w]
-        cv2.imwrite('example/result/letters/' + filename + '/' + str(index) + '_' + characters[index] + '.png', letter)
+        letter_image = img[y:y + h, x:x + w]
+        if(w > h):
+            scaling_factor = size / w
+        else:
+            scaling_factor = size / h
+        resized_letter = cv2.resize(letter_image, (int(w * scaling_factor), int(h * scaling_factor)))
+        
+        empty_image = np.ones((size, size, 3), np.uint8) * 255
+
+        x_offset = int((size - resized_letter.shape[1])/2)
+        y_offset = int((size - resized_letter.shape[0])/2)
+
+        empty_image[y_offset:y_offset+resized_letter.shape[0], x_offset:x_offset+resized_letter.shape[1]] = resized_letter
+
+        split_filename = filename.split('.')
+        cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1], empty_image)
         index += 1
 
 if __name__ == "__main__":
