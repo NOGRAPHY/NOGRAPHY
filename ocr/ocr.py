@@ -3,7 +3,8 @@ from tesserocr import PyTessBaseAPI, RIL
 import numpy as np
 
 def main():
-    filename = 'example/demo_01.png'
+
+    filename = 'example/demo_06.png'
     characters, boxes = recognizeCharacters(filename)
     drawBoxes(boxes, filename)
     createLetterImages(characters, boxes, filename, 200)
@@ -12,7 +13,7 @@ def recognizeCharacters(filename):
     with PyTessBaseAPI() as api:
         api.SetImageFile(filename)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        characters = api.GetUTF8Text().replace(' ', '').rstrip('\n')
+        characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
         if len(boxes) != len(characters):
             raise IndexError('Not all characters were recognized correctly')
         else:

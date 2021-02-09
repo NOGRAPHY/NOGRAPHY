@@ -2,6 +2,7 @@
 *.pdf
 ocr/example/result/letters/*/*.png
 ocr/example/result/*.png
+ocr/example/*_*_*.png
 
 # font_trainingsdata_generator
 font_trainingsdata_generator/fonts
