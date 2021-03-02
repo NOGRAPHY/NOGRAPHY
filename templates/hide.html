@@ -1,0 +1,17 @@
+<!doctype html>
+<title>hide-and-seek</title>
+
+<form>
+	<input placeholder="secret message" name="message">
+
+	<button>
+		Hide
+	</button>
+	<p>
+		{% if error %}
+		{{ error }}
+		{% endif %}
+	</p>
+</form>
+
+</html>
