@@ -8,8 +8,8 @@ DUMMY_CODEBOOK = {
     2: {'font': 'qbk', 'color': 'green'},   # Gyre Bonum
     3: {'font': 'qcs', 'color': 'magenta'},   # Gyre Schola
     4: {'font': 'put', 'color': 'orange'},   # Fourier
-    5: {'font': 'ppl', 'color': 'violet'},   # Palatino
-    6: {'font': 'pbk', 'color': 'pink'},   # Bookman
+    5: {'font': 'Tinos-TLF', 'color': 'violet'},   # Tinos
+    6: {'font': 'Clara-TOsF', 'color': 'pink'},   # Clara
     7: {'font': 'bch', 'color': 'lime'},   # Charter
 }
 
@@ -21,8 +21,8 @@ packages = [
     Package('tgbonum'),
     Package('tgschola'),
     Package('fourier'),
-    Package('palatino'),
-    Package('bookman'),
+    Package('clara'),
+    Package('tinos'),
     Package('charter'),
     Package('lmodern'),
 ]
