@@ -10,7 +10,12 @@
 6. See documentation of packages below to see what you can do.
 
 ## CNN - Convolutional Neural Network
-// TODO
+We currently train our network in Google Colab with the iPython notebook "font_recognition_cnn.ipynb".
+1. If not you need to create a Google account and register to Google Colab
+2. Open notebook "font_recognition_cnn.ipynb" in Google Colab
+3. Import font images folder images/A from Github or copy it to your Google Drive (change in code as you like)
+4. Run notebook "font_recognition_cnn.ipynb" in Google Colab
+
 
 ## OCR - Optical Character Recognition
 ### Installation
