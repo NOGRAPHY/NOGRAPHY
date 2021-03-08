@@ -17,3 +17,7 @@ pytesseract~=0.3.7
 opencv-python~=4.5.1.48
 imutils~=0.5.4
 tesserocr~=2.5.1
+
+# server
+flask~=1.1.2
+pdf2image~=1.14.0

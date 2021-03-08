@@ -1,5 +1,6 @@
 from pylatex.base_classes import Command, Arguments, CommandBase
 from pylatex import Document, Package, NoEscape
+from pdf2image import convert_from_path
 import string
 
 DUMMY_CODEBOOK = {
@@ -64,5 +65,6 @@ def change_font(text, font, color=None):
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
 # Cannot be tested automatically (travis has no pdf engine)
+
 def generate_document(document, file_name, clean_tex=False):
     document.generate_pdf(file_name, clean_tex=clean_tex)
