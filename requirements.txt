@@ -7,6 +7,7 @@ lorem
 numpy~=1.18.5
 Pillow~=8.1.0
 tqdm~=4.56.0
+pdf2image
 
 # cnn
 tensorflow<=2.2.0

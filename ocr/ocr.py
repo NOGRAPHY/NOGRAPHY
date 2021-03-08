@@ -1,5 +1,5 @@
 from cv2 import cv2
-from tesserocr import PyTessBaseAPI, RIL
+from tesserocr import PyTessBaseAPI, RIL, OEM
 import numpy as np
 
 def main():
@@ -10,14 +10,12 @@ def main():
     createLetterImages(characters, boxes, filename, 200)
 
 def recognizeCharacters(filename):
-    with PyTessBaseAPI() as api:
+    with PyTessBaseAPI(lang="deu", oem=OEM.TESSERACT_LSTM_COMBINED) as api:
         api.SetImageFile(filename)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
-        if len(boxes) != len(characters):
-            raise IndexError('Not all characters were recognized correctly')
-        else:
-            return characters, boxes
+
+        return characters, boxes
 
 def drawBoxes(boxes, filename):
     img = cv2.imread(filename)
@@ -50,7 +48,7 @@ def createLetterImages(characters, boxes, filename, size):
         empty_image[y_offset:y_offset+resized_letter.shape[0], x_offset:x_offset+resized_letter.shape[1]] = resized_letter
 
         split_filename = filename.split('.')
-        cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1], empty_image)
+        cv2.imwrite(split_filename[0] + '_' + str(index) + '.' + split_filename[1], empty_image)
         index += 1
 
 if __name__ == "__main__":
