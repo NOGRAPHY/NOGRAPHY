@@ -6,15 +6,15 @@ from pdf2image import convert_from_path
 
 app = Flask(__name__)
 
-placeholder = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
-secret_max_length = 50
-
-
 @app.route('/')
 def index():
     secret = request.args.get('secret', '').strip()
-    if len(secret) > secret_max_length:
-        return render_template('/server/hide.html', error = 'Secret is too long. Enter no more than ' + str(secret_max_length)+ ' characters.')
+    placeholder = request.args.get('placeholder', '').strip()
+    print("secret length: " + str(len(secret)))
+    print("placeholder length: " + str(len(placeholder)))
+
+    if len(secret) * 3 > len(placeholder):
+        return render_template('hide.html', error = 'Secret is too long. Make it shorter or the placeholder longer.')
     elif len(secret) > 0:
         embedder.generate_document(
             embedder.embed(
