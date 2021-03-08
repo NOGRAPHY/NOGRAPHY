@@ -4,14 +4,14 @@ from pdf2image import convert_from_path
 import string
 
 DUMMY_CODEBOOK = {
-    0: {'font': 'qtm', 'color': 'blue'},   # Gyre Termes
-    1: {'font': 'qpl', 'color': 'brown'},   # Gyre Pagella
-    2: {'font': 'qbk', 'color': 'green'},   # Gyre Bonum
-    3: {'font': 'qcs', 'color': 'magenta'},   # Gyre Schola
-    4: {'font': 'put', 'color': 'orange'},   # Fourier
-    5: {'font': 'ppl', 'color': 'violet'},   # Palatino
-    6: {'font': 'pbk', 'color': 'pink'},   # Bookman
-    7: {'font': 'bch', 'color': 'lime'},   # Charter
+    0: {'font': 'qtm', 'color': 'blue', 'fontname': "Gyre Termes"},
+    1: {'font': 'qpl', 'color': 'brown', 'fontname': "Gyre Pagella"},
+    2: {'font': 'qbk', 'color': 'green', 'fontname': "Gyre Bonum"},
+    3: {'font': 'qcs', 'color': 'magenta', 'fontname': "Gyre Schola"},
+    4: {'font': 'put', 'color': 'orange', 'fontname': "Fourier"},
+    5: {'font': 'Tinos-TLF', 'color': 'violet', 'fontname': "Tinos"},
+    6: {'font': 'Clara-TOsF', 'color': 'pink', 'fontname': "Clara"},
+    7: {'font': 'bch', 'color': 'lime', 'fontname': "Charter"},
 }
 
 packages = [
@@ -22,8 +22,8 @@ packages = [
     Package('tgbonum'),
     Package('tgschola'),
     Package('fourier'),
-    Package('palatino'),
-    Package('bookman'),
+    Package('clara'),
+    Package('tinos'),
     Package('charter'),
     Package('lmodern'),
 ]
@@ -65,6 +65,6 @@ def change_font(text, font, color=None):
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
 # Cannot be tested automatically (travis has no pdf engine)
-def generate_document(document, file_name):
-    document.generate_pdf(file_name, clean_tex=True)
-    # document.generate_tex(file_name)
+
+def generate_document(document, file_name, clean_tex=False):
+    document.generate_pdf(file_name, clean_tex=clean_tex)
