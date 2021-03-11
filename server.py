@@ -1,16 +1,20 @@
 import os
 import uuid
 
-from flask import Flask, request, redirect, render_template, send_file
+from flask import Flask, request, redirect, render_template, send_file, flash
+import secrets
 from pdf2image import convert_from_path
+from werkzeug.utils import secure_filename
 
 from encoder import encoder
 from embedder import embedder
 
-SERVER_TMP = "server_tmp"
-os.makedirs(SERVER_TMP, exist_ok=True)
+SERVER_TMP = os.path.join(os.path.split(os.path.realpath(__file__))[0], "server_tmp")
+UPLOAD_TMP = os.path.join(SERVER_TMP, "upload")
+os.makedirs(UPLOAD_TMP, exist_ok=True)
 
 app = Flask(__name__)
+app.secret_key = secrets.token_urlsafe(32)
 
 
 @app.route('/')
@@ -32,7 +36,7 @@ def hide():
         if len(secret) * 3 > len(placeholder):
             return render_template('hide.html', error='Secret is too long. Make it shorter or the placeholder longer.')
         elif len(secret) > 0:
-            file_pdf = os.path.join(SERVER_TMP, 'hidden_secret-{}'.format(uuid.uuid4()))
+            file_pdf = os.path.join(SERVER_TMP, 'hidden-secret_{}'.format(uuid.uuid4()))
             file_png = file_pdf + ".png"
 
             embedder.generate_document(
@@ -53,7 +57,21 @@ def hide():
 
 @app.route('/expose', methods=['GET', 'POST'])
 def expose():
-    return render_template('expose.html')
+    if request.method == 'GET':
+        return render_template('expose.html')
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No or empty file uploaded.')
+
+            return render_template('expose.html')
+
+        file = request.files['file']
+        filename = os.path.splitext(secure_filename(file.filename))
+        filename = "{}_{}{}".format(filename[0], uuid.uuid4(), filename[1])
+
+        file.save(os.path.join(UPLOAD_TMP, filename))
+
+        return render_template('expose.html')
 
 
 if __name__ == "__main__":
