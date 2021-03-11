@@ -37,6 +37,7 @@ def hide():
     if request.method == 'POST':
         secret = request.form.get('secret', '').strip()
         placeholder = request.form.get('placeholder', '').strip()
+        show_colors = request.form.get('show_colors') is not None
 
         print("secret length: " + str(len(secret)))
         print("placeholder length: " + str(len(placeholder)))
@@ -51,7 +52,8 @@ def hide():
                 document=embedder.embed(
                     embedder.setup_document(),
                     placeholder,
-                    encoder.encode(secret, ENCODING_DECODING_BASE)
+                    encoder.encode(secret, ENCODING_DECODING_BASE),
+                    show_colors
                 ),
                 file_name=file_pdf
             )
@@ -88,6 +90,9 @@ def expose():
 
         font_indexes, _ = cnn_model.predict(glyphs)
         exposed_message = decoder.decode_from_font_indexes(font_indexes, ENCODING_DECODING_BASE)
+
+        print(font_indexes)
+        print(exposed_message)
 
         return render_template('expose.html', exposed_message=exposed_message)
 
