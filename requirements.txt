@@ -4,7 +4,7 @@ pylatex~=1.4.1
 lorem
 
 # font_trainingsdata_generator
-numpy~=1.18.5
+numpy
 Pillow~=8.1.0
 tqdm~=4.56.0
 
