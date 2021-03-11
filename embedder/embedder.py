@@ -9,7 +9,7 @@ DUMMY_CODEBOOK = {
     3: {'font': 'qcs', 'color': 'magenta', 'fontname': "Gyre Schola"},
     4: {'font': 'put', 'color': 'orange', 'fontname': "Fourier"},
     5: {'font': 'Tinos-TLF', 'color': 'violet', 'fontname': "Tinos"},
-    6: {'font': 'Clara-TOsF', 'color': 'pink', 'fontname': "Clara"},
+    6: {'font': 'Clara-TOsF', 'color': 'teal', 'fontname': "Clara"},
     7: {'font': 'bch', 'color': 'lime', 'fontname': "Charter"},
 }
 
