@@ -1,6 +1,5 @@
 from pylatex.base_classes import Command, Arguments, CommandBase
 from pylatex import Document, Package, NoEscape
-from pdf2image import convert_from_path
 import string
 
 DUMMY_CODEBOOK = {
@@ -36,6 +35,7 @@ def setup_document():
     for package in packages:
         document.packages.append(package)
     document.append(Command('setlength', arguments=Command('parindent'), extra_arguments='0em'))
+    document.append(Command('pagenumbering', arguments='gobble'))
 
     args = Arguments('m m O{black}', r'\fontfamily{#2}{\selectfont\color{#3}\normalsize #1}')
     args._escape = False
