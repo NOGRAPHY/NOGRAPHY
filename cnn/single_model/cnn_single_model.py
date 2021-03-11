@@ -1,7 +1,8 @@
 import os
 
-from tensorflow import keras
 import numpy as np
+import tensorflow as tf
+from tensorflow import keras
 
 from embedder import embedder
 
@@ -29,15 +30,20 @@ class SingleModel:
         self.model = keras.models.load_model(model_path)
 
     def predict(self, images):
+        if isinstance(images, list):
+            images = np.array(images)
+
         if not isinstance(images, np.ndarray):
             raise TypeError("predict() argument 'img_array' must be " +
                             str(type(np.ndarray([]))) + ", not " + str(type(images)))
+
+        images = tf.image.rgb_to_grayscale(images)
 
         # Normalize image, if it is not yet done.
         if np.max(images) != 1.0:
             images = images / np.max(images)
 
-        predictions = self.model.predict(images)
+        predictions = self.model.predict(images, workers=0)
 
         font_indexes = []
         font_info = []
