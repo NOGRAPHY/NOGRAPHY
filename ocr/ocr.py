@@ -2,12 +2,6 @@ from cv2 import cv2
 from tesserocr import PyTessBaseAPI, RIL
 import numpy as np
 
-def main():
-
-    filename = 'example/demo_06.png'
-    characters, boxes = recognizeCharacters(filename)
-    drawBoxes(boxes, filename)
-    createLetterImages(characters, boxes, filename, 200)
 
 def recognizeCharacters(filename):
     with PyTessBaseAPI() as api:
@@ -29,18 +23,21 @@ def drawBoxes(boxes, filename):
     split_filename = filename.split(".")
     cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
 
-def createLetterImages(characters, boxes, filename, size):
+def createLetterImages(characters, boxes, filename, size, save_files=False):
     img = cv2.imread(filename)
-    index = 0
-    for box in boxes:
+
+    glyphs = []
+    for index, box in enumerate(boxes):
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        letter_image = img[y:y + h, x:x + w]
-        if(w > h):
+        letter_image = img[y:y+h, x:x+w]
+
+        if w > h:
             scaling_factor = size / w
         else:
             scaling_factor = size / h
-        resized_letter = cv2.resize(letter_image, (int(w * scaling_factor), int(h * scaling_factor)))
+
+        resized_letter = cv2.resize(letter_image, (int(w*scaling_factor), int(h*scaling_factor)))
         
         empty_image = np.ones((size, size, 3), np.uint8) * 255
 
@@ -49,9 +46,11 @@ def createLetterImages(characters, boxes, filename, size):
 
         empty_image[y_offset:y_offset+resized_letter.shape[0], x_offset:x_offset+resized_letter.shape[1]] = resized_letter
 
-        split_filename = filename.split('.')
-        cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1], empty_image)
-        index += 1
+        if save_files:
+            split_filename = filename.split('.')
+            cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1], empty_image)
 
-if __name__ == "__main__":
-    main()
+        glyphs.append(empty_image)
+
+    return glyphs
+

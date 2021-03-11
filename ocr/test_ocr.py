@@ -13,4 +13,4 @@ def test_recognize_characters():
 
 def test_create_letter_images():
     characters, boxes = recognizeCharacters('ocr/example/demo_01.png')
-    createLetterImages(characters, boxes, 'ocr/example/demo_01.png', 200)
+    createLetterImages(characters, boxes, 'ocr/example/demo_01.png', 200, save_files=True)
