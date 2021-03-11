@@ -8,6 +8,9 @@ ocr/example/*_*_*.png
 font_trainingsdata_generator/fonts
 font_trainingsdata_generator/images
 
+# server
+server_tmp
+
 .idea
 .python-version
 
