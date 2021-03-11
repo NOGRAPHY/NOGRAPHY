@@ -1,24 +1,29 @@
-<!doctype html>
-<html>
-    <head>
-        <title>nography</title>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>nography</title>
+</head>
+<body>
 
-    <h1>nography</h1>
-    <form method="post">
-        <input placeholder="secret message" name="secret">
-        <br><br>
-        <textarea style="height: 20em; width: 30em;" name="placeholder">In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.
-        </textarea>
-        <br><br>
-        <button>Hide</button>
-        <p>
-            {% if error %}
-            {{ error }}
-            {% endif %}
-        </p>
-    </form>
+<h1>nography</h1>
 
-    </body>
+<a href="/hide">hide message</a> - <a href="/expose">expose message</a>
+<br><br>
+
+<form method="post">
+    <input placeholder="secret message" name="secret">
+    <br><br>
+    <textarea style="height: 20em; width: 30em;" name="placeholder">In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.
+    </textarea>
+    <br><br>
+    <input type="submit" value="Hide">
+    <p>
+        {% if error %}
+        {{ error }}
+        {% endif %}
+    </p>
+</form>
+
+</body>
 </html>

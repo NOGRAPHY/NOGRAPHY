@@ -7,7 +7,7 @@
 3. Have an IDE ready (e.g. Visual Studio Code or PyCharm)
 4. `pip3 install -r requirements.txt` to install dependencies
 5. `pytest` executes all test
-6. To hide your secret in an image, start the webserver with `export FLASK_APP=server.py` and `flask run`, then open `http://localhost:5000/hide`
+6. To hide your secret in an image, start the webserver with `export FLASK_APP=server.py` and `flask run`, then open `http://localhost:5000/`
 7. See documentation of packages below to see what you can do
 
 ## Server

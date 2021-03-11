@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, redirect, render_template, send_file
 from pdf2image import convert_from_path
 
 from encoder import encoder
@@ -13,8 +13,13 @@ os.makedirs(SERVER_TMP, exist_ok=True)
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    return redirect('/hide')
+
+
+@app.route('/hide', methods=['GET', 'POST'])
+def hide():
     if request.method == 'GET':
         return render_template('hide.html')
     if request.method == 'POST':
@@ -44,6 +49,11 @@ def index():
             return send_file(file_png, as_attachment=True)
 
         return render_template('hide.html')
+
+
+@app.route('/expose', methods=['GET', 'POST'])
+def expose():
+    return render_template('expose.html')
 
 
 if __name__ == "__main__":
