@@ -33,11 +33,13 @@ Link Google Drive: https://drive.google.com/drive/folders/10dmF_WKGJtFlquv14vsWF
 
 #### Glyph recognition
 
+This module uses a CNN model and takes a list of glyph images and predicts their fonts and their representation in the [codebook](https://github.com/steganographie-HTWG/steganographie/blob/9109e9f13cab8d682a8d3a4db023def78ceaa9d2/embedder/embedder.py#L5).
+
 #### Training regimen
 This [iPython notebook](cnn/single_model/training_regimen/train_cnn_single_model.ipynb) was used on [Google Colaboratory](https://colab.research.google.com/notebook) to train the model.
 
 The basic structure of the used trainingdata is in [this directory](cnn/single_model/training_regimen/ocr_fonts). Used data was generated using [this script](https://github.com/steganographie-HTWG/steganographie/blob/traindata_with_ocr/font_trainingsdata_generator/extract_with_ocr.py).
-Images of glyphs (a-z & öäü, A-Z & ÖÄÜ) of each font used in the [codebook](https://github.com/steganographie-HTWG/steganographie/blob/9109e9f13cab8d682a8d3a4db023def78ceaa9d2/embedder/embedder.py#L5) were ectracted using OCR in resolution of 300dpi and 900dpi.
+Images of glyphs (a-z & öäü, A-Z & ÖÄÜ) of each font used in the [codebook](https://github.com/steganographie-HTWG/steganographie/blob/9109e9f13cab8d682a8d3a4db023def78ceaa9d2/embedder/embedder.py#L5) were extracted using OCR in resolution of 300dpi and 900dpi.
 
 By using [ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator) and [imgaug](https://github.com/aleju/imgaug) the glyph images are randomly augmented while training the model.
 
