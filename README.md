@@ -20,27 +20,31 @@
 `flask run` then go to `http://127.0.0.1:5000/`
 
 ## CNN - Convolutional Neural Network
+
+### Model per glyph
 We currently train our network in Google Colab with the iPython notebook "font_recognition_cnn.ipynb".
 1. If not you need to create a Google account and register to Google Colab
 2. Open notebook "font_recognition_cnn.ipynb" in Google Colab
 3. Import font images folder images/A from Github or copy it to your Google Drive (change in code as you like)
 4. Run notebook "font_recognition_cnn.ipynb" in Google Colab
 Link Google Drive: https://drive.google.com/drive/folders/10dmF_WKGJtFlquv14vsWFyvI9sph80eP?usp=sharing
-
+   
 ## OCR - Optical Character Recognition
 ### Installation
 We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
 ### Demo
 In order to see the demo, just execute the tests with `pytest`. Two test images will be generated with bounding boxes around them.
 
-## Decoder
-// TODO
-
 ## Encoder
-// TODO
+Here we take an input-string and convert it to a list of chunks in binary representation.
+
+## Decoder
+Here we take a list of chunks of binary digits and convert it to its string representation.
 
 ## Font Training Data Generator
-// TODO
+This module generates images of text for training of neural networks.
+
+- [font_augmenter.py](font_trainingsdata_generator/font_augmenter.py) - For augmenting images. [TextRecognitionDataGenerator](https://github.com/Belval/TextRecognitionDataGenerator) might be a better alternative.
 
 ## Embedder
 // TODO
