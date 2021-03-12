@@ -50,7 +50,7 @@ def embed(document, dummy_text, secret, is_colored=False):
 
         if letter in string.ascii_letters:
             if secret_ints:
-                i = secret_ints.pop()
+                i = secret_ints.pop(0)
                 color = DUMMY_CODEBOOK[i]['color'] if is_colored else None
                 text_to_append = change_font(letter, DUMMY_CODEBOOK[i]['font'], color).dumps()
         perturbed_text += text_to_append
@@ -65,6 +65,5 @@ def change_font(text, font, color=None):
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
 # Cannot be tested automatically (travis has no pdf engine)
-
 def generate_document(document, file_name, clean_tex=False):
     document.generate_pdf(file_name, clean_tex=clean_tex)

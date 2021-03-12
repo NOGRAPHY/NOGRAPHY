@@ -20,9 +20,6 @@ def decode(encoded_string):
     return decoded_string
 
 def decode_from_font_indexes(indexes_list, base):
-    # reverse indexes list
-    indexes_list = indexes_list[::-1]
-
     # convert decimal indexes to binary
     indexes_in_binary = [format(i, 'b').zfill(base) for i in indexes_list]
 
