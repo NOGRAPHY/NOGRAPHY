@@ -1,4 +1,4 @@
-from pylatex.base_classes import Command, Arguments, CommandBase
+from pylatex.base_classes import Command, Arguments, CommandBase, Options
 from pylatex import Document, Package, NoEscape
 import string
 
@@ -34,17 +34,27 @@ def setup_document():
     document = Document(document_options='a4paper', lmodern=False)
     for package in packages:
         document.packages.append(package)
+
+    # Increase spacing between glyphs
+    document.packages.append(Package('microtype', Options(letterspace=10)))
+    document.append(Command('lsstyle'))
+
+    # Remove indent of paragraph
     document.append(Command('setlength', arguments=Command('parindent'), extra_arguments='0em'))
+
+    # Remove pagenumber at bottom of page
     document.append(Command('pagenumbering', arguments='gobble'))
 
     args = Arguments('m m O{black}', r'\fontfamily{#2}{\selectfont\color{#3}\normalsize #1}')
     args._escape = False
     document.append(Command('NewDocumentCommand', arguments=Command('fch'), extra_arguments=args))
+
     return document
 
 def embed(document, dummy_text, secret, is_colored=False):
     secret_ints = [int(c, 2) for c in secret]
     perturbed_text = r''
+
     for letter in dummy_text:
         text_to_append = letter
 
@@ -53,15 +63,18 @@ def embed(document, dummy_text, secret, is_colored=False):
                 i = secret_ints.pop(0)
                 color = DUMMY_CODEBOOK[i]['color'] if is_colored else None
                 text_to_append = change_font(letter, DUMMY_CODEBOOK[i]['font'], color).dumps()
+
         perturbed_text += text_to_append
 
     document.append(NoEscape(perturbed_text))
     document.append("\n\n")
+
     return document
 
 def change_font(text, font, color=None):
     args = Arguments(text, font)
     args._escape = False
+
     return FontChangeCommand(arguments=args, options=color, extra_arguments=[])
 
 # Cannot be tested automatically (travis has no pdf engine)
