@@ -1,7 +1,20 @@
 from cv2 import cv2
 from tesserocr import PyTessBaseAPI, RIL
 import numpy as np
+from pdf2image import convert_from_path
 
+#download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
+
+def checkType(filename):
+    type = filename[-3] + filename[-2] + filename[-1]
+    if type == 'pdf':
+        pages = convert_from_path(filename, 500)
+        for page in pages:
+            filename = filename[:-3] + "png"
+            page.save(filename, 'PNG')
+            return filename
+    else:
+        return filename
 
 def recognizeCharacters(filename):
     with PyTessBaseAPI() as api:
