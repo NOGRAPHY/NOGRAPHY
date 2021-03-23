@@ -22,12 +22,39 @@
 ## CNN - Convolutional Neural Network
 
 ### Model per glyph
-We currently train our network in Google Colab with the iPython notebook "font_recognition_cnn.ipynb".
-1. If not you need to create a Google account and register to Google Colab
-2. Open notebook "font_recognition_cnn.ipynb" in Google Colab
-3. Import font images folder images/A from Github or copy it to your Google Drive (change in code as you like)
-4. Run notebook "font_recognition_cnn.ipynb" in Google Colab
-Link Google Drive: https://drive.google.com/drive/folders/10dmF_WKGJtFlquv14vsWFyvI9sph80eP?usp=sharing
+
+#### Introduction
+This module version uses a trained CNN model per glyph. It takes a glyph images and predicts as outcome the corresponding font arccording to the [codebook](https://github.com/steganographie-HTWG/steganographie/blob/9109e9f13cab8d682a8d3a4db023def78ceaa9d2/embedder/embedder.py#L5). 
+
+#### Dataset
+The dataset used for the training process is located in [this directory](cnn/model_per_glyph/images). It is structured into directories for lower- and upper-case images of glyphes from (a-z & öäü, A-Z & ÖÄÜ). [//]: # https://drive.google.com/drive/folders/10dmF_WKGJtFlquv14vsWFyvI9sph80eP?usp=sharing
+These images where created using this [ocr module](https://github.com/steganographie-HTWG/steganographie/blob/traindata_with_ocr/font_trainingsdata_generator/extract_with_ocr.py) in resolution of 300 dpi and 900 dpi.
+
+#### Preprocessing of Dataset:
+Because of the small dataset size image augmentation is suggested for the training process. By using the [ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator) and [imgaug](https://github.com/aleju/imgaug) the glyph images are randomly augmented with the following augmentations during the training process:
+* Gaussian blur whose standard deviation is uniformly distributed between 0 (no blur) and 3px
+* Gaussian noise with zero mean and standard deviation 3
+
+#### CNN Architecture:
+The network is designed according to the [paper](https://www.cs.columbia.edu/cg/fontcode/fontcode.pdf). It structure is based of a first convolutional neural network containing 3 convolutional layers with following max-pooling of 2x2 and a second fully connected neural network with 2  layers. For optimization purposes each layer contains a following normalization and a dopout layer. In the first layer the kernel size is set to 7 instead of 8. 
+
+**Convolution Neural Network**
+* Convolution Layer 1 (7×7×32)
+* Convolution Layer 2 (5×5×64)
+* Convolution Layer 3 (3×3×32)
+**Fully Connected Neural Network**
+* Fully Connected Layer 1 (128 neurons)
+* Fully Connected Layer 2 (9 neurons)
+
+#### Framework (Keras):
+As framework for the training and evaluation is keras used because of ist simplicity and variability. 
+
+#### Method
+We currently train our network in Google Colab with the iPython notebook [font_recognition_cnn.ipynb](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing).
+1. If not you need to create a [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?flowName=GlifWebSignIn&flowEntry=SignUp) first and register to [Google Colab](https://colab.research.google.com/notebook)
+2. Then open the [iPython notebook](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing) in Google Colab
+3. Import [font image folder](cnn/model_per_glyph/images) from Github or copy it to your Google Drive (change in code as you like)
+4. Run notebook [font_recognition_cnn.ipynb](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing) in Google Colab
 
 ### Single model
 
