@@ -27,7 +27,7 @@
 This module version uses a trained CNN model per glyph. It takes a glyph images and predicts as outcome the corresponding font arccording to the [codebook](https://github.com/steganographie-HTWG/steganographie/blob/9109e9f13cab8d682a8d3a4db023def78ceaa9d2/embedder/embedder.py#L5). 
 
 #### Dataset
-The dataset used for the training process is located in [this directory](cnn/model_per_glyph/images). It is structured into directories for lower- and upper-case images of glyphes from (a-z & öäü, A-Z & ÖÄÜ). [//]: # https://drive.google.com/drive/folders/10dmF_WKGJtFlquv14vsWFyvI9sph80eP?usp=sharing
+The dataset used for the training process is located in [this directory](cnn/model_per_glyph/images). It is structured into directories for lower- and upper-case images of glyphes from (a-z & öäü, A-Z & ÖÄÜ).
 These images where created using this [ocr module](https://github.com/steganographie-HTWG/steganographie/blob/traindata_with_ocr/font_trainingsdata_generator/extract_with_ocr.py) in resolution of 300 dpi and 900 dpi.
 
 #### Preprocessing of Dataset:
@@ -42,6 +42,7 @@ The network is designed according to the [paper](https://www.cs.columbia.edu/cg/
 * Convolution Layer 1 (7×7×32)
 * Convolution Layer 2 (5×5×64)
 * Convolution Layer 3 (3×3×32)
+
 **Fully Connected Neural Network**
 * Fully Connected Layer 1 (128 neurons)
 * Fully Connected Layer 2 (9 neurons)
