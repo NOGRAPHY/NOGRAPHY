@@ -22,7 +22,10 @@ def checkType(filename):
 
 
 def recognizeCharacters(filename):
-    whitelist = string.ascii_letters + "öäüÖÄÜ"
+    whitelist = string.ascii_letters
+
+    # Add Umlauts to Whitelist
+    # whitelist = whitelist + "öäüÖÄÜ"
 
     with PyTessBaseAPI() as api:
         api.SetImageFile(filename)
