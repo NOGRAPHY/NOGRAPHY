@@ -15,7 +15,7 @@ def decode(encoded_string):
             break
 
     # cast chunks as characters and concatenate
-    decoded_string = ''.join([chr(int(c, 2)) for c in chunks])
+    decoded_string = b''.join([int(c, 2).to_bytes((len(c) + 7) // 8, byteorder='big') for c in chunks]).decode('utf-8')
 
     return decoded_string
 
