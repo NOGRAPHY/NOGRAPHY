@@ -42,7 +42,7 @@ def hide():
         print("secret length: " + str(len(secret)))
         print("placeholder length: " + str(len(placeholder)))
 
-        if len(secret) * 3 > len(placeholder):
+        if len(secret) * ENCODING_DECODING_BASE > len(placeholder):
             return render_template('hide.html', error='Secret is too long. Make it shorter or the placeholder longer.')
         elif len(secret) > 0:
             file_pdf = os.path.join(SERVER_TMP, 'hidden-secret_{}'.format(uuid.uuid4()))
