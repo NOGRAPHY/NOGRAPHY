@@ -47,6 +47,7 @@ class SingleModel:
 
         font_indexes = []
         font_info = []
+        confidences = []
 
         for prediction in predictions:
             argmax = np.argmax(prediction).item()
@@ -59,5 +60,13 @@ class SingleModel:
 
             font_indexes.append(font_index)
             font_info.append(info)
+            confidences.append(np.max(prediction).item())
 
-        return font_indexes, font_info
+        confidence = {
+            "mean": np.mean(confidences),
+            "median": np.median(confidences),
+            "min": np.min(confidences),
+            "max": np.max(confidences)
+        }
+
+        return font_indexes, font_info, confidence

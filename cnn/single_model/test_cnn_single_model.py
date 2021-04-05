@@ -20,7 +20,7 @@ def test_single_model():
     imgs = np.array(imgs)
 
     model = SingleModel()
-    font_indexes, _ = model.predict(imgs)
+    font_indexes, _, _ = model.predict(imgs)
 
     assert len(font_indexes) == 30  # We have 30 relevant glyphs.
 

@@ -88,13 +88,14 @@ def expose():
             flash(exception)
             return render_template('expose.html')
 
-        font_indexes, _ = cnn_model.predict(glyphs)
+        font_indexes, _, confidence = cnn_model.predict(glyphs)
         exposed_message = decoder.decode_from_font_indexes(font_indexes, ENCODING_DECODING_BASE)
 
         print(font_indexes)
         print(exposed_message)
+        print(confidence)
 
-        return render_template('expose.html', exposed_message=exposed_message)
+        return render_template('expose.html', exposed_message=exposed_message, confidence=confidence)
 
 
 if __name__ == "__main__":

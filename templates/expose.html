@@ -31,6 +31,16 @@
     <code style="margin-left: 50px; font-size: 16px;">
         {{ exposed_message }}
     </code>
+
+    {% if confidence %}
+        <dl style="margin-top: 80px;">
+            <dt>Confidence:</dt>
+            <dd>Median: {{ (confidence['median']*100)|round(2) }}%</dd>
+            <dd>Mean: {{ (confidence['mean']*100)|round(2) }}%</dd>
+            <dd>Minimum: {{ (confidence['min']*100)|round(2) }}%</dd>
+            <dd>Maximum: {{ (confidence['max']*100)|round(2) }}%</dd>
+        </dl>
+    {% endif %}
 {% endif %}
 
 </body>
