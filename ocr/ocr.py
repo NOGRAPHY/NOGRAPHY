@@ -1,6 +1,8 @@
+import string
+
 from cv2 import cv2
-from tesserocr import PyTessBaseAPI, RIL
 import numpy as np
+from tesserocr import PyTessBaseAPI, RIL
 from pdf2image import convert_from_path
 
 
@@ -20,12 +22,7 @@ def checkType(filename):
 
 
 def recognizeCharacters(filename):
-    whitelist_array = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                       'T',
-                       'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü',
-                       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-                       't',
-                       'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü']
+    whitelist = string.ascii_letters + "öäüÖÄÜ"
 
     with PyTessBaseAPI() as api:
         api.SetImageFile(filename)
@@ -38,7 +35,7 @@ def recognizeCharacters(filename):
             raise IndexError('Not all characters were recognized correctly')
 
         for index in range(len(characters)):
-            if characters[index] in whitelist_array:
+            if characters[index] in whitelist:
                 characters_final = characters_final + characters[index]
 
                 boxes_final.append(boxes[index])
@@ -57,7 +54,7 @@ def drawBoxes(boxes, filename):
     cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
 
 
-def createLetterImages(characters, boxes, filename, size, save_files=True):
+def createLetterImages(characters, boxes, filename, size, save_files=False):
     img = cv2.imread(filename)
 
     glyphs = []
