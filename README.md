@@ -51,11 +51,11 @@ The network is designed according to the [paper](https://www.cs.columbia.edu/cg/
 As framework for the training and evaluation is keras used because of ist simplicity and variability. 
 
 #### Method
-We currently train our network in Google Colab with the iPython notebook [font_recognition_cnn.ipynb](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing).
+We currently train our network in Google Colab with the iPython notebook [font_recognition_cnn.ipynb](cnn/model_per_glyph/font_recognition_cnn.ipynb).
 1. If not you need to create a [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?flowName=GlifWebSignIn&flowEntry=SignUp) first and register to [Google Colab](https://colab.research.google.com/notebook)
-2. Then open the [iPython notebook](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing) in Google Colab
+2. Then open the [iPython notebook](cnn/model_per_glyph/font_recognition_cnn.ipynb) in Google Colab
 3. Import [font image folder](cnn/model_per_glyph/images) from Github or copy it to your Google Drive (change in code as you like)
-4. Run notebook [font_recognition_cnn.ipynb](https://colab.research.google.com/drive/1bq4lRkcF5dtDlimXMb_6uV1uIa5rGySB?usp=sharing) in Google Colab
+4. Run notebook [font_recognition_cnn.ipynb](cnn/model_per_glyph/font_recognition_cnn.ipynb) in Google Colab
 
 ### Single model
 
