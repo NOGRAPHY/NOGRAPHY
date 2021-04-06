@@ -47,6 +47,9 @@ The network is designed according to the [paper](https://www.cs.columbia.edu/cg/
 * Fully Connected Layer 1 (128 neurons)
 * Fully Connected Layer 2 (9 neurons)
 
+![graph.pdf](cnn/model_per_glyph/net2vis/graph.svg)
+![legend.pdf](cnn/model_per_glyph/net2vis/legend.svg)
+
 #### Framework (Keras):
 As framework for the training and evaluation is keras used because of ist simplicity and variability. 
 
