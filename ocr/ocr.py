@@ -25,9 +25,10 @@ def recognizeCharacters(filename):
     whitelist = string.ascii_letters
 
     # Add Umlauts to Whitelist
-    # whitelist = whitelist + "öäüÖÄÜ"
+    whitelist = whitelist + "öäüÖÄÜß"
+    print(whitelist)
 
-    with PyTessBaseAPI() as api:
+    with PyTessBaseAPI(lang='eng+deu') as api:
         api.SetImageFile(filename)
 
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
@@ -43,6 +44,7 @@ def recognizeCharacters(filename):
 
                 boxes_final.append(boxes[index])
 
+        print(characters_final)
         return characters_final, boxes_final
 
 

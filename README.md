@@ -32,6 +32,8 @@ In the [second approach](https://github.com/steganographie-HTWG/steganographie/w
 
 ### Installation
 We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
+For Multilanguage-Support you need to download the advanced tessdata folder from Github: https://github.com/tesseract-ocr/tessdata
+Now you have to set the TESSDATA_PREFIX path to the tessdata folder.
 ### Demo
 In order to see the demo, just execute the tests with `pytest`. Two test images will be generated with bounding boxes around them.
 

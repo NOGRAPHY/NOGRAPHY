@@ -79,4 +79,4 @@ def change_font(text, font, color=None):
 
 # Cannot be tested automatically (travis has no pdf engine)
 def generate_document(document, file_name, clean_tex=False):
-    document.generate_pdf(file_name, clean_tex=clean_tex)
+    document.generate_pdf(file_name, clean_tex=clean_tex, compiler="pdfLaTeX")
