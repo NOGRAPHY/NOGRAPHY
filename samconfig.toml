@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "nography"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-18wauojf7m9b5"
+s3_prefix = "nography"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"

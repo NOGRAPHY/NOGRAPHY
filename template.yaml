@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.8
+
+  SAM Template for nography
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  HideFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hide/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+          HelloWorld:
+            Type: Api
+            Properties:
+              Path: /hide
+              Method: get
+
+Outputs:
+  HideApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hide function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hide/"
+  HideFunction:
+    Description: "Hide Lambda Function ARN"
+    Value: !GetAtt HideFunction.Arn
+  HideFunctionIamRole:
+    Description: "Implicit IAM Role created for Hide function"
+    Value: !GetAtt HideFunctionRole.Arn
