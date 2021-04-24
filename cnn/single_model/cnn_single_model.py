@@ -18,7 +18,7 @@ class SingleModel:
         4: (1, embedder.DUMMY_CODEBOOK[1]),  # GyrePagella
         5: (3, embedder.DUMMY_CODEBOOK[3]),  # GyreSchola
         6: (0, embedder.DUMMY_CODEBOOK[0]),  # GyreTermes
-        7: (9, {'font': 'lmr', 'color': 'black', 'fontname': "Latin Modern Times"}),    # LatinModernTimes
+            7: (9, {'font': 'lmr', 'color': 'black', 'fontname': "Latin Modern"}),    # LatinModern
         8: (5, embedder.DUMMY_CODEBOOK[5]),  # Tinos
     }
 
