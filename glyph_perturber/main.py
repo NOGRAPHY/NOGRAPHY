@@ -90,7 +90,8 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--number", type=int, required=True, help="Number of perturbed fonts.")
     parser.add_argument("-p", "--points", type=int, required=True, help="Number of points to modify.")
 
-    parser.add_argument("--demo", action="store_true", help="Generate PDF file with all perturbed glyphs.")
+    parser.add_argument("--preview", action="store_true", help="Generate a preview PDF file with all perturbed glyphs.")
+    parser.add_argument("--train", action="store_true", help="Generate image data for training with all perturbed glyphs.")
 
     args = parser.parse_args()
 
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     original_font_name, extension = os.path.splitext(args.font)
 
     for i in tqdm(range(args.number)):
+        # TODO: this only works with TTF right now... Add OTF support.
         font = TTFont(args.font)
 
         font = GlyphPerturber.rename_font(font, i+1)
@@ -122,4 +124,8 @@ if __name__ == "__main__":
 
     if args.demo:
         demo_document = PdfGenerator.generate_demo(perturbed_font_names)
-        demo_document.generate_pdf(os.path.join(args.output, "demo"), clean_tex=True, compiler="xelatex")
+        demo_document.generate_pdf(os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
+                                   clean_tex=True, compiler="xelatex")
+
+    if args.train:
+        pass
