@@ -72,7 +72,7 @@ class PdfGenerator:
         return document
 
     @staticmethod
-    def generate_demo(perturbed_fonts):
+    def generate_preview(perturbed_fonts):
         document = PdfGenerator.setup_document()
 
         for perturbed_font in perturbed_fonts:
@@ -122,10 +122,10 @@ if __name__ == "__main__":
 
         font.save(os.path.join(args.output, perturbed_font_name))
 
-    if args.demo:
-        demo_document = PdfGenerator.generate_demo(perturbed_font_names)
-        demo_document.generate_pdf(os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
-                                   clean_tex=True, compiler="xelatex")
+    if args.preview:
+        preview_document = PdfGenerator.generate_preview(perturbed_font_names)
+        preview_document.generate_pdf(os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
+                                      clean_tex=True, compiler="xelatex")
 
     if args.train:
         pass
