@@ -1,5 +1,4 @@
-*.tex
-*.pdf
+# ocr
 ocr/example/result/letters/*/*.png
 ocr/example/result/*.png
 ocr/example/*_*_*.png
@@ -11,6 +10,11 @@ font_trainingsdata_generator/glyphs_extracted_with_ocr
 
 # server
 server_tmp
+
+# glyph_perturber
+glyph_perturber/*.ttf
+glyph_perturber/*.otf
+glyph_perturber/output
 
 .idea
 .python-version
