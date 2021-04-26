@@ -4,7 +4,16 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
-from embedder import embedder
+DUMMY_CODEBOOK = {
+    0: {'font': 'qtm', 'color': 'blue', 'fontname': "Gyre Termes"},
+    1: {'font': 'qpl', 'color': 'brown', 'fontname': "Gyre Pagella"},
+    2: {'font': 'qbk', 'color': 'green', 'fontname': "Gyre Bonum"},
+    3: {'font': 'qcs', 'color': 'magenta', 'fontname': "Gyre Schola"},
+    4: {'font': 'put', 'color': 'orange', 'fontname': "Fourier"},
+    5: {'font': 'Tinos-TLF', 'color': 'violet', 'fontname': "Tinos"},
+    6: {'font': 'Clara-TOsF', 'color': 'teal', 'fontname': "Clara"},
+    7: {'font': 'bch', 'color': 'lime', 'fontname': "Charter"},
+}
 
 class PerGlyphModel:
     glyph = ''
@@ -14,15 +23,15 @@ class PerGlyphModel:
     DEFAULT_FONT = 9
 
     LABELS = {
-        0: (7, embedder.DUMMY_CODEBOOK[7]),  # Charter
-        1: (6, embedder.DUMMY_CODEBOOK[6]),  # Clara
-        2: (4, embedder.DUMMY_CODEBOOK[4]),  # Fourier
-        3: (2, embedder.DUMMY_CODEBOOK[2]),  # GyreBonum
-        4: (1, embedder.DUMMY_CODEBOOK[1]),  # GyrePagella
-        5: (3, embedder.DUMMY_CODEBOOK[3]),  # GyreSchola
-        6: (0, embedder.DUMMY_CODEBOOK[0]),  # GyreTermes
+        0: (7, DUMMY_CODEBOOK[7]),  # Charter
+        1: (6, DUMMY_CODEBOOK[6]),  # Clara
+        2: (4, DUMMY_CODEBOOK[4]),  # Fourier
+        3: (2, DUMMY_CODEBOOK[2]),  # GyreBonum
+        4: (1, DUMMY_CODEBOOK[1]),  # GyrePagella
+        5: (3, DUMMY_CODEBOOK[3]),  # GyreSchola
+        6: (0, DUMMY_CODEBOOK[0]),  # GyreTermes
         7: (9, {'font': 'lmr', 'color': 'black', 'fontname': "Latin Modern Times"}),  # LatinModernTimes
-        8: (5, embedder.DUMMY_CODEBOOK[5]),  # Tinos
+        8: (5, DUMMY_CODEBOOK[5]),  # Tinos
     }
 
     models_uppercase = ['A', 'Ä', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',

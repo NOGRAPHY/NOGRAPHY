@@ -22,6 +22,7 @@ Resources:
             Properties:
               Path: /hide
               Method: get
+              # Add binary media types and set it to */*
 
 Outputs:
   HideApi:
