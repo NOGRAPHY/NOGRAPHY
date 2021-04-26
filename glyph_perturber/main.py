@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import string
 import random
 import argparse
@@ -67,7 +68,7 @@ class PdfGenerator:
 
         # Add Font integration and glyph spacing.
         document.packages.append(Package('fontspec'))
-        document.packages.append(Command('defaultfontfeatures', arguments="LetterSpace=10.0"))
+        document.packages.append(Command('defaultfontfeatures', arguments="LetterSpace=25.0"))
 
         return document
 
@@ -79,6 +80,18 @@ class PdfGenerator:
             document.append(Command('setmainfont', arguments=NoEscape(perturbed_font)))
             document.append("abcdefghijklmnopqrstuvwxyzäöüABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ")
             document.append("\n")
+
+        return document
+
+    @staticmethod
+    def generate_training_pdf(perturbed_font):
+        document = PdfGenerator.setup_document()
+
+        document.append(Command('setmainfont', arguments=NoEscape(perturbed_font)))
+        document.append("abcdefghijklmnopqrstuvwxyzäöü")
+        document.append("\n")
+        document.append("ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ")
+        document.append("\n")
 
         return document
 
@@ -102,10 +115,8 @@ if __name__ == "__main__":
         raise NotADirectoryError(args.output)
 
     if len(os.listdir(args.output)) != 0:
-        user_input = input(f"Output directory '{args.output}' is not empty. Still want to continue? (y/n) ")
-        if user_input.lower() != "y":
-            print("Quitting...")
-            sys.exit(0)
+        print(f"Output directory '{args.output}' is not empty. Quitting...")
+        sys.exit(-1)
 
     perturbed_font_names = []
     original_font_name, extension = os.path.splitext(args.font)
@@ -122,10 +133,22 @@ if __name__ == "__main__":
 
         font.save(os.path.join(args.output, perturbed_font_name))
 
-    if args.preview:
-        preview_document = PdfGenerator.generate_preview(perturbed_font_names)
-        preview_document.generate_pdf(os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
-                                      clean_tex=True, compiler="xelatex")
+        if args.train:
+            train_path = os.path.join(args.output, "train_data")
+            os.makedirs(train_path, exist_ok=True)
 
-    if args.train:
-        pass
+            train_pdf_filename = f"{original_font_name}-PerturbedGlyphs-{i+1}"
+
+            PdfGenerator.generate_training_pdf(perturbed_font_name).generate_pdf(
+                os.path.join(args.output, train_pdf_filename),
+                clean_tex=True, compiler="xelatex"
+            )
+
+            shutil.move(os.path.join(args.output, f"{train_pdf_filename}.pdf"),
+                        os.path.join(train_path, f"{train_pdf_filename}.pdf"))
+
+    if args.preview:
+        PdfGenerator.generate_preview(perturbed_font_names).generate_pdf(
+            os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
+            clean_tex=True, compiler="xelatex"
+        )
