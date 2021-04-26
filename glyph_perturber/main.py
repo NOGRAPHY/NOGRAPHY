@@ -35,24 +35,27 @@ def rename_font(_font, number):
 
 
 def perturb_glyphs(_font, number_of_points):
-    chars = string.ascii_letters    # TODO: add Umlaute
+    chars = list(string.ascii_letters) + ["adieresis", "odieresis", "udieresis", "Adieresis", "Odieresis", "Udieresis"]
     poisson_distribution = iap.RandomSign(iap.Poisson(5))
 
     for char in chars:
-        glyph = _font.getGlyphSet().get(char)
+        if char in font.getGlyphSet():
+            glyph = _font.getGlyphSet().get(char)
 
-        random_indexes = random.sample(population=range(len(glyph._glyph.coordinates)),
-                                       k=min(number_of_points, len(glyph._glyph.coordinates)))
+            random_indexes = random.sample(population=range(len(glyph._glyph.coordinates)),
+                                           k=min(number_of_points, len(glyph._glyph.coordinates)))
 
-        for index in random_indexes:
-            glyph._glyph.coordinates[index] = (glyph._glyph.coordinates[index][0] + poisson_distribution.draw_sample(),
-                                               glyph._glyph.coordinates[index][1] + poisson_distribution.draw_sample())
+            for index in random_indexes:
+                glyph._glyph.coordinates[index] = (glyph._glyph.coordinates[index][0] + poisson_distribution.draw_sample(),
+                                                   glyph._glyph.coordinates[index][1] + poisson_distribution.draw_sample())
+        else:
+            raise LookupError(f"Given font has no glyph for the char '{char}'.")
 
     return _font
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Perturbs lower and upper ASCII glyphs of a given font file.")
+    parser = argparse.ArgumentParser(description="Perturbs lower and upper ASCII and umlaut (öäü) glyphs of a given font file.")
     parser.add_argument("-f", "--font", type=str, required=True, help="Font file to be perturbed.")
     parser.add_argument("-o", "--output", type=str, required=True, help="Directory where all perturbed fonts will be saved.")
     parser.add_argument("-n", "--number", type=int, required=True, help="Number of perturbed fonts.")
