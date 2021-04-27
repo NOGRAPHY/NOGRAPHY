@@ -7,6 +7,7 @@ import base64
 from io import BytesIO
 import string
 
+FONT_SIZE = 18
 
 def lambda_handler(event, context):
     placeholder = "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort."
@@ -69,39 +70,42 @@ def get_letters_and_fonts(placeholder, encoded_secret):
 
 
 # based on https://stackoverflow.com/questions/58041361/break-long-drawn-text-to-multiple-lines-with-pillow
-def break_into_lines(text, width, font, draw):
-    if not text:
+def break_into_lines(letters_and_fonts, width, font, draw):
+
+# letters = ''.join([i[0] for i in letters_and_fonts])
+
+
+    if not letters_and_fonts:
         return
     lo = 0
-    hi = len(text)
+    hi = len(letters_and_fonts)
     while lo < hi:
         mid = (lo + hi + 1) // 2
-        t = text[:mid]
-        w, h = draw.textsize(t, font=font)
+        t = letters_and_fonts[:mid]
+        w, h = draw.textsize(''.join([i[0] for i in t]), font=font)
         if w <= width:
             lo = mid
         else:
             hi = mid - 1
-    t = text[:lo]
-    w, h = draw.textsize(t, font=font)
+    t = letters_and_fonts[:lo]
+    w, h = draw.textsize(''.join([i[0] for i in t]), font=font)
     yield t, w, h
-    yield from break_into_lines(text[lo:], width, font, draw)
+    yield from break_into_lines(letters_and_fonts[lo:], width, font, draw)
 
 
 def fit_text(img, letters_and_fonts, color, margin):
     width = img.size[0] - 2 - margin
     draw = ImageDraw.Draw(img)
-    letters = ''.join([i[0] for i in letters_and_fonts])
-    measure_font = ImageFont.truetype('./assets/3.ttf', 18)
-    pieces = list(break_into_lines(letters, width, measure_font, draw))
+    measure_font = ImageFont.truetype('./assets/0.ttf', FONT_SIZE)
+    pieces = list(break_into_lines(letters_and_fonts, width, measure_font, draw))
     height = sum(p[2] for p in pieces)
     if height > img.size[1]:
         raise ValueError("text doesn't fit")
     y = (img.size[1] - height) // 2
     for t, w, h in pieces:
         x = (img.size[0] - w) // 2
-        for letter, font in letters_and_fonts:
+        for letter, font in t:
             draw.text((x, y), letter,
-                      font=ImageFont.truetype('./assets/'+str(font)+'.ttf', 18), fill=color)
+                      font=ImageFont.truetype('./assets/'+str(font)+'.ttf', FONT_SIZE), fill=color)
             x = x + draw.textsize(letter)[0]
         y += h
