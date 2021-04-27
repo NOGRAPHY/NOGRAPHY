@@ -1,33 +1,45 @@
 import json
 from embedder import embedder
-from encoder import encoder 
+from encoder import encoder
 import os
+from PIL import Image, ImageDraw, ImageFont
+import base64
+from io import BytesIO
+
 
 ENCODING_DECODING_BASE = 3
 
+
 def lambda_handler(event, context):
-    secret = event['secret'].strip()
-    placeholder = event['placeholder'].strip()
-    show_colors = event['show_colors']
+    image = Image.new("RGB", (200, 200), "green")
+    draw = ImageDraw.Draw(image)
+    draw.text((10, 10), "nography")
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    image_str = base64.b64encode(buffered.getvalue())
+    return {
+        "statusCode": 200,
+        "headers": {
+            'Content-Type': 'image/png'
+        },
+        "body": image_str,
+        "isBase64Encoded": True
+    }
 
-    if len(secret) * ENCODING_DECODING_BASE > len(placeholder):
-        return {
-            "statusCode": 400,
-            "error": "Secret is too long. Make it shorter or the placeholder longer."
-            }
-    else:
-        document = embedder.embed(
-                        embedder.setup_document(),
-                        placeholder,
-                        encoder.encode(secret, ENCODING_DECODING_BASE),
-                        show_colors
-                    )
+    #placeholder = event['placeholder'].strip()
+    #show_colors = event['show_colors']
 
-        document.generate_pdf('/tmp/pdf', clean_tex=clean_tex, compiler="pdfLaTeX")
-        file_generated = os.path.isfile('/tmp/pdf')
+    # if len(secret) * ENCODING_DECODING_BASE > len(placeholder):
+    #    return {
+    #        "statusCode": 400,
+    #        "error": "Secret is too long. Make it shorter or the placeholder longer."
+    #    }
+    # else:
 
-        return {
-            "statusCode": 200,
-            "headers": "{'Content-type' : 'application/pdf'}",
-            "body": file_generated
-        }
+    # encoded_secret = encoder.encode(secret, ENCODING_DECODING_BASE)
+    # document = embedder.embed(
+    #                 embedder.setup_document(),
+    #                 placeholder,
+    #                 encoded_secret,
+    #                 show_colors
+    #             )

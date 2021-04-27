@@ -445,3 +445,5 @@ TSWLatexianTemp*
 .DS_Store
 
 /.vscode
+/imageTemplate
+/zipTemplate
