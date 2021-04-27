@@ -1,4 +1,4 @@
-def encode(plain_string, base):
+def encode(plain_string, base=3):
     bit_string = ''.join([format(c, 'b').zfill(8) for c in plain_string.encode('utf8')])
 
     # split bit_string into chunks the length of base
