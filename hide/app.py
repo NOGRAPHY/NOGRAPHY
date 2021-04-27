@@ -15,9 +15,9 @@ def lambda_handler(event, context):
 
     image = Image.new("RGB", (500, 200), 'white')
 
-    letters_and_fonts = get_letters_and_fonts(placeholder, secret)
+    letters_and_fonts = get_letters_and_fonts(placeholder, encoded_secret)
 
-    fit_text(image, letters_and_fonts, (0, 0, 0), 50)
+    fit_text(image, letters_and_fonts, 'black', margin=50)
 
     buffered = BytesIO()
     image.save(buffered, format="PNG")
@@ -69,7 +69,7 @@ def get_letters_and_fonts(placeholder, encoded_secret):
 
 
 # based on https://stackoverflow.com/questions/58041361/break-long-drawn-text-to-multiple-lines-with-pillow
-def break_fix(text, width, font, draw):
+def break_into_lines(text, width, font, draw):
     if not text:
         return
     lo = 0
@@ -85,7 +85,7 @@ def break_fix(text, width, font, draw):
     t = text[:lo]
     w, h = draw.textsize(t, font=font)
     yield t, w, h
-    yield from break_fix(text[lo:], width, font, draw)
+    yield from break_into_lines(text[lo:], width, font, draw)
 
 
 def fit_text(img, letters_and_fonts, color, margin):
@@ -93,13 +93,15 @@ def fit_text(img, letters_and_fonts, color, margin):
     draw = ImageDraw.Draw(img)
     letters = ''.join([i[0] for i in letters_and_fonts])
     measure_font = ImageFont.truetype('./assets/3.ttf', 18)
-    pieces = list(break_fix(letters, width, measure_font, draw))
+    pieces = list(break_into_lines(letters, width, measure_font, draw))
     height = sum(p[2] for p in pieces)
     if height > img.size[1]:
         raise ValueError("text doesn't fit")
     y = (img.size[1] - height) // 2
     for t, w, h in pieces:
         x = (img.size[0] - w) // 2
-        # draw each letter with a specific font
-        draw.text((x, y), t, font=measure_font, fill=color)
+        for letter, font in letters_and_fonts:
+            draw.text((x, y), letter,
+                      font=ImageFont.truetype('./assets/'+str(font)+'.ttf', 18), fill=color)
+            x = x + draw.textsize(letter)[0]
         y += h
