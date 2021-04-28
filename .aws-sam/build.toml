@@ -8,11 +8,4 @@ source_md5 = ""
 packagetype = "Zip"
 functions = ["HideFunction"]
 
-[function_build_definitions.6cf97c67-0a8e-498c-a0c9-34e9f307204a]
-codeuri = "/Users/robertnickel/projects/steganographie/frontend"
-runtime = "python3.8"
-source_md5 = ""
-packagetype = "Zip"
-functions = ["FrontendFunction"]
-
 [layer_build_definitions]

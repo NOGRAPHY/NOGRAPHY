@@ -21,25 +21,7 @@ Resources:
           Type: Api
           Properties:
             Path: /hide
-            Method: get
-  FrontendFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: frontend/
-      Handler: app.lambda_handler
-      Runtime: python3.8
-      Events:
-        GetHtml:
-          Type: Api
-          Properties:
-            Path: /
-            Method: get
-        PostForm:
-          Type: Api
-          Properties:
-            Path: /
             Method: post
-        
 
 Outputs:
   HideApi:
@@ -51,12 +33,3 @@ Outputs:
   HideFunctionIamRole:
     Description: "Implicit IAM Role created for Hide function"
     Value: !GetAtt HideFunctionRole.Arn
-  FrontendApi:
-    Description: "API Gateway endpoint URL for Prod stage for Frontend function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-  FrontendFunction:
-    Description: "Frontend Lambda Function ARN"
-    Value: !GetAtt FrontendFunction.Arn
-  FrontendFunctionIamRole:
-    Description: "Implicit IAM Role created for Frontend function"
-    Value: !GetAtt FrontendFunctionRole.Arn

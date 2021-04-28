@@ -11,10 +11,12 @@ IMAGE_HEIGHT = 500
 MARGIN = 50
 ENCODING_DECODING_BASE = 3
 
+
 def lambda_handler(event, context):
-    placeholder = "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort."
-    secret = "LOTR is better than GOT"
-    # TODO: get parameters from request.
+    body = json.loads(event['body'])
+    secret = body.get('secret', "LOTR is better than GOT")
+    placeholder = body.get('placeholder', "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.")
+    # TODO: check for potential error cases (missing values, wrong types etc.)
     # TODO: catch too many characters in placeholder - define a limit for the user
 
     if not secret_fits_in_placeholder(secret, placeholder):
