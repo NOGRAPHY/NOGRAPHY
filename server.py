@@ -1,6 +1,7 @@
 import os
 import uuid
 import secrets
+from distutils import dir_util
 
 from flask import Flask, request, redirect, render_template, send_file, flash
 from pdf2image import convert_from_path
@@ -16,6 +17,8 @@ from cnn.single_model.cnn_single_model import SingleModel
 SERVER_TMP = os.path.join(os.path.split(os.path.realpath(__file__))[0], "server_tmp")
 UPLOAD_TMP = os.path.join(SERVER_TMP, "upload")
 os.makedirs(UPLOAD_TMP, exist_ok=True)
+dir_util.copy_tree(os.path.join(os.path.split(os.path.realpath(__file__))[0], "embedder/fonts"),
+                   os.path.join(SERVER_TMP, "fonts"))
 
 ENCODING_DECODING_BASE = 3
 

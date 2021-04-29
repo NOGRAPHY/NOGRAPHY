@@ -15,6 +15,7 @@ server_tmp
 glyph_perturber/*.ttf
 glyph_perturber/*.otf
 glyph_perturber/output
+glyph_perturber/output.*
 
 .idea
 .python-version
