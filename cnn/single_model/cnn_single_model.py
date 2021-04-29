@@ -8,21 +8,21 @@ from embedder import embedder
 
 
 class SingleModel:
-    MODEL_FILNENAME = "model-20210309-1356.h5"
+    MODEL_FILNENAME = "LiberationSerif-model-20210429-0751.h5"
 
     LABELS = {
-        0: (7, embedder.DUMMY_CODEBOOK[7]),  # Charter
-        1: (6, embedder.DUMMY_CODEBOOK[6]),  # Clara
-        2: (4, embedder.DUMMY_CODEBOOK[4]),  # Fourier
-        3: (2, embedder.DUMMY_CODEBOOK[2]),  # GyreBonum
-        4: (1, embedder.DUMMY_CODEBOOK[1]),  # GyrePagella
-        5: (3, embedder.DUMMY_CODEBOOK[3]),  # GyreSchola
-        6: (0, embedder.DUMMY_CODEBOOK[0]),  # GyreTermes
-            7: (9, {'font': 'lmr', 'color': 'black', 'fontname': "Latin Modern"}),    # LatinModern
-        8: (5, embedder.DUMMY_CODEBOOK[5]),  # Tinos
+        0: (0, embedder.DUMMY_CODEBOOK[0]),
+        1: (1, embedder.DUMMY_CODEBOOK[1]),
+        2: (2, embedder.DUMMY_CODEBOOK[2]),
+        3: (3, embedder.DUMMY_CODEBOOK[3]),
+        4: (4, embedder.DUMMY_CODEBOOK[4]),
+        5: (5, embedder.DUMMY_CODEBOOK[5]),
+        6: (6, embedder.DUMMY_CODEBOOK[6]),
+        7: (7, embedder.DUMMY_CODEBOOK[7]),
+        8: (8, embedder.DUMMY_CODEBOOK[8]),
     }
 
-    DEFAULT_FONT = 9
+    DEFAULT_FONT = 8
 
     def __init__(self):
         model_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], self.MODEL_FILNENAME)
