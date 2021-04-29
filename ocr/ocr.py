@@ -24,10 +24,7 @@ def checkType(filename):
 def recognizeCharacters(filename):
     whitelist = string.ascii_letters
 
-    # Add Umlauts to Whitelist
-    whitelist = whitelist + "öäüÖÄÜß"
-
-    with PyTessBaseAPI(lang='deu+eng', oem=OEM.TESSERACT_LSTM_COMBINED) as api:
+    with PyTessBaseAPI(lang='eng', oem=OEM.TESSERACT_LSTM_COMBINED) as api:
         api.SetImageFile(filename)
 
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
