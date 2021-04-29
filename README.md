@@ -22,13 +22,15 @@
 ## CNN - Convolutional Neural Network
 
 This module uses a CNN model and takes a list of glyph images and predicts their fonts and their representation in the codebook.
-We have the glyphs a-z lower & uppercasee including german umlauts (ä, ö, ü). This leads to 58 glyphs.
+We have the glyphs a-z lower & uppercase. This leads to 52 glyphs. This is because we set the Tesseract OCR to an english recognition model.
 
-We take two different approaches. In the [first approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#model-per-glyph) we created & trained one CNN per existing glyph in our codebook. This leads to 58 different CNN models.
+We take two different approaches. In the [first approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#model-per-glyph) we created & trained one CNN per existing glyph in our codebook. This leads to 52 different CNN models.
 
-In the [second approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#single-model) we build and train one single CNN model for all 58 glyphs.
+In the [second approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#single-model) we build and train one single CNN model for all 52 glyphs.
 
 ## OCR - Optical Character Recognition
+
+We limit the recognized text in english. So only ASCII letters are recognized.
 
 ### Installation
 We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.

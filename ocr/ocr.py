@@ -2,7 +2,7 @@ import string
 
 from cv2 import cv2
 import numpy as np
-from tesserocr import PyTessBaseAPI, RIL
+from tesserocr import PyTessBaseAPI, RIL, OEM
 from pdf2image import convert_from_path
 
 
@@ -24,11 +24,7 @@ def checkType(filename):
 def recognizeCharacters(filename):
     whitelist = string.ascii_letters
 
-    # Add Umlauts to Whitelist
-    whitelist = whitelist + "öäüÖÄÜß"
-    print(whitelist)
-
-    with PyTessBaseAPI(lang='eng+deu') as api:
+    with PyTessBaseAPI(lang='eng', oem=OEM.TESSERACT_LSTM_COMBINED) as api:
         api.SetImageFile(filename)
 
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
@@ -44,7 +40,6 @@ def recognizeCharacters(filename):
 
                 boxes_final.append(boxes[index])
 
-        print(characters_final)
         return characters_final, boxes_final
 
 
