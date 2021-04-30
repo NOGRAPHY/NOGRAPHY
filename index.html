@@ -16,9 +16,14 @@
                 body: raw,
                 redirect: 'follow'
             };
-            fetch("https://0dfw2yndli.execute-api.eu-central-1.amazonaws.com/prod", requestOptions)
+            fetch("https://0dfw2yndli.execute-api.eu-central-1.amazonaws.com/prod/hide", requestOptions)
                 .then(response => response.text())
-                .then(result => alert(JSON.parse(result).body))
+                .then(result => {
+                    var a = document.createElement("a"); //Create <a>
+                    a.href = "data:image/png;base64," + result; //Image Base64 Goes here
+                    a.download = "Secret.png"; //File name Here
+                    a.click(); //Downloaded file
+                })
                 .catch(error => console.log('error', error));
         }
     </script>
