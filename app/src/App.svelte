@@ -5,6 +5,7 @@
 	let loading = false;
 
 	const hide = () => {
+		loading = true;
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
 		var raw = JSON.stringify({ secret: secret, placeholder: placeholder });
@@ -24,6 +25,7 @@
 				a.href = "data:image/png;base64," + result;
 				a.download = "Secret.png";
 				a.click();
+				loading = false;
 			})
 			.catch((error) => console.log("error", error));
 	};
@@ -31,6 +33,7 @@
 
 <main>
 	<h1>nography</h1>
+	{#if !loading}
 	<br />
 	<form>
 		<label for="secret">Secret :</label>
@@ -45,7 +48,8 @@
 		<br />
 		<button type="button" on:click={hide}> Hide </button>
 	</form>
-	{#if !loading}
+	{/if}
+	{#if loading}
 		<div class="lds-ellipsis">
 		<div />
 		<div />
