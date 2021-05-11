@@ -7,52 +7,15 @@
 3. Have an IDE ready (e.g. Visual Studio Code or PyCharm)
 4. `pip3 install -r requirements.txt` to install dependencies
 5. `pytest` executes all test
-6. To hide your secret in an image, start the webserver with `export FLASK_APP=server.py` and `flask run`, then open `http://localhost:5000/`
-7. See documentation of packages below to see what you can do
-
-## Server
-### Installation
-1. [Install poppler](https://github.com/Belval/pdf2image#how-to-install)
-2. `pip3 install -r requirements.txt`
-3. `export FLASK_APP=server.py`
-
-### Run
-`flask run` then go to `http://127.0.0.1:5000/`
+6. Run __main__ in /hide/app.py
+7. Run __main__ in /expose/app.py (not possible yet)
+8. TODO: shorten: We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
+For Multilanguage-Support you need to download the advanced tessdata folder from Github: https://github.com/tesseract-ocr/tessdata. Now you have to set the TESSDATA_PREFIX path to the tessdata folder.
 
 ## Deploy to AWS
 We use AWS Lambda for the updated embedding process. In order to deploy it, you need credentials (talk to Robert).
-If that is set up, execute `sam deploy` to deploy.
+If that is set up, execute `sam build && sam deploy` to deploy.
 
-## CNN - Convolutional Neural Network
-
-This module uses a CNN model and takes a list of glyph images and predicts their fonts and their representation in the codebook.
-We have the glyphs a-z lower & uppercase. This leads to 52 glyphs. This is because we set the Tesseract OCR to an english recognition model.
-
-We take two different approaches. In the [first approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#model-per-glyph) we created & trained one CNN per existing glyph in our codebook. This leads to 52 different CNN models.
-
-In the [second approach](https://github.com/steganographie-HTWG/steganographie/wiki/CNN#single-model) we build and train one single CNN model for all 52 glyphs.
-
-## OCR - Optical Character Recognition
-
-We limit the recognized text in english. So only ASCII letters are recognized.
-
-### Installation
-We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
-For Multilanguage-Support you need to download the advanced tessdata folder from Github: https://github.com/tesseract-ocr/tessdata
-Now you have to set the TESSDATA_PREFIX path to the tessdata folder.
-### Demo
-In order to see the demo, just execute the tests with `pytest`. Two test images will be generated with bounding boxes around them.
-
-## Encoder
-Here we take an input string and convert it to a list of chunks in binary representation.
-
-## Decoder
-Here we take a list of chunks of binary digits and convert it to its string representation.
-
-## Font Training Data Generator
-This module generates images of text for training of neural networks.
-- [font_augmenter.py](font_trainingsdata_generator/font_augmenter.py) - For augmenting images. [TextRecognitionDataGenerator](https://github.com/Belval/TextRecognitionDataGenerator) might be a better alternative.
-
-## Embedder
-By passing an input text and a secret message, this module creates a PDF file displaying the input text.
-The secret message is embedded in the input text by perturbing the single glyphs.
+## TODO: Which problem does the nography project solve?
+- hide texts in placeholder texts
+- english letters only
