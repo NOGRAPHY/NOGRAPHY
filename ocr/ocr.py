@@ -23,8 +23,8 @@ def checkType(filename):
 
 def recognizeCharacters(filename):
     whitelist = string.ascii_letters
-
-    with PyTessBaseAPI(lang='eng', oem=OEM.TESSERACT_LSTM_COMBINED) as api:
+    # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
+    with PyTessBaseAPI(lang='eng') as api:
         api.SetImageFile(filename)
 
         boxes = api.GetComponentImages(RIL.SYMBOL, True)

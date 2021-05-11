@@ -13,7 +13,7 @@
 ## Server
 ### Installation
 1. [Install poppler](https://github.com/Belval/pdf2image#how-to-install)
-2. `pip3 install -r -requirements.txt`
+2. `pip3 install -r requirements.txt`
 3. `export FLASK_APP=server.py`
 
 ### Run
