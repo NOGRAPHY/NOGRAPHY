@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 import base64
 from io import BytesIO
 import string
+import os
 
 FONT_SIZE = 72
 IMAGE_WIDTH = 2480
@@ -51,15 +52,17 @@ def lambda_handler(event, context):
 
 
 def load_fonts_from_fs(font_size):
+    path, _ = os.path.split(os.path.abspath(__file__))
+
     return {
-        0: ImageFont.truetype('./assets/0.ttf', font_size),
-        1: ImageFont.truetype('./assets/1.ttf', font_size),
-        2: ImageFont.truetype('./assets/2.ttf', font_size),
-        3: ImageFont.truetype('./assets/3.ttf', font_size),
-        4: ImageFont.truetype('./assets/4.ttf', font_size),
-        5: ImageFont.truetype('./assets/5.ttf', font_size),
-        6: ImageFont.truetype('./assets/6.ttf', font_size),
-        7: ImageFont.truetype('./assets/7.ttf', font_size)
+        0: ImageFont.truetype(os.path.join(path, 'assets', '0.ttf'), font_size),
+        1: ImageFont.truetype(os.path.join(path, 'assets', '1.ttf'), font_size),
+        2: ImageFont.truetype(os.path.join(path, 'assets', '2.ttf'), font_size),
+        3: ImageFont.truetype(os.path.join(path, 'assets', '3.ttf'), font_size),
+        4: ImageFont.truetype(os.path.join(path, 'assets', '4.ttf'), font_size),
+        5: ImageFont.truetype(os.path.join(path, 'assets', '5.ttf'), font_size),
+        6: ImageFont.truetype(os.path.join(path, 'assets', '6.ttf'), font_size),
+        7: ImageFont.truetype(os.path.join(path, 'assets', '7.ttf'), font_size)
     }
 
 
@@ -86,7 +89,8 @@ def get_letters_and_fonts(placeholder, encoded_secret, fonts):
 def fit_text(img, letters_and_fonts, color, margin):
     width = img.size[0] - 2 - margin
     draw = ImageDraw.Draw(img)
-    measure_font = ImageFont.truetype('./assets/0.ttf', FONT_SIZE)
+    path, _ = os.path.split(os.path.abspath(__file__))
+    measure_font = ImageFont.truetype(os.path.join(path, 'assets', '0.ttf'), FONT_SIZE)
 
     lines = list(break_into_lines(
         letters_and_fonts, width, measure_font, draw))
@@ -126,3 +130,6 @@ def break_into_lines(letters_and_fonts, width, font, draw):
 
 def secret_fits_in_placeholder(secret, placeholder):
     return len(secret) * ENCODING_DECODING_BASE <= len(placeholder)
+
+if __name__ == "__main__":
+    print(lambda_handler({"body": "{}"}, None)["body"])
