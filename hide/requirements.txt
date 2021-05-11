@@ -1,0 +1,2 @@
+pylatex~=1.4.1
+Pillow~=8.2.0

@@ -17,11 +17,11 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.8
       Events:
-          HelloWorld:
-            Type: Api
-            Properties:
-              Path: /hide
-              Method: get
+        Hide:
+          Type: Api
+          Properties:
+            Path: /hide
+            Method: post
 
 Outputs:
   HideApi:

@@ -19,6 +19,10 @@
 ### Run
 `flask run` then go to `http://127.0.0.1:5000/`
 
+## Deploy to AWS
+We use AWS Lambda for the updated embedding process. In order to deploy it, you need credentials (talk to Robert).
+If that is set up, execute `sam deploy` to deploy.
+
 ## CNN - Convolutional Neural Network
 
 This module uses a CNN model and takes a list of glyph images and predicts their fonts and their representation in the codebook.
