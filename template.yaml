@@ -22,6 +22,14 @@ Resources:
           Properties:
             Path: /hide
             Method: post
+  ExposeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./expose
+      DockerTag: python3.8-v1
 
 Outputs:
   HideApi:
@@ -33,3 +41,13 @@ Outputs:
   HideFunctionIamRole:
     Description: "Implicit IAM Role created for Hide function"
     Value: !GetAtt HideFunctionRole.Arn
+
+  ExposeApi:
+    Description: "API Gateway endpoint URL for Prod stage for Expose function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/expose/"
+  ExposeFunction:
+    Description: "Expose Lambda Function ARN"
+    Value: !GetAtt ExposeFunction.Arn
+  ExposeFunctionIamRole:
+    Description: "Implicit IAM Role created for Expose function"
+    Value: !GetAtt ExposeFunctionRole.Arn
