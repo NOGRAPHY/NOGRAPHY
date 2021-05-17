@@ -22,10 +22,10 @@ si = 8
 for Ct in C:                # for every block in text 
     for i in range(n):      # for every letter in block (for Ci in Ct:)
         # search mutually prime number pi
-        for i in range(1, si):
-            for j in range(1, si):
-                pi = bltin_gcd(i, j)
-
+        for k in range(1, si):
+            # Given a number n >= 2, output all the positive integers less than n where gcd(n, k) == 1 
+            # (with k being any one of the output numbers). Numbers of this sort are coprime to each other.
+            pi = bltin_gcd(si, k) == 1  # n >= 2
         if [pi <= si for i in range(len(pi))]:
 	        p.append(pi[i])
         elif pi > si:       # Note 1: [pi > si for i in range(len(pi))]
@@ -166,3 +166,20 @@ def hamming_distance(encod_fct, codevector):
             distance += 1
     # Return the final count of differences
     return distance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
