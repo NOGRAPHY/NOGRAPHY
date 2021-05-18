@@ -14,6 +14,11 @@ ENCODING_DECODING_BASE = 3
 
 
 def lambda_handler(event, context):
+    if 'body' not in event:
+        return {
+            "statusCode": 400,
+            "error": "Missing request body."
+        }
     body = json.loads(event['body'])
     secret = body.get('secret', "LOTR is better than GOT")
     placeholder = body.get('placeholder', "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.")
@@ -43,8 +48,7 @@ def lambda_handler(event, context):
             "statusCode": 200,
             "headers": {
                 'Content-Type': 'image/png',
-                "Access-Control-Allow-Origin": "*", 
-                "Access-Control-Allow-Credentials": True
+                'Access-Control-Allow-Origin': '*'
             },
             "body": image_str,
             "isBase64Encoded": True

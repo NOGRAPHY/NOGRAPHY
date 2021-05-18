@@ -16,7 +16,7 @@
 			redirect: "follow",
 		};
 		fetch(
-			"https://0dfw2yndli.execute-api.eu-central-1.amazonaws.com/prod/hide",
+			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
 			requestOptions
 		)
 			.then((response) => response.text())

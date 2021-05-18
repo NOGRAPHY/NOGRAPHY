@@ -9,12 +9,16 @@
 5. `pytest` executes all test
 6. Run __main__ in /hide/app.py
 7. Run __main__ in /expose/app.py (not possible yet)
-8. TODO: shorten: We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
+8. For the Frontend `cd app` and then `npm run dev`
+9. TODO: shorten: We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
 For Multilanguage-Support you need to download the advanced tessdata folder from Github: https://github.com/tesseract-ocr/tessdata. Now you have to set the TESSDATA_PREFIX path to the tessdata folder.
 
 ## Deploy to AWS
+### Backend
 We use AWS Lambda for the updated embedding process. In order to deploy it, you need credentials (talk to Robert).
 If that is set up, execute `sam build && sam deploy` to deploy.
+### Frontend
+In order to deploy the frontend, `cd app` then `npm run build` then zip the content of the app/public folder and upload it to Amplify.
 
 ## TODO: Which problem does the nography project solve?
 - hide texts in placeholder texts
