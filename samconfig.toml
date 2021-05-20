@@ -7,5 +7,5 @@ s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-18wauojf7m9b5"
 s3_prefix = "nography"
 region = "eu-central-1"
 capabilities = "CAPABILITY_IAM"
-confirm_changeset = true
+confirm_changeset = false
 image_repositories = ["ExposeFunction=532688539985.dkr.ecr.eu-central-1.amazonaws.com/nography"]

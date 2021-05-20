@@ -3,45 +3,34 @@ import string
 from cv2 import cv2
 import numpy as np
 from tesserocr import PyTessBaseAPI, RIL, OEM
-from pdf2image import convert_from_path
-
+from PIL import Image
+from io import BytesIO
+import base64
 
 # download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
 
-
-def checkType(filename):
-    type = filename[-3] + filename[-2] + filename[-1]
-    if type == 'pdf':
-        pages = convert_from_path(filename, 500)
-        for page in pages:
-            filename = filename[:-3] + "png"
-            page.save(filename, 'PNG')
-            return filename
-    else:
-        return filename
-
-
-def recognizeCharacters(filename):
-    whitelist = string.ascii_letters
+def recognizeCharacters(imageAsBase64):
+    image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+    
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
-        api.SetImageFile(filename)
+        api.SetImage(image)
 
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
-        characters_final = ''
-        boxes_final = []
         if len(boxes) != len(characters):
             raise IndexError('Not all characters were recognized correctly')
 
+        characters_final = ''
+        boxes_final = []
+
+        whitelist = string.ascii_letters
         for index in range(len(characters)):
             if characters[index] in whitelist:
                 characters_final = characters_final + characters[index]
-
                 boxes_final.append(boxes[index])
 
         return characters_final, boxes_final
-
 
 def drawBoxes(boxes, filename):
     img = cv2.imread(filename)
