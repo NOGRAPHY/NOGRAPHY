@@ -5,7 +5,7 @@ vals = []
 
 def extgcd(a, b, &d, &x, &y):
     if not b:
-        d = a 
+        d = a
         x = 1
         y = 0
     else:
@@ -115,7 +115,7 @@ def co_prime(input, output):
     output.clear()
     current = input
     s = [][]
-    
+
     while (True):
         flag = True
         for i in range(current.size()):
@@ -133,19 +133,19 @@ def co_prime(input, output):
 
         if is_coprime(current):
             s.push_back(current)
-    
+
     if s.empty():
         return -1
-    
+
     for i in range(current.size()):
         int mul=1
         for i in range(s[i].size()):
             mul *= s[i][j]
- 
+
         if mul > max:
             max = mul
             mid = i
-    
+
     output = s[mid]
     return max
 
@@ -189,21 +189,21 @@ class Message:
         if m_integer == None and m_binary==None and m_char==None:
             print("No parameters for 'Message' class constructor omitted!")
             return
-        if m_integer not None:
+        if m_integer is not None:
             assert m_integer >= 0
             self.message_int = m_integer
-            self.message_bin = __IntToBinary(m_integer)
+            self.message_bin = self.__IntToBinary(m_integer)
             self.message_char = chr(m_integer)
-        if m_binary not None:
+        if m_binary is not None:
             assert m_binary >= 0
             self.message_bin = m_binary
-            self.message_int = __BinaryToInt(binary)
+            self.message_int = self.__BinaryToInt(m_binary)
             self.message_char = chr(m_integer)
-        if m_char not None:
+        if m_char is not None:
             assert m_char >= 0
             self.message_char = m_char
-            self.message_int = __BinaryToInt(''.join(format(ord(m_char), '08b'))
-            self.message_bin = __IntToBinary(ord(m_char))
+            self.message_int = self.__BinaryToInt(''.join(format(ord(m_char), '08b')))
+            self.message_bin = self.__IntToBinary(ord(m_char))
 
     def __IntToBinary(self, n):
         ans = ""
@@ -232,7 +232,7 @@ class Message:
 
     def getBin(self):
         return self.m_binary
-    
+
     def getChar(self):
         return self.message_char
 
@@ -244,7 +244,7 @@ class Message:
 
     def setInt(self, i):
         assert i >= 0
-        self.message_int = i 
+        self.message_int = i
         self.message_bin = __IntToBinary(i)
         self.message_char = chr(i)
 
