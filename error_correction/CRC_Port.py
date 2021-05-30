@@ -3,9 +3,9 @@ INT_MAX = 2147483647
 basis = []
 vals = []
 
-def extgcd(a, b, &d, &x, &y):
+def extgcd(a, b, d, x, y):
     if not b:
-        d = a
+        d = a 
         x = 1
         y = 0
     else:
@@ -14,49 +14,52 @@ def extgcd(a, b, &d, &x, &y):
 
 
 def gcd(a, b):
-    return b == 0 ? a : gcd(b, a % b)
+    return b == 0 if a else gcd(b, a % b)
+    #return b == 0 ? a : gcd(b, a % b)
 
 
-def mod_inv(int a,int n):   # inverse of a on mod n
-    d, x, y = null
+
+def mod_inv(a, n):   # inverse of a on mod n
+    d, x, y = None
     extgcd(a, n, d, x, y)
-    return d == 1 ? (x+n) % n: -1
+    return d == 1 if (x+n) % n else -1
+    #return d == 1 ? (x+n) % n: -1
 
 
-def CRT(const vector<int>& vals, const vector<int>& basis):
+def CRT(vals, basis):
     mm=1
     ans=0
-    for i in range(basis.size()):
+    for i in range(len(basis)):
         mm*=basis[i]
-    for i in range(basis.size()):
+    for i in range(len(basis)):
         mdm = mm / basis[i]
         bi = mod_inv(mdm, basis[i])
         ans += vals[i] * bi * mdm
     return ans % mm
 
 
-def decode(Message &m, int msgrange):
-    assert basis.size() == vals.size()
+def decode(m, msgrange):
+    assert len(basis) == len(vals)
     codewords = []
     getCodeWords(msgrange, codewords)
-    crtans = CRT(this->vals, this->basis)
+    crtans = CRT(vals, basis)
     if crtans < msgrange:
         m.setInt(crtans)
         return True
     minhammingdist=INT_MAX
     minid=0
     mincodelist = []
-    for i in range(codewords.size()):
-        dist = hammingDist(codewords[i], *this);
+    for i in range(len(codewords)):
+        dist = hammingDist(codewords[i], getBasis()) #*this
         if dist < minhammingdist:
             mincodelist.clear()
-            mincodelist.push_back(codewords[i])
+            mincodelist.append(codewords[i])
             minid = i
             minhammingdist = dist
         elif dist == minhammingdist:
-            mincodelist.push_back(codewords[i])
+            mincodelist.append(codewords[i])
 
-    if mincodelist.size() == 1:
+    if len(mincodelist) == 1:
         m.setInt(minid)
         return True
 
@@ -66,46 +69,44 @@ def decode(Message &m, int msgrange):
 def getCodeWords(msgrange, codewords):
     codewords.clear()
     for i in range(msgrange):
-        CRTCode c(this->basis)
-        c.encode(i)
-        codewords.push_back(c)
+        encode(i)
+        codewords.append(basis)
 
-def encode(m){
-    if m.type == String:
+def encode(m):
+    if isinstance(m, str):
         m = m.getInt()
-    assert not basis.empty()
+    assert not len(basis) == 0
     vals.clear()
-    for i in range(basis.size()):
-        vals.push_back(m % basis[i])
+    for i in range(len(basis)):
+        vals.append(m % basis[i])
 
 def hammingDist(a, b):
-    assert a.basis.size() == b.basis.size():
+    assert len(a.basis) == len(b.basis):
     ans = 0
     for i in range(a.basis.size()):
         assert a.basis[i] == b.basis[i]
         if a.vals[i] != b.vals[i]:
-            ans++
+            ans+=1
     return ans
 
 def minHammingDist(range):
-    assert not basis.empty()
-    sorted = basis
-    sort(sorted.begin(), sorted.end())
+    assert not len(basis) == 0
+    sorted = sorted(basis)
     mul = 1
-    for i in range(basis.size()):
+    for i in range(len(basis)):
         mul *= basis[i]
         if mul >= range:
-            i++
+            i+=1
             break
     assert mul >= range
-    return basis.size() - (i + 1)
+    return len(basis) - (i + 1)
 
 def is_coprime(input):
-    for i in range(input.size()):
-        for j=(i+1) in range(input.size()):
+    for i in range(len(input)):
+        for j in range(i+1,len(input)):
             if input[i] == input[j]:
                 return False
-            if gcd(input[i], input[j]) not 1:
+            if gcd(input[i], input[j]) is not 1:
                 return False
     return True
 
@@ -114,41 +115,40 @@ def co_prime(input, output):
     mid=0
     output.clear()
     current = input
-    s = [][]
-
+    s = [[]]
+    
     while (True):
         flag = True
-        for i in range(current.size()):
-            if current[i] != 2:
+        for i in range(len(current)):
+            if current[i] is not 2:
                 flag = False
 
         if flag:
             break
 
-        current[0]--
-        for i in range(current.size()):
+        current[0]-=1
+        for i in range(len(current)):
             if current[i] < 2:
                 current[i] = input[i]
-                current[i+1]--
+                current[i+1]-=1
 
         if is_coprime(current):
-            s.push_back(current)
-
-    if s.empty():
+            s.append(current)
+    
+    if len(s) == 0:
         return -1
-
-    for i in range(current.size()):
-        int mul=1
-        for i in range(s[i].size()):
+    
+    for i in range(len(current)):
+        mul=1
+        for j in range(len(s[i])):
             mul *= s[i][j]
-
+ 
         if mul > max:
             max = mul
             mid = i
-
+    
     output = s[mid]
     return max
-
 
 def getBasis():
     return basis
@@ -158,28 +158,29 @@ def getVals():
 
 def setbasis(b):
     assert isValidBasis(b)
-    basis = b
+    basis.clear()
+    basis.append(b)
 
 def setvals(v):
-    assert v.size() == basis.size()
+    assert len(v) == len(basis)
     vals.clear()
-    for i in range(basis.size())
+    for i in range(len(basis)):
         assert v[i] < basis[i]
-        vals.push_back(v[i])
+        vals.append(v[i])
 
 def isValidBasis(b):
-    for i in range(b.size()):
-        for j=i+1 in range(b.size()):
-            if gcd(b[i], b[j]) not 1:
+    for i in range(len(b)):
+        for j in range(i+1, len(b)):
+            if gcd(b[i], b[j]) is not 1:
                 return False
     return True
 
 def printBasis():
-    for i in range(basis.size()):
+    for i in range(len(basis)):
         print(basis[i])
 
 def printVals():
-    for i in range(vals.size()):
+    for i in range(len(vals)):
         print(vals[i])
 
 ## message
@@ -210,7 +211,7 @@ class Message:
         if n == 0:
             return "0"
         while n > 0:
-            ans = to_string(n % 2) + ans
+            ans = str(n % 2) + ans
             n /= 2
         return ans
 
@@ -239,17 +240,17 @@ class Message:
     def setBin(self, s):
         assert s >= 0
         self.message_bin = s
-        self.message_int = __BinaryToInt(s)
-        self.message_char = chr(__BinaryToInt(s))
+        self.message_int = self.__BinaryToInt(s)
+        self.message_char = chr(self.__BinaryToInt(s))
 
     def setInt(self, i):
         assert i >= 0
         self.message_int = i
-        self.message_bin = __IntToBinary(i)
+        self.message_bin = self.__IntToBinary(i)
         self.message_char = chr(i)
 
     def setChar(self, c):
         assert c >= 0
         self.message_char = c
-        self.message_int = __BinaryToInt(''.join(format(ord(c), '08b'))
-        self.message_bin = __IntToBinary(ord(c))
+        self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
+        self.message_bin = self.__IntToBinary(ord(c))
