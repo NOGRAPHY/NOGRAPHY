@@ -1,19 +1,20 @@
 ## crtcode
 import math
 
+# global variables
 INT_MAX = 2147483647
 basis = []
 vals = []
 
-
+# Extended Euclidean Algorithm
 def gcd(a, b):
     return math.gcd(a, b)
 
-
+# inverse of a on mod n
 def mod_inv(a, n):
     return pow(a, -1, n)
 
-
+# Chinese Remainder Theorem with inverse modulo calculation
 def chinese_remainder_theorem(vals, basis):
     mm = 1
     ans = 0
@@ -32,33 +33,30 @@ def chinese_remainder_theorem(vals, basis):
 # Extended Euclidean Algorithm
 """
 def extgcd(a, b, d, x, y):
-    """
-# The extended Euclidean algorithm computes the greatest common divisor and solves Bezout's identity.
-"""
-if not b:
-    d = a
-    x = 1
-    y = 0
-else:
-    extgcd(b, a % b, d, y, x)
-    y -= x * (a / b)
+    '''The extended Euclidean algorithm computes the greatest common divisor and solves Bezout's identity.'''
+    if not b:
+        d = a
+        x = 1
+        y = 0
+    else:
+        extgcd(b, a % b, d, y, x)
+        y -= x * (a / b)
 
 
-# greatest common divider between to variables
-def gcd(a, b):
-return b == 0 if a else gcd(b, a % b)
-# return b == 0 ? a : gcd(b, a % b)
+    # greatest common divider between to variables
+    def gcd(a, b):
+    return b == 0 if a else gcd(b, a % b)
+    # return b == 0 ? a : gcd(b, a % b)
 
 
-# inverse of a on mod n
-def mod_inv(a, n):
-d, x, y = None
-extgcd(a, n, d, x, y)
-return d == 1 if (x + n) % n else -1
-# return d == 1 ? (x+n) % n: -1
+    # inverse of a on mod n
+    def mod_inv(a, n):
+    d, x, y = None
+    extgcd(a, n, d, x, y)
+    return d == 1 if (x + n) % n else -1
+    # return d == 1 ? (x+n) % n: -1
 
 """
-
 
 # Chinese Remainder Theorem with inverse modulo calculation
 def CRT(vals, basis):
@@ -73,119 +71,135 @@ def CRT(vals, basis):
     return ans % mm
 
 
-# Decoding function with minimal hamming distance
-def decode(m, msgrange):
-    assert len(basis) == len(vals)
-    codewords = []
-    getCodeWords(msgrange, codewords)
-    crtans = CRT(vals, basis)
-    if crtans < msgrange:
-        m.setInt(crtans)
+## CRTCode class
+class CRTCode:
+
+    # class constructor
+    def __init__(self, b=None):
+        if b == None:
+            print("No parameters for 'Message' class constructor omitted!")
+            self.basis = None
+        elif b is not None:
+            assert self.isValidBasis(b) == True
+            self.basis = b
+        self.vals = None
+
+    # get basis values
+    def getBasis(self):
+        return self.basis
+
+    # get encoded values
+    def getVals(self):
+        return self.vals
+
+    # set basis values
+    def setbasis(self, b):
+        assert self.isValidBasis(b)
+        self.basis.clear()
+        self.basis.append(b)
+
+    # set encoded values
+    def setvals(self, v):
+        assert len(v) == len(self.basis)
+        self.vals.clear()
+        for i in range(len(self.basis)):
+            assert v[i] < self.basis[i]
+            self.vals.append(v[i])
+
+    # check if given basis is valid (gcd)
+    def isValidBasis(self, b):
+        for i in range(len(b)):
+            for j in range(i + 1, len(b)):
+                if gcd(b[i], b[j]) is not 1:
+                    return False
         return True
-    minhammingdist = INT_MAX
-    minid = 0
-    mincodelist = []
-    for i in range(len(codewords)):
-        dist = hammingDist(codewords[i], getBasis())  # a, *this
-        if dist < minhammingdist:
-            mincodelist.clear()
-            mincodelist.append(codewords[i])
-            minid = i
-            minhammingdist = dist
-        elif dist == minhammingdist:
-            mincodelist.append(codewords[i])
 
-    if len(mincodelist) == 1:
-        m.setInt(minid)
-        return True
+    # show all basis values
+    def printBasis(self):
+        for i in range(len(basis)):
+            print(self.basis[i])
+
+    # show all encoded values
+    def printVals(self):
+        for i in range(len(self.vals)):
+            print(self.vals[i])
 
 
-m, int
-msgrange):
-assert basis.size() == vals.size()
-codewords = []
-getCodeWords(msgrange, codewords)
-crtans = CRT(this->vals, this->basis)
-if crtans < msgrange:
-    m.setInt(crtans)
-return True
-minhammingdist = INT_MAX
-minid = 0
-mincodelist = []
-for i in range(codewords.size()):
-    dist = hammingDist(codewords[i], *this);
-    if dist < minhammingdist:
-        mincodelist.clear()
-        mincodelist.push_back(codewords[i])
-        minid = i
-        minhammingdist = dist
-    elif dist == minhammingdist:
-        mincodelist.push_back(codewords[i])
+    # Decoding function with minimal hamming distance
+    def decode(self, m, msgrange):
+        assert len(self.basis) == len(self.vals)
+        codewords = []  # list of CRTCode class objects
+        codewords = self.getCodeWords(msgrange, codewords)
+        crtans = CRT(self.vals, self.basis)
+        if crtans < msgrange:
+            m.setInt(crtans)
+            return True
+        minhammingdist = INT_MAX
+        minid = 0
+        mincodelist = []  # list of CRTCode class objects
+        for i in range(len(codewords)):
+            dist = self.hammingDist(codewords[i], self)  # a, *this
+            if dist < minhammingdist:
+                mincodelist.clear()
+                mincodelist.append(codewords[i])
+                minid = i
+                minhammingdist = dist
+            elif dist == minhammingdist:
+                mincodelist.append(codewords[i])
 
-if mincodelist.size() == 1:
-    m.setInt(minid)
-    return True
+        if len(mincodelist) == 1:
+            m.setInt(minid)
+            return True
 
-m.setInt(minid)
-return False
+    # calculate codwords from input message
+    def getCodeWords(self, msgrange, codewords):
+        codewords.clear()
+        for i in range(msgrange):
+            c = CRTCode(self.basis)
+            c.encode(i)
+            codewords.append(c)
+        return codewords
 
+    # encoding function for message
+    def encode(self, m):  # message class object m
+        if isinstance(m, object):
+            m = m.getInt()
+        if isinstance(m, str):
+            m = ord(m)
+        if isinstance(m, int):
+            m = m
+        if isinstance(m, bin):
+            m = Message.__BinaryToInt(m)
+        assert not len(self.basis) == 0
+        self.vals.clear()
+        for i in range(len(self.basis)):
+            self.vals.append(m % self.basis[i])
 
-# calculate codwords from input message
-def getCodeWords(msgrange, codewords):
-    codewords.clear()
-    for i in range(msgrange):
-        CRTCode
-        c(this->basis)
-        c.encode(i)
-        codewords.push_back(c)
+    # calculate hemming distance between two values from codewords
+    def hammingDist(self, a, b):
+        assert len(a.basis) == len(b.basis)
+        ans = 0
+        for i in range(len(a.basis)):
+            assert a.basis[i] == b.basis[i]
+            if a.vals[i] != b.vals[i]:
+                ans += 1
+        return ans
 
-
-# encoding function for message
-def encode(m):
-    if isinstance(m, str):
-        m = m.getInt()
-    assert not len(basis) == 0
-    vals.clear()
-    for i in range(len(basis)):
-        vals.append(m % basis[i])
-
-
-# calculate hemming distance between two values from codewords
-def hammingDist(a, b):
-    assert len(a.basis) == len(b.basis):
-    ans = 0
-    for i in range(a.basis.size()):
-        assert a.basis[i] == b.basis[i]
-        if a.vals[i] != b.vals[i]:
-            ans + +
-    return ans
-
-    ans += 1
-
-
-return ans
-
-
-# calculate minimal hamming distance fro given range
-
-def minHammingDist(range):
-    assert not len(basis) == 0
-    sorted = sorted(basis)
-    mul = 1
-    for i in range(len(basis)):
-        mul *= basis[i]
-        if mul >= range:
-            i + +
-
-            i += 1
-
-            break
-    assert mul >= range
-    return len(basis) - (i + 1)
+    # calculate minimal hamming distance fro given range
+    def minHammingDist(self, range):
+        assert not len(self.basis) == 0
+        sorted = sorted(self.basis)
+        mul = 1
+        for i in range(len(self.basis)):
+            mul *= self.basis[i]
+            if mul >= range:
+                i += 1
+                break
+        assert mul >= range
+        return len(self.basis) - (i + 1)
 
 
 # check if values from input list are all coprime
-
 def is_coprime(input):
     for i in range(len(input)):
         for j in range(i + 1, len(input)):
@@ -197,7 +211,6 @@ def is_coprime(input):
 
 
 # calculate maximum coprime number(s)
-
 def co_prime(input, output):
     max = 0
     mid = 0
@@ -214,12 +227,6 @@ def co_prime(input, output):
         if flag:
             break
 
-        current[0] - -
-        for i in range(current.size()):
-            if current[i] < 2:
-                current[i] = input[i]
-                current[i + 1] - -
-
         current[0] -= 1
         for i in range(len(current)):
             if current[i] < 2:
@@ -231,11 +238,6 @@ def co_prime(input, output):
 
     if len(s) == 0:
         return -1
-
-    for i in range(current.size()):
-        int
-        mul = 1
-        for i in range(s[i].size()):
 
     for i in range(len(current)):
         mul = 1
@@ -250,63 +252,7 @@ def co_prime(input, output):
     return max
 
 
-# get basis values
-def getBasis():
-    return basis
-
-
-def getVals():
-    return vals
-
-
-# get encoded values
-def getVals():
-    return vals
-
-
-# set basis values
-
-def setbasis(b):
-    assert isValidBasis(b)
-    basis.clear()
-    basis.append(b)
-
-
-# set encoded values
-
-def setvals(v):
-    assert len(v) == len(basis)
-    vals.clear()
-    for i in range(len(basis)):
-        assert v[i] < basis[i]
-        vals.append(v[i])
-
-
-# check if given basis is valid (gcd)
-
-def isValidBasis(b):
-    for i in range(len(b)):
-        for j in range(i + 1, len(b)):
-            if gcd(b[i], b[j]) is not 1:
-                return False
-    return True
-
-
-# show all basis values
-
-def printBasis():
-    for i in range(len(basis)):
-        print(basis[i])
-
-
-# show all encoded values
-
-def printVals():
-    for i in range(len(vals)):
-        print(vals[i])
-
-
-## message
+## Message class
 class Message:
 
     def __init__(self, m_integer=None, m_binary=None, m_char=None):
@@ -340,11 +286,11 @@ class Message:
 
     def __BinaryToInt(self, binary):
         ans = 0
-        n = self.binary.length()
+        n = binary.length()
         for i in range(n):
-            if self.binary[i] == '0':
+            if binary[i] == '0':
                 continue
-            elif self.binary[i] == '1':
+            elif binary[i] == '1':
                 ans += (1 << (n - i - 1))
             else:
                 print("invalid input message")
@@ -376,8 +322,8 @@ class Message:
         assert c >= 0
         self.message_char = c
 
-        self.message_int = __BinaryToInt(''.join(format(ord(c), '08b'))
-        self.message_bin = __IntToBinary(ord(c))
+        self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
+        self.message_bin = self.__IntToBinary(ord(c))
 
         self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
         self.message_bin = self.__IntToBinary(ord(c))
