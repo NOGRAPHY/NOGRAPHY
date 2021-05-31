@@ -29,44 +29,49 @@ def chinese_remainder_theorem(vals, basis):
     return ans % mm
 
 
-def decode(Message &
 # Extended Euclidean Algorithm
+"""
 def extgcd(a, b, d, x, y):
     """
-    The extended Euclidean algorithm computes the greatest common divisor and solves Bezout's identity.
-    """
-    if not b:
-        d = a 
-        x = 1
-        y = 0
-    else:
-        extgcd(b, a % b, d, y, x)
-        y -= x * (a/b)
+# The extended Euclidean algorithm computes the greatest common divisor and solves Bezout's identity.
+"""
+if not b:
+    d = a
+    x = 1
+    y = 0
+else:
+    extgcd(b, a % b, d, y, x)
+    y -= x * (a / b)
+
 
 # greatest common divider between to variables
 def gcd(a, b):
-    return b == 0 if a else gcd(b, a % b)
-    #return b == 0 ? a : gcd(b, a % b)
+return b == 0 if a else gcd(b, a % b)
+# return b == 0 ? a : gcd(b, a % b)
 
 
 # inverse of a on mod n
 def mod_inv(a, n):
-    d, x, y = None
-    extgcd(a, n, d, x, y)
-    return d == 1 if (x+n) % n else -1
-    #return d == 1 ? (x+n) % n: -1
+d, x, y = None
+extgcd(a, n, d, x, y)
+return d == 1 if (x + n) % n else -1
+# return d == 1 ? (x+n) % n: -1
+
+"""
+
 
 # Chinese Remainder Theorem with inverse modulo calculation
 def CRT(vals, basis):
-    mm=1
-    ans=0
+    mm = 1
+    ans = 0
     for i in range(len(basis)):
-        mm*=basis[i]
+        mm *= basis[i]
     for i in range(len(basis)):
         mdm = mm / basis[i]
         bi = mod_inv(mdm, basis[i])
         ans += vals[i] * bi * mdm
     return ans % mm
+
 
 # Decoding function with minimal hamming distance
 def decode(m, msgrange):
@@ -77,11 +82,11 @@ def decode(m, msgrange):
     if crtans < msgrange:
         m.setInt(crtans)
         return True
-    minhammingdist=INT_MAX
-    minid=0
+    minhammingdist = INT_MAX
+    minid = 0
     mincodelist = []
     for i in range(len(codewords)):
-        dist = hammingDist(codewords[i], getBasis()) #a, *this
+        dist = hammingDist(codewords[i], getBasis())  # a, *this
         if dist < minhammingdist:
             mincodelist.clear()
             mincodelist.append(codewords[i])
@@ -95,7 +100,6 @@ def decode(m, msgrange):
         return True
 
 
-
 m, int
 msgrange):
 assert basis.size() == vals.size()
@@ -104,7 +108,7 @@ getCodeWords(msgrange, codewords)
 crtans = CRT(this->vals, this->basis)
 if crtans < msgrange:
     m.setInt(crtans)
-    return True
+return True
 minhammingdist = INT_MAX
 minid = 0
 mincodelist = []
@@ -130,27 +134,11 @@ return False
 def getCodeWords(msgrange, codewords):
     codewords.clear()
     for i in range(msgrange):
-
         CRTCode
         c(this->basis)
         c.encode(i)
         codewords.push_back(c)
 
-
-def encode(m){
-
-
-if m.type == String:
-    m = m.getInt()
-assert not basis.empty()
-vals.clear()
-for i in range(basis.size()):
-    vals.push_back(m % basis[i])
-
-
-        encode(i)
-        codewords.append(basis[i])
-    return codewords
 
 # encoding function for message
 def encode(m):
@@ -161,6 +149,7 @@ def encode(m):
     for i in range(len(basis)):
         vals.append(m % basis[i])
 
+
 # calculate hemming distance between two values from codewords
 def hammingDist(a, b):
     assert len(a.basis) == len(b.basis):
@@ -168,14 +157,14 @@ def hammingDist(a, b):
     for i in range(a.basis.size()):
         assert a.basis[i] == b.basis[i]
         if a.vals[i] != b.vals[i]:
-
             ans + +
     return ans
 
+    ans += 1
 
 
-            ans+=1
-    return ans
+return ans
+
 
 # calculate minimal hamming distance fro given range
 
@@ -186,23 +175,20 @@ def minHammingDist(range):
     for i in range(len(basis)):
         mul *= basis[i]
         if mul >= range:
-
             i + +
 
-            i+=1
+            i += 1
 
             break
     assert mul >= range
     return len(basis) - (i + 1)
 
 
-
-
 # check if values from input list are all coprime
 
 def is_coprime(input):
     for i in range(len(input)):
-        for j in range(i+1,len(input)):
+        for j in range(i + 1, len(input)):
             if input[i] == input[j]:
                 return False
             if gcd(input[i], input[j]) is not 1:
@@ -218,7 +204,7 @@ def co_prime(input, output):
     output.clear()
     current = input
     s = [[]]
-    
+
     while (True):
         flag = True
         for i in range(len(current)):
@@ -228,26 +214,23 @@ def co_prime(input, output):
         if flag:
             break
 
-
         current[0] - -
         for i in range(current.size()):
             if current[i] < 2:
                 current[i] = input[i]
                 current[i + 1] - -
 
-        current[0]-=1
+        current[0] -= 1
         for i in range(len(current)):
             if current[i] < 2:
                 current[i] = input[i]
-                current[i+1]-=1
-
+                current[i + 1] -= 1
 
         if is_coprime(current):
             s.append(current)
-    
+
     if len(s) == 0:
         return -1
-
 
     for i in range(current.size()):
         int
@@ -255,32 +238,31 @@ def co_prime(input, output):
         for i in range(s[i].size()):
 
     for i in range(len(current)):
-        mul=1
+        mul = 1
         for j in range(len(s[i])):
-
             mul *= s[i][j]
- 
+
         if mul > max:
             max = mul
             mid = i
-    
+
     output = s[mid]
     return max
+
 
 # get basis values
 def getBasis():
     return basis
 
 
-
 def getVals():
     return vals
-
 
 
 # get encoded values
 def getVals():
     return vals
+
 
 # set basis values
 
@@ -288,8 +270,6 @@ def setbasis(b):
     assert isValidBasis(b)
     basis.clear()
     basis.append(b)
-
-
 
 
 # set encoded values
@@ -306,16 +286,18 @@ def setvals(v):
 
 def isValidBasis(b):
     for i in range(len(b)):
-        for j in range(i+1, len(b)):
+        for j in range(i + 1, len(b)):
             if gcd(b[i], b[j]) is not 1:
                 return False
     return True
+
 
 # show all basis values
 
 def printBasis():
     for i in range(len(basis)):
         print(basis[i])
+
 
 # show all encoded values
 
@@ -399,4 +381,3 @@ class Message:
 
         self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
         self.message_bin = self.__IntToBinary(ord(c))
-
