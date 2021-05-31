@@ -3,7 +3,11 @@ INT_MAX = 2147483647
 basis = []
 vals = []
 
+# Extended Euclidean Algorithm
 def extgcd(a, b, d, x, y):
+    """
+    The extended Euclidean algorithm computes the greatest common divisor and solves Bezout's identity.
+    """
     if not b:
         d = a 
         x = 1
@@ -12,20 +16,20 @@ def extgcd(a, b, d, x, y):
         extgcd(b, a % b, d, y, x)
         y -= x * (a/b)
 
-
+# greatest common divider between to variables
 def gcd(a, b):
     return b == 0 if a else gcd(b, a % b)
     #return b == 0 ? a : gcd(b, a % b)
 
 
-
-def mod_inv(a, n):   # inverse of a on mod n
+# inverse of a on mod n
+def mod_inv(a, n):
     d, x, y = None
     extgcd(a, n, d, x, y)
     return d == 1 if (x+n) % n else -1
     #return d == 1 ? (x+n) % n: -1
 
-
+# Chinese Remainder Theorem with inverse modulo calculation
 def CRT(vals, basis):
     mm=1
     ans=0
@@ -37,7 +41,7 @@ def CRT(vals, basis):
         ans += vals[i] * bi * mdm
     return ans % mm
 
-
+# Decoding function with minimal hamming distance
 def decode(m, msgrange):
     assert len(basis) == len(vals)
     codewords = []
@@ -50,7 +54,7 @@ def decode(m, msgrange):
     minid=0
     mincodelist = []
     for i in range(len(codewords)):
-        dist = hammingDist(codewords[i], getBasis()) #*this
+        dist = hammingDist(codewords[i], getBasis()) #a, *this
         if dist < minhammingdist:
             mincodelist.clear()
             mincodelist.append(codewords[i])
@@ -66,12 +70,15 @@ def decode(m, msgrange):
     m.setInt(minid)
     return False
 
+# calculate codwords from input message
 def getCodeWords(msgrange, codewords):
     codewords.clear()
     for i in range(msgrange):
         encode(i)
-        codewords.append(basis)
+        codewords.append(basis[i])
+    return codewords
 
+# encoding function for message
 def encode(m):
     if isinstance(m, str):
         m = m.getInt()
@@ -80,6 +87,7 @@ def encode(m):
     for i in range(len(basis)):
         vals.append(m % basis[i])
 
+# calculate hemming distance between two values from codewords
 def hammingDist(a, b):
     assert len(a.basis) == len(b.basis):
     ans = 0
@@ -89,6 +97,7 @@ def hammingDist(a, b):
             ans+=1
     return ans
 
+# calculate minimal hamming distance fro given range
 def minHammingDist(range):
     assert not len(basis) == 0
     sorted = sorted(basis)
@@ -101,6 +110,7 @@ def minHammingDist(range):
     assert mul >= range
     return len(basis) - (i + 1)
 
+# check if values from input list are all coprime
 def is_coprime(input):
     for i in range(len(input)):
         for j in range(i+1,len(input)):
@@ -110,6 +120,7 @@ def is_coprime(input):
                 return False
     return True
 
+# calculate maximum coprime number(s)
 def co_prime(input, output):
     max=0
     mid=0
@@ -150,17 +161,21 @@ def co_prime(input, output):
     output = s[mid]
     return max
 
+# get basis values
 def getBasis():
     return basis
 
+# get encoded values
 def getVals():
     return vals
 
+# set basis values
 def setbasis(b):
     assert isValidBasis(b)
     basis.clear()
     basis.append(b)
 
+# set encoded values
 def setvals(v):
     assert len(v) == len(basis)
     vals.clear()
@@ -168,6 +183,7 @@ def setvals(v):
         assert v[i] < basis[i]
         vals.append(v[i])
 
+# check if given basis is valid (gcd)
 def isValidBasis(b):
     for i in range(len(b)):
         for j in range(i+1, len(b)):
@@ -175,10 +191,12 @@ def isValidBasis(b):
                 return False
     return True
 
+# show all basis values
 def printBasis():
     for i in range(len(basis)):
         print(basis[i])
 
+# show all encoded values
 def printVals():
     for i in range(len(vals)):
         print(vals[i])
