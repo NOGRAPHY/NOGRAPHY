@@ -1,37 +1,45 @@
-FROM ubuntu:latest 
-FROM python:3.7
+# Define function directory
+ARG FUNCTION_DIR="/function"
 
-RUN apt-get update -y
-#RUN apt-get install -y  python3.7 python3-pip
-RUN apt update && apt install -y libsm6 libxext6
-RUN DEBIAN_FRONTEND='noninteractive' apt-get -y install tesseract-ocr 
+#FROM python:3.7-buster as build-image
+FROM python:3.7-buster
 
-RUN pip install pillow
-RUN pip install pytesseract
-RUN pip install opencv-contrib-python
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  unzip \
+  libcurl4-openssl-dev
 
-# copy application code to container
-COPY app.py tesserocr-2.3.0-cp37-cp37m-manylinux1_x86_64.whl requirements.txt ./ocr ./ 
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Create function directory
+RUN mkdir -p ${FUNCTION_DIR}
 
-# Installs development tools (gcc compiler is needed)
-#RUN yum groups mark convert
-#RUN yum group install "Development Tools" -y
+# Copy function code
+COPY app.py ${FUNCTION_DIR}
+COPY ocr/* ${FUNCTION_DIR}/
+COPY requirements.txt ${FUNCTION_DIR}
 
-# install tesseract
-#RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-#RUN yum clean all
-#RUN yum -y update
-#RUN yum install tesseract -y 
+# Install the runtime interface client
+RUN pip install \
+        --target ${FUNCTION_DIR} \
+        awslambdaric
 
-# install python dependencies
-# TODO: "fatal error: tesseract/publictypes.h: No such file or directory"
-#RUN yum -y install libleptonica-dev libtesseract-dev
-RUN pip install tesserocr-2.3.0-cp37-cp37m-manylinux1_x86_64.whl
-RUN python3.7 -m pip install -r requirements.txt -t .
+# Multi-stage build: grab a fresh copy of the base image
+# FROM python:3.7-buster
 
-# TODO install poppler?
+# Include global arg in this stage of the build
+# ARG FUNCTION_DIR
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
 
-ENTRYPOINT ["python"]
+# Copy in the build image dependencies
+# COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 
-# set handler as command
-CMD ["app.lambda_handler"]
+RUN pip3 install -r ${FUNCTION_DIR}/requirements.txt
+
+ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
+CMD [ "app.handler" ]
