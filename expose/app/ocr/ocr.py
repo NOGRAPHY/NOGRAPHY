@@ -2,6 +2,8 @@ import string
 
 from cv2 import cv2
 import numpy as np
+import locale
+locale.setlocale(locale.LC_ALL, 'C')
 from tesserocr import PyTessBaseAPI, RIL, OEM
 from PIL import Image
 from io import BytesIO
@@ -15,7 +17,6 @@ def recognizeCharacters(imageAsBase64):
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
         api.SetImage(image)
-
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
         if len(boxes) != len(characters):

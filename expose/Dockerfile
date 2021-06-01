@@ -21,7 +21,6 @@ RUN mkdir -p ${FUNCTION_DIR}
 # Copy function code
 COPY /app ${FUNCTION_DIR}/
 COPY requirements.txt ${FUNCTION_DIR}
-COPY tesserocr-2.3.0-cp37-cp37m-manylinux1_x86_64.whl ${FUNCTION_DIR}
 
 # Install the runtime interface client
 RUN pip install \
@@ -31,9 +30,13 @@ RUN pip install \
 # Set working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
 
+# Install Tesseract-OCR and all dependencies for tesserocr
 RUN apt-get install -y tesseract-ocr
+RUN apt-get install -y libtesseract-dev
+RUN apt-get install -y libleptonica-dev
+RUN apt-get install -y pkg-config
+RUN apt-get install -y build-essential
 
-RUN pip install tesserocr-2.3.0-cp37-cp37m-manylinux1_x86_64.whl
 RUN pip3 install -r ${FUNCTION_DIR}/requirements.txt
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]

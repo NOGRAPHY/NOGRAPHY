@@ -1,3 +1,5 @@
 requests
 Pillow~=8.2.0
+Cython
 opencv-contrib-python-headless
+tesserocr
