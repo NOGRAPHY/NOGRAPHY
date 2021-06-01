@@ -2,6 +2,8 @@
 import math
 
 # global variables
+import string
+
 INT_MAX = 2147483647
 basis = []
 vals = []
@@ -12,7 +14,8 @@ def gcd(a, b):
 
 # inverse of a on mod n
 def mod_inv(a, n):
-    return pow(a, -1, n)
+    #return pow(int(a), -1, n)
+    return pow(int(a), n-2, n)
 
 # Chinese Remainder Theorem with inverse modulo calculation
 def chinese_remainder_theorem(vals, basis):
@@ -68,7 +71,7 @@ def CRT(vals, basis):
         mdm = mm / basis[i]
         bi = mod_inv(mdm, basis[i])
         ans += vals[i] * bi * mdm
-    return ans % mm
+    return int(ans % mm)
 
 
 ## CRTCode class
@@ -82,7 +85,7 @@ class CRTCode:
         elif b is not None:
             assert self.isValidBasis(b) == True
             self.basis = b
-        self.vals = None
+        self.vals = []
 
     # get basis values
     def getBasis(self):
@@ -101,10 +104,11 @@ class CRTCode:
     # set encoded values
     def setvals(self, v):
         assert len(v) == len(self.basis)
-        self.vals.clear()
-        for i in range(len(self.basis)):
+        #self.vals.clear
+        #self.vals.remove(element)
+        for i in range(0, len(self.basis)):
             assert v[i] < self.basis[i]
-            self.vals.append(v[i])
+            self.vals[i] = v[i]
 
     # check if given basis is valid (gcd)
     def isValidBasis(self, b):
@@ -162,14 +166,16 @@ class CRTCode:
 
     # encoding function for message
     def encode(self, m):  # message class object m
-        if isinstance(m, object):
-            m = m.getInt()
+        if isinstance(m, Message):
+            if m.getInt() is not None:
+                m = m.getInt()
         if isinstance(m, str):
-            m = ord(m)
+            if m[0] is string.ascii_lowercase or string.ascii_uppercase:
+                m = ord(m)
+            if m[0] is '0' or '1':
+                m = Message.__BinaryToInt(m)
         if isinstance(m, int):
             m = m
-        if isinstance(m, bin):
-            m = Message.__BinaryToInt(m)
         assert not len(self.basis) == 0
         self.vals.clear()
         for i in range(len(self.basis)):
@@ -257,18 +263,21 @@ class Message:
 
     def __init__(self, m_integer=None, m_binary=None, m_char=None):
         if m_integer == None and m_binary == None and m_char == None:
-            print("No parameters for 'Message' class constructor omitted!")
-            return
+            # print("No parameters for 'Message' class constructor omitted!")
+            self.message_int = None
+            self.message_bin = None
+            self.message_char = None
         if m_integer is not None:
             assert m_integer >= 0
             self.message_int = m_integer
-            self.message_bin = self.__IntToBinary(m_integer)
+            #self.message_bin = self.__IntToBinary(m_integer)
+            self.message_bin = bin(m_integer)
             self.message_char = chr(m_integer)
         if m_binary is not None:
-            assert m_binary >= 0
+            assert m_binary >= '0'
             self.message_bin = m_binary
             self.message_int = self.__BinaryToInt(m_binary)
-            self.message_char = chr(m_integer)
+            self.message_char = chr(self.message_int)
         if m_char is not None:
             assert m_char >= 0
             self.message_char = m_char
@@ -286,7 +295,7 @@ class Message:
 
     def __BinaryToInt(self, binary):
         ans = 0
-        n = binary.length()
+        n = len(binary)
         for i in range(n):
             if binary[i] == '0':
                 continue
@@ -298,10 +307,10 @@ class Message:
         return ans
 
     def getInt(self):
-        return self.m_integer
+        return self.message_int
 
     def getBin(self):
-        return self.m_binary
+        return self.message_bin
 
     def getChar(self):
         return self.message_char
@@ -315,15 +324,69 @@ class Message:
     def setInt(self, i):
         assert i >= 0
         self.message_int = i
-        self.message_bin = self.__IntToBinary(i)
+        #self.message_bin = self.__IntToBinary(i)
+        self.message_bin = bin(i)
         self.message_char = chr(i)
 
     def setChar(self, c):
         assert c >= 0
         self.message_char = c
-
         self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
         self.message_bin = self.__IntToBinary(ord(c))
 
-        self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
-        self.message_bin = self.__IntToBinary(ord(c))
+
+
+# Error correction test function
+def Sample():
+
+    print("Chinese Remainder Code Error Correction Test\n")
+
+    # assume we want to encode '10110100'(8bit) to 'ABCDE'. capacity of ABCDE are '13 7 15 17 11', respectively.
+    # first we create a message that present the information we want to encode.
+    m = Message(m_binary="01000001")  # A
+
+    # if you want, you can also create m by a int value.
+    m = Message(m_integer=65)  # 01000001
+    
+    # we can check the value in m.
+    print("char message: " + m.getChar() + "\nbinary message: " + str(m.getBin()) + "\nint message: " + str(m.getInt()))
+    # then we create CRTcode for 'ABCDE'
+    code = CRTCode([13, 7, 15, 17, 11])  # must make sure basis are co-prime.
+
+    # show encoding capacity within five letter block
+    print("\nencoding capacity: {0}\n". format(code.getBasis()))
+
+    # encoding
+    code.encode(m)
+    
+    # we can check the encode result
+    encoderesult = code.getVals()
+    for i in range(len(encoderesult)):
+        print(str(m.getInt()) + " mod " + str(code.getBasis()[i]) + " is " + str(encoderesult[i]))
+    
+    # if we want to decode, first we must know the encode range.
+    # since our encode message is 8-bits, so the range is 0-255, totally 256.
+    # next we create a message to store the decoded information
+    decoded = Message() 
+    
+    # decoding
+    code.decode(decoded, 256);
+    
+    # we can check the decode result.
+    print("\norigin message: {0} -> {1} -> {2}".format(m.getChar(), m.getBin(), m.getInt()))
+    print("decode message: {0} <- {1} <- {2}".format(decoded.getChar(), decoded.getBin(), decoded.getInt()))
+    
+    # if we have a transition error, for example:
+    print("\nnow with one transition error: {0} ".format(code.getVals()), end='')
+    encoderesult[0] -= 2
+    print("-> {1}\n".format(code.getVals(), encoderesult), end='')
+    code.setvals(encoderesult)
+
+    # we can still decode
+    errordecode = Message()
+    code.decode(errordecode, 256)
+    print("\nerror decode message: {0} <- {1} <- {2}".format(errordecode.getChar(), errordecode.getBin(), errordecode.getInt()))
+
+if __name__ == "__main__":
+    # execute only if run as a script
+    Sample()
