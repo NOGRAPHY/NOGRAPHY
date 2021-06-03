@@ -7,7 +7,9 @@ def lambda_handler(event, context):
     """
 
     # ocr
+    # TODO: do we actually need the characters? The CNN recognizes them itself.
     characters, boxes = ocr.recognizeCharacters(imageAsBase64)
+    glyphImages = ocr.createGlyphImages(boxes, imageAsBase64, 200)
 
     # cnn
 

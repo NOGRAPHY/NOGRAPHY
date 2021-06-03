@@ -44,8 +44,9 @@ def drawBoxes(boxes, filename):
     cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
 
 
-def createLetterImages(characters, boxes, filename, size, save_files=False):
-    img = cv2.imread(filename)
+def createGlyphImages(boxes, imageAsBase64, size):
+    pillow_image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+    img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
 
     glyphs = []
     for index, box in enumerate(boxes):
@@ -68,11 +69,5 @@ def createLetterImages(characters, boxes, filename, size, save_files=False):
         empty_image[y_offset:y_offset + resized_letter.shape[0],
         x_offset:x_offset + resized_letter.shape[1]] = resized_letter
 
-        if save_files:
-            split_filename = filename.split('.')
-            cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1],
-                        empty_image)
-
         glyphs.append(empty_image)
-
     return glyphs
