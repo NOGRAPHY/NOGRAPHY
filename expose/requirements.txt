@@ -4,3 +4,4 @@ Cython
 opencv-contrib-python-headless
 tesserocr
 numpy
+tensorflow~=2.4.1

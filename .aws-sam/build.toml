@@ -8,11 +8,11 @@ source_md5 = ""
 packagetype = "Zip"
 functions = ["HideFunction"]
 
-[function_build_definitions.b9a70313-b718-43ff-8f54-3cbb99de7b52]
+[function_build_definitions.bac51556-edf3-4816-a7d4-bbf43587c430]
 packagetype = "Image"
 functions = ["ExposeFunction"]
 
-[function_build_definitions.b9a70313-b718-43ff-8f54-3cbb99de7b52.metadata]
+[function_build_definitions.bac51556-edf3-4816-a7d4-bbf43587c430.metadata]
 Dockerfile = "Dockerfile"
 DockerContext = "/Users/robertnickel/projects/nography/expose"
 DockerTag = "python3.8-v1"

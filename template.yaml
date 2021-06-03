@@ -7,7 +7,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 60
 
 Resources:
   HideFunction:

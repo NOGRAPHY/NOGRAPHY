@@ -1,5 +1,7 @@
 import json
 from ocr import ocr
+from cnn.single_model.cnn_single_model import SingleModel
+from decoder import decoder
 
 def lambda_handler(event, context):
     imageAsBase64 = """
@@ -12,8 +14,14 @@ def lambda_handler(event, context):
     glyphImages = ocr.createGlyphImages(boxes, imageAsBase64, 200)
 
     # cnn
+    cnn_model = SingleModel()
+    font_indexes, _, confidence = cnn_model.predict(glyphImages)
+    print("font indexes: " + font_indexes)
+    print("confidence: " + confidence)
 
     # decode
+    exposed_message = decoder.decode_from_font_indexes(font_indexes)
+    print("exposed message: " + exposed_message)
 
     return {
         "statusCode": 200,
