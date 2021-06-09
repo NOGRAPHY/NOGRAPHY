@@ -19,8 +19,8 @@ def recognizeCharacters(imageAsBase64):
         api.SetImage(image)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
-        if len(boxes) != len(characters):
-            raise IndexError('Not all characters were recognized correctly')
+        #if len(boxes) != len(characters):
+        #    raise IndexError('Not all characters were recognized correctly')
 
         characters_final = ''
         boxes_final = []

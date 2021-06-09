@@ -452,4 +452,4 @@ TSWLatexianTemp*
 /.vscode
 /imageTemplate
 /zipTemplate
-.aws-sam/build.toml
+/.aws-sam

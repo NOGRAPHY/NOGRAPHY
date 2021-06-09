@@ -15,9 +15,9 @@ def lambda_handler(event, context):
 
     # cnn
     cnn_model = SingleModel()
-    font_indexes, _, confidence = cnn_model.predict(glyphImages)
-    print("font indexes: " + font_indexes)
-    print("confidence: " + confidence)
+    font_indexes, confidence = cnn_model.predict(glyphImages)
+    print("font indexes: " + str(font_indexes))
+    print("confidence: " + str(confidence))
 
     # decode
     exposed_message = decoder.decode_from_font_indexes(font_indexes)
