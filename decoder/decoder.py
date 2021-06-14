@@ -1,4 +1,23 @@
-def decode(encoded_string):
+from error_correction import CRC_Port
+
+
+def decode(data):
+    result = []
+    code = CRC_Port.CRTCode([1, 2, 3, 5, 7])
+    for x in range(0, len(data), 5):
+        tmp = data[x:x + 5]
+        tmp_int = []
+        for y in tmp:
+            tmp_int.append(int(y, 2))
+        code.vals.clear()
+        code.vals.extend(tmp_int)
+
+        result.extend(decode_ec(code))
+
+    return ''.join(result)
+
+
+def decode2(encoded_string):
     bit_string = ''.join(encoded_string)
 
     # split bit_string into chunks the length of 8
@@ -18,6 +37,14 @@ def decode(encoded_string):
     decoded_string = b''.join([int(c, 2).to_bytes((len(c) + 7) // 8, byteorder='big') for c in chunks]).decode('utf-8')
 
     return decoded_string
+
+
+def decode_ec(code):
+    decoded = CRC_Port.Message()
+    # decoding
+    code.decode(decoded, 256)
+    return decoded.getChar()
+
 
 def decode_from_font_indexes(indexes_list, base):
     # convert decimal indexes to binary

@@ -8,14 +8,17 @@ INT_MAX = 2147483647
 basis = []
 vals = []
 
+
 # Extended Euclidean Algorithm
 def gcd(a, b):
     return math.gcd(a, b)
 
+
 # inverse of a on mod n
 def mod_inv(a, n):
-    #return pow(int(a), -1, n)
-    return pow(int(a), n-2, n)
+    # return pow(int(a), -1, n)
+    return pow(int(a), -1, n)
+
 
 # Chinese Remainder Theorem with inverse modulo calculation
 def chinese_remainder_theorem(vals, basis):
@@ -61,6 +64,7 @@ def extgcd(a, b, d, x, y):
 
 """
 
+
 # Chinese Remainder Theorem with inverse modulo calculation
 def CRT(vals, basis):
     mm = 1
@@ -104,8 +108,8 @@ class CRTCode:
     # set encoded values
     def setvals(self, v):
         assert len(v) == len(self.basis)
-        #self.vals.clear
-        #self.vals.remove(element)
+        # self.vals.clear
+        # self.vals.remove(element)
         for i in range(0, len(self.basis)):
             assert v[i] < self.basis[i]
             self.vals[i] = v[i]
@@ -127,7 +131,6 @@ class CRTCode:
     def printVals(self):
         for i in range(len(self.vals)):
             print(self.vals[i])
-
 
     # Decoding function with minimal hamming distance
     def decode(self, m, msgrange):
@@ -224,7 +227,7 @@ def co_prime(input, output):
     current = input
     s = [[]]
 
-    while (True):
+    while True:
         flag = True
         for i in range(len(current)):
             if current[i] is not 2:
@@ -262,7 +265,7 @@ def co_prime(input, output):
 class Message:
 
     def __init__(self, m_integer=None, m_binary=None, m_char=None):
-        if m_integer == None and m_binary == None and m_char == None:
+        if m_integer is None and m_binary is None and m_char is None:
             # print("No parameters for 'Message' class constructor omitted!")
             self.message_int = None
             self.message_bin = None
@@ -270,7 +273,7 @@ class Message:
         if m_integer is not None:
             assert m_integer >= 0
             self.message_int = m_integer
-            #self.message_bin = self.__IntToBinary(m_integer)
+            # self.message_bin = self.__IntToBinary(m_integer)
             self.message_bin = bin(m_integer)
             self.message_char = chr(m_integer)
         if m_binary is not None:
@@ -324,7 +327,7 @@ class Message:
     def setInt(self, i):
         assert i >= 0
         self.message_int = i
-        #self.message_bin = self.__IntToBinary(i)
+        # self.message_bin = self.__IntToBinary(i)
         self.message_bin = bin(i)
         self.message_char = chr(i)
 
@@ -370,8 +373,8 @@ class MaximumLikelihoodDecoding:
         for info in range(0, 5):
             word = info << 2
             self.C2.append(word + \
-                     (self.bit8(word, 1) ^ self.bit8(word, 3) << 1) + \
-                     (self.bit8(word, 1) ^ self.bit8(word, 2) ^ self.bit8(word, 3)))
+                           (self.bit8(word, 1) ^ self.bit8(word, 3) << 1) + \
+                           (self.bit8(word, 1) ^ self.bit8(word, 2) ^ self.bit8(word, 3)))
             print(format(self.C2[-1], '08b'))
 
     # (b) Find the minimum distance of the code C2.
@@ -380,6 +383,7 @@ class MaximumLikelihoodDecoding:
     # We calculate the distance as the weight of the sum of the two words.
     def weight(self, n):
         return bin(n).count("1")
+
     # So we add each pair of codewords in C2 (using bitwise XOR) to calculate their weight.
     def minDist(self):
         mindist = 999
@@ -391,9 +395,9 @@ class MaximumLikelihoodDecoding:
                 mindist = min(dist, mindist)
         print(mindist)
 
+
 # Error correction test function
 def Sample():
-
     print("Chinese Remainder Code Error Correction Test\n")
 
     # assume we want to encode '01000001'(8bit) to 'ABCDE'. capacity of ABCDE are '13 7 15 17 11', respectively.
@@ -402,52 +406,54 @@ def Sample():
 
     # if you want, you can also create m by a int value.
     m = Message(m_integer=65)  # 01000001
-    
+
     # we can check the value in m.
     print("char message: " + m.getChar() + "\nbinary message: " + str(m.getBin()) + "\nint message: " + str(m.getInt()))
     # then we create CRTcode for 'ABCDE'
-    code = CRTCode([13, 7, 15, 17, 11])  # must make sure basis are co-prime.
+    # code = CRTCode([13, 7, 15, 17, 11])  # must make sure basis are co-prime.
+
+    code = CRTCode([1, 2, 3, 5, 7])  # must make sure basis are co-prime.
 
     # show encoding capacity within five letter block
-    print("\nencoding capacity: {0}\n". format(code.getBasis()))
+    print("\nencoding capacity: {0}\n".format(code.getBasis()))
 
     # encoding
     code.encode(m)
-    
+
     # we can check the encode result
     encoderesult = code.getVals()
     for i in range(len(encoderesult)):
         print(str(m.getInt()) + " mod " + str(code.getBasis()[i]) + " is " + str(encoderesult[i]))
-    
+
     # if we want to decode, first we must know the encode range.
     # since our encode message is 8-bits, so the range is 0-255, totally 256.
     # next we create a message to store the decoded information
-    decoded = Message() 
-    
+    decoded = Message()
+
     # decoding
-    code.decode(decoded, 256);
-    
+    code.decode(decoded, 256)
+
     # we can check the decode result.
     print("\norigin message: {0} -> {1} -> {2}".format(m.getChar(), m.getBin(), m.getInt()))
     print("decode message: {0} <- {1} <- {2}".format(decoded.getChar(), decoded.getBin(), decoded.getInt()))
-    
+
     # if we have a transition error, for example:
     print("\nnow with one transition error: {0} ".format(code.getVals()), end='')
     encoderesult[0] -= 2
     # two errors
-    #encoderesult[3] -= 6
+    # encoderesult[3] -= 6
     print("-> {1}\n".format(code.getVals(), encoderesult), end='')
     code.setvals(encoderesult)
 
     # we can still decode
     errordecode = Message()
     code.decode(errordecode, 256)
-    print("\nerror decode message: {0} <- {1} <- {2}".format(errordecode.getChar(), errordecode.getBin(), errordecode.getInt()))
+    print("\nerror decode message: {0} <- {1} <- {2}".format(errordecode.getChar(), errordecode.getBin(),
+                                                             errordecode.getInt()))
 
 
 # Maximum Likelihood Decoding test function
 def test_maximum_likelihood_decoding():
-
     print("Maximum Likelihood Decoding Test\n")
 
     # Define code C1 with 5 codewords A, B, C, D, E
@@ -483,10 +489,11 @@ def test_maximum_likelihood_decoding():
     # but sometimes 2 errors can go undetected. This is because two errors (bit flips)
     # may in fact change the codeword into another "valid" codeword.
 
+
 if __name__ == "__main__":
     # execute only if run as a script
     Sample()
-    #test_maximum_likelihood_decoding()
+    # test_maximum_likelihood_decoding()
 
 # ToDo:
 # Check Thesis: The encoding function already adds redundancy: because m is
