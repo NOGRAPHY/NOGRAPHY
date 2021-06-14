@@ -14,6 +14,7 @@ def encode(plain_string, base=3):
 
     result = []
     tmp = []
+    # CRTCode Object is used for error correction
     code = CRC_Port.CRTCode([1, 2, 3, 5, 7])
 
     # encode each chunk with error correction
@@ -26,6 +27,7 @@ def encode(plain_string, base=3):
     return result
 
 
+# Encode with error correction
 def encode_with_ec(data, code):
     m = CRC_Port.Message(m_binary=data)
     code.encode(m)
