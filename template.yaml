@@ -8,7 +8,7 @@ Description: >
 Globals:
   Function:
     Timeout: 60
-    MemorySize: 1024  # TODO: do we need more memory or is this sufficient?
+    MemorySize: 2048  # TODO: do we need more memory or is this sufficient?
 
 Resources:
   HideFunction:
