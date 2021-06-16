@@ -32,20 +32,6 @@
 
 	const expose = () => {
 		// TODO: upload image
-		/*if (this.files && this.files[0]) {
-			console.log("--------------------");
-			console.log("something was invoked")
-			console.log("--------------------");
-
-			var FR = new FileReader();
-
-			FR.addEventListener("load", function (e) {
-				document.getElementById("img").src = e.target.result;
-				document.getElementById("b64").innerHTML = e.target.result;
-			});
-
-			FR.readAsDataURL(this.files[0]);
-		}*/
 
 		// TODO: base64 encode the image
 
@@ -93,9 +79,6 @@
 			<br />
 			<button type="button" on:click={hide}> Hide </button>
 			<button type="button" on:click={expose}> Expose </button>
-			<!--<input id="inp" type="file" on:change={ expose } />
-			<p id="b64" />-->
-			<!--<img id="img" height="150" />-->
 		</form>
 	{/if}
 	{#if loading}
