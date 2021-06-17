@@ -1,25 +1,46 @@
-# Steganography Team Project @HTWG WS2020/21
+# NOGRAPHY<br>Team Project @HTWG WS2020/21
 [![Build Status](https://travis-ci.com/steganographie-HTWG/steganographie.svg?branch=master)](https://travis-ci.com/github/steganographie-HTWG/steganographie)
 
-## Local Setup
-1. Clone the repo
+## What is NOGRAPHY?
+
+NOGRAPHY is an encoding engine, that uses a placeholder text and assigns different fonts to different letters in order to embed information. These fonts are hardly recognizable by sight but easily differentiable for the neural network of the engine, which also contains an error correction mechanism for better stability.
+
+You can use the app here: ![NOGRAPHY App](https://nography.cc/)
+
+Boundaries:
+- please use short texts and even shorter secrets
+- The website is like an old diesel engine: it is slow in the beginning, but then it speeds up.
+
+## Prepare local Setup
+1. Clone the repository
 2. Install Python 3.8.7 (e.g. with pyenv)
-3. Have an IDE ready (e.g. Visual Studio Code or PyCharm)
-4. `pip3 install -r requirements.txt` to install dependencies
-5. `pytest` executes all test
-6. Run __main__ in /hide/app.py
-7. Run __main__ in /expose/app.py (not possible yet)
-8. For the Frontend `cd app` and then `npm run dev`
-9. TODO: shorten: We use tesseract for ocr, so you need to install it (and add it to your $PATH) to use the ocr package.
-For Multilanguage-Support you need to download the advanced tessdata folder from Github: https://github.com/tesseract-ocr/tessdata. Now you have to set the TESSDATA_PREFIX path to the tessdata folder.
+3. Install & run ![Docker](https://docs.docker.com/engine/install/)
+4. Install & run ![AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
-## Deploy to AWS
-### Backend
-We use AWS Lambda for the updated embedding process. In order to deploy it, you need credentials (talk to Robert).
-If that is set up, execute `sam build && sam deploy` to deploy.
-### Frontend
-In order to deploy the frontend, `cd app` then `npm run build` then zip the content of the app/public folder and upload it to Amplify.
+NOTE: There is no further need to install tesseract locally on your system, since it is shipped within the container.
 
-## TODO: Which problem does the nography project solve?
-- hide texts in placeholder texts
-- english letters only
+## Invoke Lambdas locally
+In the root folder of the project
+
+1. Run `sam build`
+2. Run `sam local invoke ExposeFunction -e expose-event.json` to invoke the expose lambda directly
+3. Run `sam local invoke HideFunction -e hide-event.json` to invoke hide lambda directly
+
+## Run Frontend locally (with prod Backend)
+In the app folder of the project
+
+1. Run `npm install`
+2. Run `npm run dev`
+3. Open http://localhost:5000/ in your browser
+
+## Deploy backend
+1. You will need AWS credentials, talk to Robert
+2. Run `sam build && sam deploy` 
+
+## Deploy frontend Frontend
+1. You will need AWS credentials, talk to Robert
+2. Run `cd app`
+3. Run `npm install`
+4. Run `npm run build`
+5. Zip the content of the app/public folder
+6. Upload it to amplify
