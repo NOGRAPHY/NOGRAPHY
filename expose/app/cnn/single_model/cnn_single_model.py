@@ -29,6 +29,8 @@ class SingleModel:
 
         predictions = self.model.predict(images, workers=0)
 
+        keras.backend.clear_session()
+
         font_indexes = []
         confidences = []
 

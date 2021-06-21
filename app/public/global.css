@@ -1,6 +1,6 @@
 /* based on https://github.com/bradtraversy/svelte-scoreboard/blob/master/public/global.css */
 
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 
 /* Global Styles */
 :root {
@@ -18,7 +18,7 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   background-color: #fff;
@@ -296,7 +296,8 @@ img {
 }
 
 /* Forms */
-input, textarea {
+input,
+textarea {
   margin: 1.2rem 0;
   border: 20px solid black;
   border-radius: 20px;
@@ -308,11 +309,11 @@ input, textarea {
   color: #888;
 }
 
-input[type='text'],
-input[type='email'],
-input[type='password'],
-input[type='date'],
-input[type='number'],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
 select,
 textarea {
   display: block;
@@ -322,9 +323,13 @@ textarea {
   border: 1px solid #ccc;
 }
 
-input[type='submit'],
+input[type="submit"],
 button {
   font: inherit;
+}
+
+input[type="file"] {
+  display: none;
 }
 
 .form-group {
@@ -410,6 +415,7 @@ button {
   height: 2.5rem;
   background-color: white;
   border-radius: 20px;
+  margin-bottom: 1em;
 }
 
 h1 {

@@ -126,7 +126,8 @@ class GlyphExtractor:
             if len(GlyphPerturber.characters) != len(boxes):
                 raise RuntimeError("OCR was not able to recognize all glyphs.")
 
-            ocr.createLetterImages(characters, boxes, png_path, 200, save_files=True)
+            # TODO: If you want the pngs, use the new function's interface
+            # ocr.createGlyphImages(characters, boxes, png_path, 200, save_files=True)
 
             os.remove(new_pdf_path)
             os.remove(png_path)

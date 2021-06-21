@@ -7,7 +7,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 60
 
 Resources:
   HideFunction:
@@ -26,6 +26,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
+      MemorySize: 2048  # TODO: do we need more memory or is this sufficient?
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./expose

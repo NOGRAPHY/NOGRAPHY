@@ -2,46 +2,36 @@ import string
 
 from cv2 import cv2
 import numpy as np
+import locale
+locale.setlocale(locale.LC_ALL, 'C')
 from tesserocr import PyTessBaseAPI, RIL, OEM
-from pdf2image import convert_from_path
-
+from PIL import Image
+from io import BytesIO
+import base64
 
 # download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
 
-
-def checkType(filename):
-    type = filename[-3] + filename[-2] + filename[-1]
-    if type == 'pdf':
-        pages = convert_from_path(filename, 500)
-        for page in pages:
-            filename = filename[:-3] + "png"
-            page.save(filename, 'PNG')
-            return filename
-    else:
-        return filename
-
-
-def recognizeCharacters(filename):
-    whitelist = string.ascii_letters
+def recognizeCharacters(imageAsBase64):
+    image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+    
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
-        api.SetImageFile(filename)
-
+        api.SetImage(image)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
+        #if len(boxes) != len(characters):
+        #    raise IndexError('Not all characters were recognized correctly')
+
         characters_final = ''
         boxes_final = []
-        if len(boxes) != len(characters):
-            raise IndexError('Not all characters were recognized correctly')
 
+        whitelist = string.ascii_letters
         for index in range(len(characters)):
             if characters[index] in whitelist:
                 characters_final = characters_final + characters[index]
-
                 boxes_final.append(boxes[index])
 
         return characters_final, boxes_final
-
 
 def drawBoxes(boxes, filename):
     img = cv2.imread(filename)
@@ -54,8 +44,9 @@ def drawBoxes(boxes, filename):
     cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
 
 
-def createLetterImages(characters, boxes, filename, size, save_files=False):
-    img = cv2.imread(filename)
+def createGlyphImages(boxes, imageAsBase64, size):
+    pillow_image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+    img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
 
     glyphs = []
     for index, box in enumerate(boxes):
@@ -78,11 +69,5 @@ def createLetterImages(characters, boxes, filename, size, save_files=False):
         empty_image[y_offset:y_offset + resized_letter.shape[0],
         x_offset:x_offset + resized_letter.shape[1]] = resized_letter
 
-        if save_files:
-            split_filename = filename.split('.')
-            cv2.imwrite(split_filename[0] + '_' + str(index) + '_' + characters[index] + '.' + split_filename[1],
-                        empty_image)
-
         glyphs.append(empty_image)
-
     return glyphs
