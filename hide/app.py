@@ -65,9 +65,9 @@ def load_fonts_from_fs(font_size):
         4: ImageFont.truetype(os.path.join(path, 'assets', '4.ttf'), font_size),
         5: ImageFont.truetype(os.path.join(path, 'assets', '5.ttf'), font_size),
         6: ImageFont.truetype(os.path.join(path, 'assets', '6.ttf'), font_size),
-        7: ImageFont.truetype(os.path.join(path, 'assets', '7.ttf'), font_size)
+        7: ImageFont.truetype(os.path.join(path, 'assets', '7.ttf'), font_size),
+        8: ImageFont.truetype(os.path.join(path, 'assets', '8.ttf'), font_size)
     }
-
 
 def get_letters_and_fonts(placeholder, encoded_secret, fonts):
     letters_and_fonts = []
@@ -78,7 +78,7 @@ def get_letters_and_fonts(placeholder, encoded_secret, fonts):
                 letters_and_fonts.append(
                     (placeholder[index], fonts[encoded_secret[index]]))
             else:
-                letters_and_fonts.append((placeholder[index], fonts[0]))
+                letters_and_fonts.append((placeholder[index], fonts[8]))
             index = index + 1
         else:
             letters_and_fonts.append((placeholder[index], fonts[0]))
