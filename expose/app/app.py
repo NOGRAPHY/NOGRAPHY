@@ -18,8 +18,10 @@ def lambda_handler(event, context):
     image = body.get('image', fallback_image)
 
     # ocr
-    _, boxes = ocr.recognizeCharacters(image)
+    boxes = ocr.recognizeCharacters(image)
     glyph_images = ocr.createGlyphImages(boxes, image, 200)
+    print("Image with boxes: \n" + ocr.drawBoxes(boxes, image) + "\n")
+    print("The first letter as fed into CNN:\n" + ocr.arraysToBase64(glyph_images[0])+ "\n")
 
     del boxes
 

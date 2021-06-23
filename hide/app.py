@@ -6,12 +6,11 @@ from io import BytesIO
 import string
 import os
 
-FONT_SIZE = 72
-IMAGE_WIDTH = 2480
+FONT_SIZE = 144
+IMAGE_WIDTH = 7441 # = 900 dpi
 IMAGE_HEIGHT = 640
 MARGIN = 640
 ENCODING_DECODING_BASE = 3
-
 
 def lambda_handler(event, context):
     if 'body' not in event:

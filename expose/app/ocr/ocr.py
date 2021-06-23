@@ -4,7 +4,7 @@ from cv2 import cv2
 import numpy as np
 import locale
 locale.setlocale(locale.LC_ALL, 'C')
-from tesserocr import PyTessBaseAPI, RIL, OEM
+from tesserocr import PyTessBaseAPI, RIL
 from PIL import Image
 from io import BytesIO
 import base64
@@ -14,39 +14,23 @@ import base64
 def recognizeCharacters(imageAsBase64):
     image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
     
-    # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
         api.SetImage(image)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
-        #if len(boxes) != len(characters):
-        #    raise IndexError('Not all characters were recognized correctly')
+        return boxes
 
-        characters_final = ''
-        boxes_final = []
+def drawBoxes(boxes, imageAsBase64):
+    image = base64ToArrays(imageAsBase64)
 
-        whitelist = string.ascii_letters
-        for index in range(len(characters)):
-            if characters[index] in whitelist:
-                characters_final = characters_final + characters[index]
-                boxes_final.append(boxes[index])
-
-        return characters_final, boxes_final
-
-def drawBoxes(boxes, filename):
-    img = cv2.imread(filename)
     for box in boxes:
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 1)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 1)
 
-    split_filename = filename.split(".")
-    cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
-
+    return arraysToBase64(image)
 
 def createGlyphImages(boxes, imageAsBase64, size):
-    pillow_image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
-    img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
+    img = base64ToArrays(imageAsBase64)
 
     glyphs = []
     for index, box in enumerate(boxes):
@@ -71,3 +55,14 @@ def createGlyphImages(boxes, imageAsBase64, size):
 
         glyphs.append(empty_image)
     return glyphs
+
+def base64ToArrays(imageAsBase64):
+    pillow_image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+    return cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
+
+def arraysToBase64(arrays):
+    pillow_image = Image.fromarray(arrays)
+    buffer = BytesIO()
+    pillow_image.save(buffer, format="PNG")
+    imageAsBase64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return imageAsBase64
