@@ -11,7 +11,7 @@ IMAGE_WIDTH = 2480
 IMAGE_HEIGHT = 640
 MARGIN = 640
 ENCODING_DECODING_BASE = 3
-
+CHARACTER_SPACING = 8
 
 def lambda_handler(event, context):
     if 'body' not in event:
@@ -110,7 +110,7 @@ def fit_text(img, letters_and_fonts, color, margin):
         for letter, font in t:
             draw.text((x, y), letter,
                       font=font, fill=color)
-            x = x + draw.textsize(letter, font=font)[0]
+            x = x + draw.textsize(letter, font=font)[0] + CHARACTER_SPACING
         y += h
 
 
