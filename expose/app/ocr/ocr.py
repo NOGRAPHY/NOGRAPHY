@@ -18,7 +18,17 @@ def recognizeCharacters(imageAsBase64):
     with PyTessBaseAPI(lang='eng') as api:
         api.SetImage(image)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        return boxes
+        characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
+
+        boxes_final = []
+
+        # Filter that only A-Z & a-z gets extracted.
+        whitelist = string.ascii_letters
+        for index, character in enumerate(characters):
+            if character in whitelist:
+                boxes_final.append(boxes[index])
+
+        return boxes_final
 
 def drawBoxes(boxes, filename):
     img = cv2.imread(filename)
