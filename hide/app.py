@@ -66,7 +66,8 @@ def load_fonts_from_fs(font_size):
         4: ImageFont.truetype(os.path.join(path, 'assets', '4.ttf'), font_size),
         5: ImageFont.truetype(os.path.join(path, 'assets', '5.ttf'), font_size),
         6: ImageFont.truetype(os.path.join(path, 'assets', '6.ttf'), font_size),
-        7: ImageFont.truetype(os.path.join(path, 'assets', '7.ttf'), font_size)
+        7: ImageFont.truetype(os.path.join(path, 'assets', '7.ttf'), font_size),
+        8: ImageFont.truetype(os.path.join(path, 'assets', '8.ttf'), font_size)
     }
 
 
@@ -79,10 +80,10 @@ def get_letters_and_fonts(placeholder, encoded_secret, fonts):
                 letters_and_fonts.append(
                     (placeholder[index], fonts[encoded_secret[index]]))
             else:
-                letters_and_fonts.append((placeholder[index], fonts[0]))
+                letters_and_fonts.append((placeholder[index], fonts[8]))
             index = index + 1
         else:
-            letters_and_fonts.append((placeholder[index], fonts[0]))
+            letters_and_fonts.append((placeholder[index], fonts[8]))
             # slicing out the non-ASCII character, so it won't block the index
             placeholder = placeholder[:index] + placeholder[index+1:]
     return letters_and_fonts
@@ -134,6 +135,19 @@ def break_into_lines(letters_and_fonts, width, font, draw):
 
 def secret_fits_in_placeholder(secret, placeholder):
     return len(secret) * ENCODING_DECODING_BASE <= len(placeholder)
+
+# Use this if you want to generate new training data (not actively used by hide lambda)
+def generate_training_data():
+    fonts = load_fonts_from_fs(FONT_SIZE)
+    placeholder = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
+    for i in range(0, 9) :
+        list_of_ints = []
+        for j in range(0, 52) :
+            list_of_ints.append(i)
+        letters_and_fonts = get_letters_and_fonts(placeholder, list_of_ints, fonts)
+        image = Image.new("RGB", (IMAGE_WIDTH, IMAGE_HEIGHT), 'white')
+        fit_text(image, letters_and_fonts, 'black', MARGIN)
+        image.save(str(i)+".png", format="PNG")
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])
