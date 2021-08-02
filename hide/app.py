@@ -106,7 +106,7 @@ def fit_text(img, letters_and_fonts, color, margin):
 
     y = (img.size[1] - height) // 2
     for t, w, h in lines:
-        x = (img.size[0] - w) // 2
+        x = (img.size[0] - w - CHARACTER_SPACING * len(t)) // 2
         for letter, font in t:
             draw.text((x, y), letter,
                       font=font, fill=color)
