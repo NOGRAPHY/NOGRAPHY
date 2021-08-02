@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 class SingleModel:
-    MODEL_FILNENAME = "LiberationSerif-model-20210429-0751.h5"
+    MODEL_FILNENAME = "LiberationSerif-model-20210802-1357.h5"
     DEFAULT_FONT = 8
 
     def __init__(self):
