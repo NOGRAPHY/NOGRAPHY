@@ -121,7 +121,7 @@ class GlyphExtractor:
                 images = convert_from_path(new_pdf_path, dpi=int(dpi), output_folder=path, fmt="png")[0]
                 images.save(png_path)
 
-            characters, boxes = ocr.recognizeCharacters(png_path)
+            boxes = ocr.recognizeCharacters(png_path)
 
             if len(GlyphPerturber.characters) != len(boxes):
                 raise RuntimeError("OCR was not able to recognize all glyphs.")

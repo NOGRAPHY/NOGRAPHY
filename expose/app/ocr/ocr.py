@@ -18,20 +18,7 @@ def recognizeCharacters(imageAsBase64):
     with PyTessBaseAPI(lang='eng') as api:
         api.SetImage(image)
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
-        characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
-        #if len(boxes) != len(characters):
-        #    raise IndexError('Not all characters were recognized correctly')
-
-        characters_final = ''
-        boxes_final = []
-
-        whitelist = string.ascii_letters
-        for index in range(len(characters)):
-            if characters[index] in whitelist:
-                characters_final = characters_final + characters[index]
-                boxes_final.append(boxes[index])
-
-        return characters_final, boxes_final
+        return boxes
 
 def drawBoxes(boxes, filename):
     img = cv2.imread(filename)

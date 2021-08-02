@@ -18,10 +18,8 @@ def lambda_handler(event, context):
     image = body.get('image', fallback_image)
 
     # ocr
-    _, boxes = ocr.recognizeCharacters(image)
+    boxes = ocr.recognizeCharacters(image)
     glyph_images = ocr.createGlyphImages(boxes, image, 200)
-
-    del boxes
 
     # cnn
     cnn_model = SingleModel()
