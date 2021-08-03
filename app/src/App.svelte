@@ -16,7 +16,7 @@
 			body: '{"wake-up": true}',
 			redirect: "follow",
 		}
-	).catch((error) => console.log("error", error));;
+	).catch((error) => console.log("error", error));
 
 	fetch(
 		"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
@@ -26,7 +26,7 @@
 			body: '{"wake-up": true}',
 			redirect: "follow",
 		}
-	).catch((error) => console.log("error", error));;
+	).catch((error) => console.log("error", error));
 
 	const hide = () => {
 		if (!validateInput(secret, placeholder)) {
@@ -130,13 +130,13 @@
 		<br />
 		<form>
 			<label for="secret">Secret :</label>
-			<input type="text" id="secret" bind:value={secret} />
+			<input type="text" id="secret" maxlength="320" bind:value={secret} />
 			<label for="placeholder">Placeholder :</label>
 			<textarea
 				style="height: 20em; width: 30em;"
 				name="placeholder"
 				id="placeholder"
-				maxlength="2000"
+				maxlength="1600"
 				bind:value={placeholder}
 			/>
 			<br />

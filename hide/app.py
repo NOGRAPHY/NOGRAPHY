@@ -38,10 +38,10 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "error": "Secret is too long. Make it shorter or the placeholder longer."
         }
-    elif len(placeholder) > 2000:
+    elif len(placeholder) > 1600:
         return {
                 "statusCode": 400,
-                "error": "Placeholder is too long. Max is 2000 characters."
+                "error": "Placeholder is too long. Max is 1600 characters."
             }
     else:
         fonts = load_fonts_from_fs(FONT_SIZE)
