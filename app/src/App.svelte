@@ -4,6 +4,7 @@
 	let placeholder =
 		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort. It had a perfectly round door like a porthole, painted green, with a shiny yellow brass knob in the exact middle. The door opened on to a tube-shaped hall like a tunnel: a very comfortable tunnel without smoke, with panelled walls, and floors tiled and carpeted, provided with polished chairs, and lots and lots of pegs for hats and coats - the hobbit was fond of visitors.";
 	let loading = false;
+	let imageWithSecret = "";
 	let exposeResult = "";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -46,10 +47,7 @@
 		)
 			.then((response) => response.text())
 			.then((result) => {
-				var a = document.createElement("a");
-				a.href = "data:image/png;base64," + result;
-				a.download = "Secret.png";
-				a.click();
+				imageWithSecret = "data:image/png;base64," + result;
 				loading = false;
 			})
 			.catch((error) => console.log("error", error));
@@ -101,6 +99,7 @@
 	};
 
 	const expose = (image) => {
+		imageWithSecret = "";
 		var raw = JSON.stringify({ image: image });
 		var requestOptions = {
 			method: "POST",
@@ -117,41 +116,90 @@
 				let parsedResult = JSON.parse(result);
 				exposeResult = parsedResult.exposed_message;
 				loading = false;
-				console.log("expose result is: ");
-				console.log(parsedResult);
 			})
 			.catch((error) => console.log("error", error));
+	};
+
+	const resetImageWithSecret = () => {
+		imageWithSecret = "";
+	};
+
+	const resetExposeResult = () => {
+		exposeResult = "";
 	};
 </script>
 
 <main>
 	<h1>nography</h1>
+	<br /><br />
+
 	{#if !loading}
-		<br />
-		<form>
-			<label for="secret">Secret :</label>
-			<input type="text" id="secret" maxlength="320" bind:value={secret} />
-			<label for="placeholder">Placeholder :</label>
-			<textarea
-				style="height: 20em; width: 30em;"
-				name="placeholder"
-				id="placeholder"
-				maxlength="1600"
-				bind:value={placeholder}
-			/>
-			<br />
-			<button type="button" on:click={hide}> Hide </button>
-			<button type="button" on:click={exposeButtonPressed}>
-				Expose
+		{#if imageWithSecret != ""}
+			<img style="border: 1px solid black;" src={imageWithSecret} alt="Secret" />
+			<p style="text-align: center; font-size: x-large;">^^ Download and Share this Image ^^</p>
+			<br><br>
+			<button
+				class="btn-primary"
+				type="button"
+				on:click={exposeButtonPressed}
+			>
+				Upload Image to expose Secret
 			</button>
-			{#if exposeResult.length > 0}
+			<button
+				class="btn-secondary"
+				type="button"
+				on:click={resetImageWithSecret}>Hide another Secret</button
+			>
+		{:else if exposeResult != ""}
+			<p>Exposed secret :</p>
+			<h2>{exposeResult}</h2>
+			<br><br>
+
+			<button
+				class="btn-primary"
+				type="button"
+				on:click={resetExposeResult}>Hide Secret in Image</button
+			>
+			<button
+				class="btn-secondary"
+				type="button"
+				on:click={exposeButtonPressed}
+			>
+				Expose another Secret
+			</button>
+		{:else}
+			<form>
+				<label for="secret">Secret :</label>
+				<input
+					type="text"
+					id="secret"
+					maxlength="320"
+					bind:value={secret}
+				/>
+				<label for="placeholder">Placeholder :</label>
+				<textarea
+					style="height: 20em; width: 30em;"
+					name="placeholder"
+					id="placeholder"
+					maxlength="1600"
+					bind:value={placeholder}
+				/>
 				<br />
-				<p>Exposed secret :</p>
-				<h2>{exposeResult}</h2>
-			{/if}
-			<!--invisible:-->
-			<input type="file" id="fileId" on:change={imageUploaded} />
-		</form>
+				<button class="btn-primary" type="button" on:click={hide}
+					>Hide Secret in Image</button
+				>
+				<button
+					class="btn-secondary"
+					type="button"
+					on:click={exposeButtonPressed}
+				>
+					Expose Secret from Image
+				</button>
+			</form>
+		{/if}
+
+		<!--invisible:-->
+		<input type="file" id="fileId" on:change={imageUploaded} />
 	{/if}
 	{#if loading}
 		<div class="lds-ellipsis">
