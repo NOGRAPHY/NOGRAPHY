@@ -429,6 +429,18 @@ h1 {
   background-color: white;
 }
 
+.btn-hint {
+  margin-bottom: 0;
+  width: 8rem;
+  float:right;
+}
+
+.hint-box {
+  border: solid black 1px;
+  padding: 1rem;
+  padding-bottom: 3.5rem;
+}
+
 /* Mobile Styles */
 @media (max-width: 700px) {
   .hide-sm {

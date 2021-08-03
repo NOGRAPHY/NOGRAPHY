@@ -4,6 +4,7 @@
 	let placeholder =
 		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort. It had a perfectly round door like a porthole, painted green, with a shiny yellow brass knob in the exact middle. The door opened on to a tube-shaped hall like a tunnel: a very comfortable tunnel without smoke, with panelled walls, and floors tiled and carpeted, provided with polished chairs, and lots and lots of pegs for hats and coats - the hobbit was fond of visitors.";
 	let loading = false;
+	let showHint = true;
 	let imageWithSecret = "";
 	let exposeResult = "";
 	const headers = new Headers();
@@ -127,6 +128,10 @@
 	const resetExposeResult = () => {
 		exposeResult = "";
 	};
+
+	const closeHint = () => {
+		showHint = false;
+	}
 </script>
 
 <main>
@@ -134,6 +139,20 @@
 	<br /><br />
 
 	{#if !loading}
+		{#if showHint}
+			<div class="hint-box">
+				<p>
+					HINT: With NOGRAPHY you can hide a secret text within an
+					image, by providing a non-secret placeholder text. You can
+					download and share that image, deceiving outsiders with an
+					image with the placeholder text. You (or any other insider)
+					can expose the secret using NOGRAPHY.
+				</p>
+				<br>
+				<button class="btn-secondary btn-hint" on:click="{closeHint}">close hint</button>
+			</div>
+			<br />
+		{/if}
 		{#if imageWithSecret != ""}
 			<img
 				style="border: 1px solid black;"
@@ -141,7 +160,7 @@
 				alt="Secret"
 			/>
 			<p style="text-align: center; font-size: x-large;">
-				^^ Download and Share this Image ^^
+				⬆️  Download and Share this Image ⬆️
 			</p>
 			<br /><br />
 			<button
