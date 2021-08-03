@@ -135,9 +135,15 @@
 
 	{#if !loading}
 		{#if imageWithSecret != ""}
-			<img style="border: 1px solid black;" src={imageWithSecret} alt="Secret" />
-			<p style="text-align: center; font-size: x-large;">^^ Download and Share this Image ^^</p>
-			<br><br>
+			<img
+				style="border: 1px solid black;"
+				src={imageWithSecret}
+				alt="Secret"
+			/>
+			<p style="text-align: center; font-size: x-large;">
+				^^ Download and Share this Image ^^
+			</p>
+			<br /><br />
 			<button
 				class="btn-primary"
 				type="button"
@@ -153,7 +159,7 @@
 		{:else if exposeResult != ""}
 			<p>Exposed secret :</p>
 			<h2>{exposeResult}</h2>
-			<br><br>
+			<br /><br />
 
 			<button
 				class="btn-primary"
@@ -200,13 +206,15 @@
 
 		<!--invisible:-->
 		<input type="file" id="fileId" on:change={imageUploaded} />
-	{/if}
-	{#if loading}
+	{:else}
 		<div class="lds-ellipsis">
 			<div />
 			<div />
 			<div />
 			<div />
+		</div>
+		<div class="loading-hint">
+			<p>This takes up to 12 seconds</p>
 		</div>
 	{/if}
 </main>

@@ -470,6 +470,13 @@ h1 {
   }
 }
 
+.loading-hint {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .lds-ellipsis {
   position: fixed;
   top: 50%;
