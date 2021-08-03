@@ -15,6 +15,14 @@ def lambda_handler(event, context):
             "error": "Missing request body."
         }
     body = json.loads(event['body'])
+    if body.get('wake-up', False):
+        return {
+            "statusCode": 200,
+            "headers": {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
     image = body.get('image', fallback_image)
 
     # ocr

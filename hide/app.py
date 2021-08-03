@@ -8,10 +8,11 @@ import os
 
 FONT_SIZE = 72
 IMAGE_WIDTH = 2480
-IMAGE_HEIGHT = 640
+IMAGE_HEIGHT = 1240
 MARGIN = 640
 ENCODING_DECODING_BASE = 3
 CHARACTER_SPACING = 8
+
 
 def lambda_handler(event, context):
     if 'body' not in event:
@@ -20,6 +21,15 @@ def lambda_handler(event, context):
             "error": "Missing request body."
         }
     body = json.loads(event['body'])
+    if body.get('wake-up', False):
+        return {
+            "statusCode": 200,
+            "headers": {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
+
     secret = body.get('secret', "LOTR is better than GOT")
     placeholder = body.get('placeholder', "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.")
     # TODO: check for potential error cases (missing values, wrong types etc.)
@@ -95,7 +105,8 @@ def fit_text(img, letters_and_fonts, color, margin):
     width = img.size[0] - 2 - margin
     draw = ImageDraw.Draw(img)
     path, _ = os.path.split(os.path.abspath(__file__))
-    measure_font = ImageFont.truetype(os.path.join(path, 'assets', '0.ttf'), FONT_SIZE)
+    measure_font = ImageFont.truetype(
+        os.path.join(path, 'assets', '0.ttf'), FONT_SIZE)
 
     lines = list(break_into_lines(
         letters_and_fonts, width, measure_font, draw))
@@ -140,14 +151,16 @@ def secret_fits_in_placeholder(secret, placeholder):
 def generate_training_data():
     fonts = load_fonts_from_fs(FONT_SIZE)
     placeholder = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-    for i in range(0, 9) :
+    for i in range(0, 9):
         list_of_ints = []
-        for j in range(0, 52) :
+        for j in range(0, 52):
             list_of_ints.append(i)
-        letters_and_fonts = get_letters_and_fonts(placeholder, list_of_ints, fonts)
+        letters_and_fonts = get_letters_and_fonts(
+            placeholder, list_of_ints, fonts)
         image = Image.new("RGB", (IMAGE_WIDTH, IMAGE_HEIGHT), 'white')
         fit_text(image, letters_and_fonts, 'black', MARGIN)
         image.save(str(i)+".png", format="PNG")
+
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

@@ -1,18 +1,42 @@
 <script>
-	let secret = "LOTR is better than GOT";
+	let secret =
+		"Aragorn broke two of his toes while kicking an Uruk Hai helmet";
 	let placeholder =
-		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.";
+		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort. It had a perfectly round door like a porthole, painted green, with a shiny yellow brass knob in the exact middle. The door opened on to a tube-shaped hall like a tunnel: a very comfortable tunnel without smoke, with panelled walls, and floors tiled and carpeted, provided with polished chairs, and lots and lots of pegs for hats and coats - the hobbit was fond of visitors.";
 	let loading = false;
 	let exposeResult = "";
+	const headers = new Headers();
+	headers.append("Content-Type", "application/json");
+
+	fetch(
+		"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
+		{
+			method: "POST",
+			headers: headers,
+			body: '{"wake-up": true}',
+			redirect: "follow",
+		}
+	).catch((error) => console.log("error", error));;
+
+	fetch(
+		"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
+		{
+			method: "POST",
+			headers: headers,
+			body: '{"wake-up": true}',
+			redirect: "follow",
+		}
+	).catch((error) => console.log("error", error));;
 
 	const hide = () => {
+		if (!validateInput(secret, placeholder)) {
+			return;
+		}
 		loading = true;
-		var myHeaders = new Headers();
-		myHeaders.append("Content-Type", "application/json");
 		var raw = JSON.stringify({ secret: secret, placeholder: placeholder });
 		var requestOptions = {
 			method: "POST",
-			headers: myHeaders,
+			headers: headers,
 			body: raw,
 			redirect: "follow",
 		};
@@ -29,6 +53,33 @@
 				loading = false;
 			})
 			.catch((error) => console.log("error", error));
+	};
+
+	const validateInput = (secret, placeholder) => {
+		let valid = true;
+		if (secret.length == 0) {
+			valid = false;
+			alert("Provide a secret.");
+		}
+		if (placeholder.length == 0) {
+			valid = false;
+			alert("Provide a placeholder.");
+		}
+		if (!secret.match("^[a-zA-Z ]*$")) {
+			valid = false;
+			alert("Use only A-Z for your secret.");
+		}
+		if (!placeholder.match("^[a-zA-Z-()`',.?!;: ]*$")) {
+			valid = false;
+			alert(
+				"Use only letters and punctuation marks for your placeholder."
+			);
+		}
+		if (secret.length * 5 > placeholder.length) {
+			valid = false;
+			alert("Use a longer placeholder or a shorter secret.");
+		}
+		return valid;
 	};
 
 	const imageUploaded = () => {
@@ -50,12 +101,10 @@
 	};
 
 	const expose = (image) => {
-		var myHeaders = new Headers();
-		myHeaders.append("Content-Type", "application/json");
 		var raw = JSON.stringify({ image: image });
 		var requestOptions = {
 			method: "POST",
-			headers: myHeaders,
+			headers: headers,
 			body: raw,
 			redirect: "follow",
 		};
@@ -95,8 +144,8 @@
 				Expose
 			</button>
 			{#if exposeResult.length > 0}
-				<br>
-				<label>Exposed secret :</label>
+				<br />
+				<p>Exposed secret :</p>
 				<h2>{exposeResult}</h2>
 			{/if}
 			<!--invisible:-->
