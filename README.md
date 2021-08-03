@@ -11,7 +11,7 @@ Boundaries:
 - please use short texts and even shorter secrets
 - The website is like an old diesel engine: it is slow in the beginning, but then it speeds up.
 
-## Prepare local Setup
+## Prepare local setup
 1. Clone the repository
 2. Install Python 3.8.7 (e.g. with pyenv)
 3. Install & run ![Docker](https://docs.docker.com/engine/install/)
@@ -26,7 +26,7 @@ In the root folder of the project
 2. Run `sam local invoke ExposeFunction -e expose-event.json` to invoke the expose lambda directly
 3. Run `sam local invoke HideFunction -e hide-event.json` to invoke hide lambda directly
 
-## Run Frontend locally (with prod Backend)
+## Run frontend locally (with prod backend)
 In the app folder of the project
 
 1. Run `npm install`
@@ -37,7 +37,7 @@ In the app folder of the project
 1. You will need AWS credentials, talk to Robert
 2. Run `sam build && sam deploy` 
 
-## Deploy frontend Frontend
+## Deploy frontend
 1. You will need AWS credentials, talk to Robert
 2. Run `cd app`
 3. Run `npm install`
