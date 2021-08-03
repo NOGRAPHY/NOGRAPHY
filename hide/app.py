@@ -8,11 +8,9 @@ import os
 
 FONT_SIZE = 72
 IMAGE_WIDTH = 2480
-IMAGE_HEIGHT = 1240
 MARGIN = 640
 ENCODING_DECODING_BASE = 3
 CHARACTER_SPACING = 8
-
 
 def lambda_handler(event, context):
     if 'body' not in event:
@@ -40,13 +38,18 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "error": "Secret is too long. Make it shorter or the placeholder longer."
         }
+    elif len(placeholder) > 2000:
+        return {
+                "statusCode": 400,
+                "error": "Placeholder is too long. Max is 2000 characters."
+            }
     else:
         fonts = load_fonts_from_fs(FONT_SIZE)
         encoded_secret = encoder.to_ints(
             encoder.encode(secret, ENCODING_DECODING_BASE))
         letters_and_fonts = get_letters_and_fonts(
             placeholder, encoded_secret, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, IMAGE_HEIGHT), 'white')
+        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
 
         fit_text(image, letters_and_fonts, 'black', MARGIN)
 
@@ -157,10 +160,16 @@ def generate_training_data():
             list_of_ints.append(i)
         letters_and_fonts = get_letters_and_fonts(
             placeholder, list_of_ints, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, IMAGE_HEIGHT), 'white')
+        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
         fit_text(image, letters_and_fonts, 'black', MARGIN)
         image.save(str(i)+".png", format="PNG")
 
+def estimateImageHeight(placeholder, font_size, image_width):
+    # if the character spacing or the margin is changed, these values need to be recalibrated!
+    letters_per_line = image_width / font_size / 0.53 
+    number_of_lines = len(placeholder) // letters_per_line + 1
+    height_without_margin = 1.1 * font_size * number_of_lines
+    return int(height_without_margin) + 640
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

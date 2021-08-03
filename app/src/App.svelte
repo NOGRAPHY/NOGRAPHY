@@ -136,6 +136,7 @@
 				style="height: 20em; width: 30em;"
 				name="placeholder"
 				id="placeholder"
+				maxlength="2000"
 				bind:value={placeholder}
 			/>
 			<br />
