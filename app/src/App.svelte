@@ -16,25 +16,31 @@
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
 
-	fetch(
-		"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
-		{
-			method: "POST",
-			headers: headers,
-			body: '{"wake-up": true}',
-			redirect: "follow",
-		}
-	).catch((error) => console.log("error", error));
+	const wakeUpHide = () => {
+		fetch(
+			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
+			{
+				method: "POST",
+				headers: headers,
+				body: '{"wake-up": true}',
+				redirect: "follow",
+			}
+		).catch((error) => console.log("error", error));
+	};
 
-	fetch(
-		"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
-		{
-			method: "POST",
-			headers: headers,
-			body: '{"wake-up": true}',
-			redirect: "follow",
-		}
-	).catch((error) => console.log("error", error));
+	const wakeUpExpose = () => {
+		fetch(
+			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
+			{
+				method: "POST",
+				headers: headers,
+				body: '{"wake-up": true}',
+				redirect: "follow",
+			}
+		).catch((error) => console.log("error", error));
+	};
+	wakeUpHide();
+	wakeUpExpose();
 
 	const hide = () => {
 		loading = true;
@@ -96,6 +102,7 @@
 	};
 
 	const exposeButtonPressed = () => {
+		wakeUpExpose();
 		document.querySelector("input[type=file]").click();
 	};
 
