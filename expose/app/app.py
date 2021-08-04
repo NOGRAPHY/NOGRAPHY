@@ -26,30 +26,34 @@ def lambda_handler(event, context):
     image = body.get('image', fallback_image)
 
     # ocr
-    boxes = ocr.recognizeCharacters(image)
-    glyph_images = ocr.createGlyphImages(boxes, image, 200)
+    boxes = ocr.recognize_boxes(image)
+    glyph_images = ocr.create_glyph_images(boxes, image, 200)
 
     # cnn
     cnn_model = SingleModel()
     font_indexes, confidence = cnn_model.predict(glyph_images)
 
     # decode
-    exposed_message = decoder.decode_from_font_indexes(font_indexes)
+    try:
+        exposed_message = decoder.decode_from_font_indexes(font_indexes)
 
-    return {
-        "statusCode": 200,
-        "headers": {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        "body": json.dumps(
-            {
-                "exposed_message": exposed_message,
-                "font_indexes": font_indexes,
-                "confidence": confidence,
-            }
-        ),
-    }
+        return {
+            "statusCode": 200,
+            "headers": {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            "body": json.dumps(
+                {
+                    "exposed_message": exposed_message,
+                    "font_indexes": font_indexes,
+                    "confidence": confidence,
+                }
+            ),
+        }
+    except UnicodeDecodeError as e:
+        # TODO: write an exception-case when the decoder failed.
+        pass
 
 
 if __name__ == "__main__":

@@ -8,11 +8,13 @@ from tesserocr import PyTessBaseAPI, RIL, OEM
 from PIL import Image
 from io import BytesIO
 import base64
+import datetime
 
 # download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
 
-def recognizeCharacters(imageAsBase64):
-    image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+
+def recognize_boxes(image_as_base64):
+    image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
     
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
@@ -22,7 +24,7 @@ def recognizeCharacters(imageAsBase64):
 
         boxes_final = []
 
-        # Filter that only A-Z & a-z gets extracted.
+        # Filter boxes, so that only A-Z & a-z gets recognized.
         whitelist = string.ascii_letters
         for index, character in enumerate(characters):
             if character in whitelist:
@@ -30,19 +32,9 @@ def recognizeCharacters(imageAsBase64):
 
         return boxes_final
 
-def drawBoxes(boxes, filename):
-    img = cv2.imread(filename)
-    for box in boxes:
-        box = box[1]
-        x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 1)
 
-    split_filename = filename.split(".")
-    cv2.imwrite(split_filename[0] + "_result." + split_filename[1], img)
-
-
-def createGlyphImages(boxes, imageAsBase64, size):
-    pillow_image = Image.open(BytesIO(base64.b64decode(imageAsBase64)))
+def create_glyph_images(boxes, image_as_base64, output_size):
+    pillow_image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
     img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
 
     glyphs = []
@@ -52,19 +44,32 @@ def createGlyphImages(boxes, imageAsBase64, size):
         letter_image = img[y:y + h, x:x + w]
 
         if w > h:
-            scaling_factor = size / w
+            scaling_factor = output_size / w
         else:
-            scaling_factor = size / h
+            scaling_factor = output_size / h
 
         resized_letter = cv2.resize(letter_image, (int(w * scaling_factor), int(h * scaling_factor)))
 
-        empty_image = np.ones((size, size, 3), np.uint8) * 255
+        empty_image = np.ones((output_size, output_size, 3), np.uint8) * 255
 
-        x_offset = int((size - resized_letter.shape[1]) / 2)
-        y_offset = int((size - resized_letter.shape[0]) / 2)
+        x_offset = int((output_size - resized_letter.shape[1]) / 2)
+        y_offset = int((output_size - resized_letter.shape[0]) / 2)
 
-        empty_image[y_offset:y_offset + resized_letter.shape[0],
-        x_offset:x_offset + resized_letter.shape[1]] = resized_letter
+        empty_image[y_offset:y_offset + resized_letter.shape[0], x_offset:x_offset + resized_letter.shape[1]] = resized_letter
 
         glyphs.append(empty_image)
+
     return glyphs
+
+
+# This generates an image, where all recognized boxes are framed in a blue rectangle.
+def draw_boxes(boxes, image_as_base64):
+    pillow_image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
+    cv2_img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
+
+    for box in boxes:
+        box = box[1]
+        x, y, w, h = box['x'], box['y'], box['w'], box['h']
+        cv2.rectangle(cv2_img, (x, y), (x + w, y + h), (255, 0, 0), 1)
+
+    cv2.imwrite(f"boxes_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}.png", cv2_img)
