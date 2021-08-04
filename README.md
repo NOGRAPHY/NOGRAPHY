@@ -38,8 +38,5 @@ In the app folder of the project
 2. Run `sam build && sam deploy` 
 
 ## Deploy frontend
-1. Run `cd app`
-2. Run `npm install`
-3. Run `npm run build`
-4. Commit and push to master
-5. Check [https://nography.cc](https://nography.cc) for your changes
+1. Commit and push to master branch
+2. Check [https://nography.cc](https://nography.cc) for your changes
