@@ -39,4 +39,5 @@ In the app folder of the project
 
 ## Deploy frontend
 1. Commit and push to master branch
-2. Check [https://nography.cc](https://nography.cc) for your changes
+2. Wait ~ 2 minutes
+3. Check [https://nography.cc](https://nography.cc) for your changes
