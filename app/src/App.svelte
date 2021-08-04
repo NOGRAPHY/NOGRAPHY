@@ -1,5 +1,4 @@
 <script>
-	import Hint from "./Hint.svelte";
 	import Loading from "./Loading.svelte";
 	import ValidationError from "./ValidationError.svelte";
 
@@ -8,6 +7,7 @@
 	let placeholder =
 		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort. It had a perfectly round door like a porthole, painted green, with a shiny yellow brass knob in the exact middle. The door opened on to a tube-shaped hall like a tunnel: a very comfortable tunnel without smoke, with panelled walls, and floors tiled and carpeted, provided with polished chairs, and lots and lots of pegs for hats and coats - the hobbit was fond of visitors.";
 	let loading = false;
+	let showHint = true;
 	let imageWithSecret = "";
 	let exposeResult = "";
 	let secretValidationError = "";
@@ -128,6 +128,10 @@
 	const resetImageWithSecret = () => {
 		imageWithSecret = "";
 	};
+
+	const closeHint = () => {
+		showHint = false;
+	};
 </script>
 
 <main>
@@ -135,7 +139,26 @@
 	<br /><br />
 
 	{#if !loading}
-		<Hint />
+		{#if showHint}
+			<div class="hint-box">
+				<p>
+					With NOGRAPHY you can hide a secret text within an image
+					with a placholder text. You can download and share that
+					image, deceiving outsiders with the placeholder text. You,
+					or any other insider, can expose the secret afterwards with
+					NOGRAPHY. For details visit <a
+						href="https://github.com/steganographie-HTWG/steganographie"
+						target="_blank">our Github repo</a
+					>.
+				</p>
+				<br />
+				<button class="btn-secondary btn-hint" on:click={closeHint}
+					>Got it!</button
+				>
+			</div>
+			<br />
+		{/if}
+
 		{#if imageWithSecret != ""}
 			<img
 				style="border: 1px solid black;"
