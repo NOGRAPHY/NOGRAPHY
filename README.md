@@ -1,5 +1,4 @@
 # NOGRAPHY<br>Team Project @HTWG WS2020/21
-[![Build Status](https://travis-ci.com/steganographie-HTWG/steganographie.svg?branch=master)](https://travis-ci.com/github/steganographie-HTWG/steganographie)
 
 ## What is NOGRAPHY?
 
@@ -14,8 +13,8 @@ Boundaries:
 ## Prepare local setup
 1. Clone the repository
 2. Install Python 3.8.7 (e.g. with pyenv)
-3. Install & run ![Docker](https://docs.docker.com/engine/install/)
-4. Install & run ![AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+3. Install & run [Docker](https://docs.docker.com/engine/install/)
+4. Install & run [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
 NOTE: There is no further need to install tesseract locally on your system, since it is shipped within the container.
 
