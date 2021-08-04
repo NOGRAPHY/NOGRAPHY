@@ -5,7 +5,7 @@
 
 NOGRAPHY is an encoding engine, that uses a placeholder text and assigns different fonts to different letters in order to embed information. These fonts are hardly recognizable by sight but easily differentiable for the neural network of the engine, which also contains an error correction mechanism for better stability.
 
-You can use the app here: ![NOGRAPHY App](https://nography.cc/)
+You can use the app here: [NOGRAPHY App](https://nography.cc/)
 
 Boundaries:
 - please use short texts and even shorter secrets
@@ -38,9 +38,8 @@ In the app folder of the project
 2. Run `sam build && sam deploy` 
 
 ## Deploy frontend
-1. You will need AWS credentials, talk to Robert
-2. Run `cd app`
-3. Run `npm install`
-4. Run `npm run build`
-5. Zip the content of the app/public folder
-6. Upload it to amplify
+1. Run `cd app`
+2. Run `npm install`
+3. Run `npm run build`
+4. Commit and push to master
+5. Check [https://nography.cc](https://nography.cc) for your changes
