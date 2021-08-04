@@ -149,7 +149,7 @@
 					can expose the secret using NOGRAPHY.
 				</p>
 				<br>
-				<button class="btn-secondary btn-hint" on:click="{closeHint}">close hint</button>
+				<button class="btn-secondary btn-hint" on:click="{closeHint}">Got it!</button>
 			</div>
 			<br />
 		{/if}
