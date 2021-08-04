@@ -1,6 +1,6 @@
 import json
 from ocr import ocr
-from cnn.single_model.cnn_single_model import SingleModel
+from cnn.glyph_recognizer import GlyphRecognizer
 from decoder import decoder
 
 fallback_image = """
@@ -30,8 +30,8 @@ def lambda_handler(event, context):
     glyph_images = ocr.create_glyph_images(boxes, image, 200)
 
     # cnn
-    cnn_model = SingleModel()
-    font_indexes, confidence = cnn_model.predict(glyph_images)
+    glyph_recognizer = GlyphRecognizer()
+    font_indexes, confidence = glyph_recognizer.predict(glyph_images)
 
     # decode
     try:

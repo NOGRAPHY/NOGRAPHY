@@ -4,7 +4,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
-class SingleModel:
+
+class GlyphRecognizer:
     MODEL_FILNENAME = "LiberationSerif-model-20210802-1357.h5"
     DEFAULT_FONT = 8
 
