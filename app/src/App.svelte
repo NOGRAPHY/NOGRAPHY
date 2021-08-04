@@ -150,7 +150,7 @@
 			<div class="hint-box">
 				<p>
 					With NOGRAPHY you can hide a secret text within an image
-					with a placholder text. You can download and share that
+					with a placeholder text. You can download and share that
 					image, deceiving outsiders with the placeholder text. You,
 					or any other insider, can expose the secret afterwards with
 					NOGRAPHY. For details visit <a
