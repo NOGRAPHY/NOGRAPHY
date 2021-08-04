@@ -1,22 +1,26 @@
 import os
 import sys
-import shutil
 import string
 import random
 import argparse
-import tempfile
-
-from ocr import ocr
+import base64
+from io import BytesIO
 
 from tqdm import tqdm
 from fontTools.ttLib import TTFont
 from imgaug import parameters as iap
-from pdf2image import convert_from_path
 from pylatex.base_classes import Command
 from pylatex import Document, Package, NoEscape
 
+from PIL import Image, ImageDraw, ImageFont
+from cv2 import cv2
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+from expose.app.ocr import ocr
+
 
 class GlyphPerturber:
+    # To add Umlauts you might uncomment the list concat in this line
     characters = list(string.ascii_letters) # + ["adieresis", "odieresis", "udieresis", "Adieresis", "Odieresis", "Udieresis"]
 
     @staticmethod
@@ -88,63 +92,103 @@ class PdfGenerator:
 
         return document
 
+
+class PngGenerator:
+    FONT_SIZE = 72
+    MARGIN = 640
+    CHARACTER_SPACING = 8
+
     @staticmethod
-    def generate_training_pdf(perturbed_font):
-        document = PdfGenerator.setup_document(letterspace=15)
+    def _calc_image_height(input_text, image_width):
+        letters_per_line = image_width / PngGenerator.FONT_SIZE / 0.53
+        number_of_lines = len(input_text) // letters_per_line + 1
 
-        document.append(Command('setmainfont', arguments=NoEscape(perturbed_font)))
-        document.append(string.ascii_lowercase)
-        document.append("\n")
-        document.append("\n")
-        document.append(string.ascii_uppercase)
-        document.append("\n")
+        height_without_margin = 1.1 * PngGenerator.FONT_SIZE * number_of_lines
 
-        return document
+        return int(height_without_margin) + PngGenerator.MARGIN
+
+    @staticmethod
+    def break_into_lines(text, width, font_to_draw, draw):
+        if not text:
+            return
+        lo = 0
+        hi = len(text)
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            w, h = draw.textsize(text[:mid], font=font_to_draw)
+            if w <= width:
+                lo = mid
+            else:
+                hi = mid - 1
+        w, h = draw.textsize(text[:lo], font=font_to_draw)
+        yield text[:lo], w, h
+        yield from PngGenerator.break_into_lines(text[lo:], width, font_to_draw, draw)
+
+    @staticmethod
+    def generate_training_data(perturbed_font, output_path, dpi):
+        text_to_draw = string.ascii_letters
+        image_width = int(8.267717 * dpi)
+        image_height = PngGenerator._calc_image_height(text_to_draw, image_width)
+
+        img = Image.new("RGB", (image_width, image_height), 'white')
+        draw = ImageDraw.Draw(img)
+
+        font_to_draw = ImageFont.truetype(perturbed_font, PngGenerator.FONT_SIZE)
+
+        width = img.size[0] - 2 - PngGenerator.MARGIN
+        lines = list(PngGenerator.break_into_lines(text_to_draw, width, font_to_draw, draw))
+        height = sum(line[2] for line in lines)
+
+        y = (img.size[1] - height) // 2
+        for t, w, h in lines:
+            x = (img.size[0] - w - PngGenerator.CHARACTER_SPACING * len(t)) // 2
+            for char in t:
+                draw.text((x, y), char, font=font_to_draw, fill='black')
+                x = x + draw.textsize(char, font=font_to_draw)[0] + PngGenerator.CHARACTER_SPACING
+            y += h
+
+        filename, _ = os.path.splitext(os.path.basename(perturbed_font))
+        filename = f"{os.path.join(output_path, filename)}.png"
+        img.save(filename, format="PNG")
+
+        return filename
 
 
 class GlyphExtractor:
     @staticmethod
-    def extract_glyphs(font_pdf_path, dpis):
-        for dpi in dpis:
-            filename = os.path.splitext(os.path.basename(font_pdf_path))[0]
-            new_pdf_dir = os.path.join(os.path.dirname(font_pdf_path), f"{dpi}dpi", filename)
-            os.makedirs(new_pdf_dir, exist_ok=True)
+    def extract_glyphs(png_path):
+        with BytesIO() as buffer:
+            img = Image.open(png_path)
+            img.save(buffer, format="PNG")
+            image_base64 = base64.b64encode(buffer.getvalue())
 
-            new_pdf_path = os.path.join(new_pdf_dir, os.path.basename(font_pdf_path))
+        boxes = ocr.recognize_boxes(image_base64)
 
-            # copy PDF of font into its own directory
-            shutil.copy(font_pdf_path, new_pdf_path)
+        if len(GlyphPerturber.characters) != len(boxes):
+            raise RuntimeError("OCR was not able to recognize all glyphs.")
 
-            # convert PDF to PNG
-            png_path = os.path.join(new_pdf_dir, f"{filename}.png")
-            with tempfile.TemporaryDirectory() as path:
-                images = convert_from_path(new_pdf_path, dpi=int(dpi), output_folder=path, fmt="png")[0]
-                images.save(png_path)
+        glyphs = ocr.create_glyph_images(boxes, image_base64, 200)
 
-            boxes = ocr.recognize_boxes(png_path)
+        png_filename = os.path.splitext(os.path.basename(png_path))[0]
+        new_png_path = os.path.join(os.path.dirname(png_path), png_filename)
+        os.makedirs(new_png_path, exist_ok=True)
 
-            if len(GlyphPerturber.characters) != len(boxes):
-                raise RuntimeError("OCR was not able to recognize all glyphs.")
+        for index, glyph in enumerate(glyphs):
+            cv2.imwrite(os.path.join(new_png_path, f"{png_filename}_{index:02}.png"), glyph)
 
-            # TODO: If you want the pngs, use the new function's interface
-            # ocr.createGlyphImages(characters, boxes, png_path, 200, save_files=True)
-
-            os.remove(new_pdf_path)
-            os.remove(png_path)
-
-        os.remove(font_pdf_path)
+        os.remove(png_path)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Perturbs glyphs of a given font file.")
-    parser.add_argument("-f", "--font", type=str, required=True, help="Font file to be perturbed.")
+    parser = argparse.ArgumentParser(description="Perturbs glyphs of a given TTF-font file.")
+    parser.add_argument("-f", "--font", type=str, required=True, help="TTF-Font file to be perturbed.")
     parser.add_argument("-o", "--output", type=str, required=True, help="Directory where all perturbed fonts will be saved.")
     parser.add_argument("-n", "--number", type=int, required=True, help="Number of perturbed fonts.")
     parser.add_argument("-p", "--points", type=int, required=True, help="Number of points to modify.")
 
     parser.add_argument("--preview", action="store_true", help="Generate a preview PDF file with all perturbed glyphs.")
     parser.add_argument("--train", action="store_true", help="Generate image data for training with all perturbed glyphs.")
-    parser.add_argument("--dpis", nargs='+', default=300)
+    parser.add_argument("--dpis", nargs='+', default=[300])
 
     args = parser.parse_args()
 
@@ -158,40 +202,41 @@ if __name__ == "__main__":
         print(f"Output directory '{args.output}' is not empty. Quitting...")
         sys.exit(-1)
 
-    perturbed_font_names = []
-    original_font_name, extension = os.path.splitext(args.font)
+    for dpi in args.dpis:
+        if not dpi.isdigit():
+            raise TypeError("Only integers are allowed for dpi.")
+
+    perturbed_fonts = []
+    original_font_filename, extension = os.path.splitext(args.font)
 
     for i in tqdm(range(args.number)):
-        # TODO: this only works with TTF right now... Add OTF support.
+        # TODO in future: this only works with TTF right now... Add OTF support.
         font = TTFont(args.font)
 
         font = GlyphPerturber.rename_font(font, i+1)
         font = GlyphPerturber.perturb_glyphs(font, args.points)
 
-        perturbed_font_name = f"{original_font_name}-PerturbedGlyphs-{i+1}{extension}"
-        perturbed_font_names.append(perturbed_font_name)
+        perturbed_font_filename = f"{original_font_filename}-PerturbedGlyphs-{i+1:02}"
+        perturbed_fonts.append(f"{perturbed_font_filename}{extension}")
 
-        font.save(os.path.join(args.output, perturbed_font_name))
+        font.save(os.path.join(args.output, f"{perturbed_font_filename}{extension}"))
 
         if args.train:
-            train_path = os.path.join(args.output, "train_data")
-            os.makedirs(train_path, exist_ok=True)
+            for dpi in args.dpis:
+                dpi = int(dpi)
+                train_path = os.path.join(args.output, "train_data", f"{dpi}dpi")
+                os.makedirs(train_path, exist_ok=True)
 
-            train_pdf_filename = f"{original_font_name}-PerturbedGlyphs-{i+1}"
+                training_png_filepath = PngGenerator.generate_training_data(
+                    os.path.join(args.output, f"{perturbed_font_filename}{extension}"),
+                    train_path,
+                    dpi
+                )
 
-            PdfGenerator.generate_training_pdf(perturbed_font_name).generate_pdf(
-                os.path.join(args.output, train_pdf_filename),
-                clean_tex=True, compiler="xelatex"
-            )
-
-            shutil.move(os.path.join(args.output, f"{train_pdf_filename}.pdf"),
-                        os.path.join(train_path, f"{train_pdf_filename}.pdf"))
-
-            GlyphExtractor.extract_glyphs(font_pdf_path=os.path.join(train_path, f"{train_pdf_filename}.pdf"),
-                                          dpis=[] + args.dpis)
+                GlyphExtractor.extract_glyphs(training_png_filepath)
 
     if args.preview:
-        PdfGenerator.generate_preview(perturbed_font_names).generate_pdf(
-            os.path.join(args.output, f"{original_font_name}-PerturbedGlyphs-Preview"),
+        PdfGenerator.generate_preview(perturbed_fonts).generate_pdf(
+            os.path.join(args.output, f"{original_font_filename}-PerturbedGlyphs-Preview"),
             clean_tex=True, compiler="xelatex"
         )
