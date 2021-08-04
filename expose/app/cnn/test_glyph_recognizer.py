@@ -1,4 +1,4 @@
-from cnn.single_model.cnn_single_model import SingleModel
+from glyph_recognizer import GlyphRecognizer
 
 import os
 import numpy as np
@@ -19,7 +19,7 @@ def test_single_model():
 
     imgs = np.array(imgs)
 
-    model = SingleModel()
+    model = GlyphRecognizer()
     font_indexes, _, _ = model.predict(imgs)
 
     assert len(font_indexes) == 30  # We have 30 relevant glyphs.
