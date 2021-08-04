@@ -217,10 +217,3 @@
 		<Loading />
 	{/if}
 </main>
-
-<style>
-	.placeholder {
-		height: 20em;
-		width: 30em;
-	}
-</style>

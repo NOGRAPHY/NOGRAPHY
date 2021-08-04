@@ -482,6 +482,17 @@ h1 {
   }
 }
 
+.placeholder {
+  height: 20em;
+  width: 30em;
+}
+
+.validationError {
+  color: red;
+  margin-top: -1rem;
+  text-align: center;
+}
+
 .loading-hint {
   position: fixed;
   top: 60%;
