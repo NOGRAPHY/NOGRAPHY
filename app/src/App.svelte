@@ -1,6 +1,7 @@
 <script>
 	import Hint from "./Hint.svelte";
 	import Loading from "./Loading.svelte";
+	import ValidationError from "./ValidationError.svelte";
 
 	let secret =
 		"Aragorn broke two of his toes while kicking an Uruk Hai helmet";
@@ -9,6 +10,9 @@
 	let loading = false;
 	let imageWithSecret = "";
 	let exposeResult = "";
+	let secretValidationError = "";
+	let placeholderValidationError = "";
+	const allowedChars = "^[a-zA-Z-()`',.?!;: ]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
 
@@ -33,9 +37,6 @@
 	).catch((error) => console.log("error", error));
 
 	const hide = () => {
-		if (!validateInput(secret, placeholder)) {
-			return;
-		}
 		loading = true;
 		var raw = JSON.stringify({ secret: secret, placeholder: placeholder });
 		var requestOptions = {
@@ -56,31 +57,28 @@
 			.catch((error) => console.log("error", error));
 	};
 
-	const validateInput = (secret, placeholder) => {
-		let valid = true;
-		if (secret.length == 0) {
-			valid = false;
-			alert("Provide a secret.");
+	const validateSecret = () => {
+		if (!secret.match(allowedChars)) {
+			secretValidationError =
+				"Use only letters and punctuation marks for your secret.";
+		} else if (secret.length * 5 > placeholder.length) {
+			secretValidationError =
+				"Use a shorter secret or a longer placeholder.";
+		} else {
+			secretValidationError = "";
 		}
-		if (placeholder.length == 0) {
-			valid = false;
-			alert("Provide a placeholder.");
+	};
+
+	const validatePlaceholder = () => {
+		if (!placeholder.match(allowedChars)) {
+			placeholderValidationError =
+				"Use only letters and punctuation marks for your placeholder.";
+		} else if (secret.length * 5 > placeholder.length) {
+			placeholderValidationError =
+				"Use a longer placeholder or a shorter secret.";
+		} else {
+			placeholderValidationError = "";
 		}
-		if (!secret.match("^[a-zA-Z ]*$")) {
-			valid = false;
-			alert("Use only A-Z for your secret.");
-		}
-		if (!placeholder.match("^[a-zA-Z-()`',.?!;: ]*$")) {
-			valid = false;
-			alert(
-				"Use only letters and punctuation marks for your placeholder."
-			);
-		}
-		if (secret.length * 5 > placeholder.length) {
-			valid = false;
-			alert("Use a longer placeholder or a shorter secret.");
-		}
-		return valid;
 	};
 
 	const imageUploaded = () => {
@@ -185,15 +183,20 @@
 					id="secret"
 					maxlength="320"
 					bind:value={secret}
+					on:keyup={validateSecret}
 				/>
+				<ValidationError validationError={secretValidationError} />
 				<label for="placeholder">Placeholder :</label>
 				<textarea
-					style="height: 20em; width: 30em;"
+					class="placeholder"
 					name="placeholder"
 					id="placeholder"
 					maxlength="1600"
 					bind:value={placeholder}
+					on:keyup={validatePlaceholder}
 				/>
+				<ValidationError validationError={placeholderValidationError} />
+
 				<br />
 				<button class="btn-primary" type="button" on:click={hide}
 					>Hide Secret in Image</button
@@ -214,3 +217,10 @@
 		<Loading />
 	{/if}
 </main>
+
+<style>
+	.placeholder {
+		height: 20em;
+		width: 30em;
+	}
+</style>
