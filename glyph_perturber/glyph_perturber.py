@@ -94,18 +94,24 @@ class PdfGenerator:
 
 
 class PngGenerator:
-    FONT_SIZE = 72
-    MARGIN = 640
-    CHARACTER_SPACING = 8
+    def __init__(self, dpi):
+        self.TEXT = ' '.join([char for char in string.ascii_letters])
+        # self.TEXT = string.ascii_letters
 
-    @staticmethod
-    def _calc_image_height(input_text, image_width):
-        letters_per_line = image_width / PngGenerator.FONT_SIZE / 0.53
-        number_of_lines = len(input_text) // letters_per_line + 1
+        self.CHARACTER_SPACING = int(0.01 * dpi)
+        self.FONT_SIZE = int(0.24 * dpi)
+        self.MARGIN = int(2.13 * dpi)
 
-        height_without_margin = 1.1 * PngGenerator.FONT_SIZE * number_of_lines
+        self.IMAGE_WIDTH = int(8.267717 * dpi)
+        self.IMAGE_HEIGHT = self._calc_image_height()
 
-        return int(height_without_margin) + PngGenerator.MARGIN
+    def _calc_image_height(self):
+        letters_per_line = self.IMAGE_WIDTH / self.FONT_SIZE / 0.53
+        number_of_lines = len(self.TEXT) // letters_per_line + 1
+
+        height_without_margin = 1.1 * self.FONT_SIZE * number_of_lines
+
+        return int(height_without_margin) + self.MARGIN
 
     @staticmethod
     def break_into_lines(text, width, font_to_draw, draw):
@@ -124,27 +130,22 @@ class PngGenerator:
         yield text[:lo], w, h
         yield from PngGenerator.break_into_lines(text[lo:], width, font_to_draw, draw)
 
-    @staticmethod
-    def generate_training_data(perturbed_font, output_path, dpi):
-        text_to_draw = string.ascii_letters
-        image_width = int(8.267717 * dpi)
-        image_height = PngGenerator._calc_image_height(text_to_draw, image_width)
-
-        img = Image.new("RGB", (image_width, image_height), 'white')
+    def generate_training_data(self, perturbed_font, output_path):
+        img = Image.new("RGB", (self.IMAGE_WIDTH, self.IMAGE_HEIGHT), 'white')
         draw = ImageDraw.Draw(img)
 
-        font_to_draw = ImageFont.truetype(perturbed_font, PngGenerator.FONT_SIZE)
+        font_to_draw = ImageFont.truetype(perturbed_font, self.FONT_SIZE)
 
-        width = img.size[0] - 2 - PngGenerator.MARGIN
-        lines = list(PngGenerator.break_into_lines(text_to_draw, width, font_to_draw, draw))
+        width = img.size[0] - 2 - self.MARGIN
+        lines = list(PngGenerator.break_into_lines(self.TEXT, width, font_to_draw, draw))
         height = sum(line[2] for line in lines)
 
         y = (img.size[1] - height) // 2
         for t, w, h in lines:
-            x = (img.size[0] - w - PngGenerator.CHARACTER_SPACING * len(t)) // 2
+            x = (img.size[0] - w - self.CHARACTER_SPACING * len(t)) // 2
             for char in t:
                 draw.text((x, y), char, font=font_to_draw, fill='black')
-                x = x + draw.textsize(char, font=font_to_draw)[0] + PngGenerator.CHARACTER_SPACING
+                x = x + draw.textsize(char, font=font_to_draw)[0] + self.CHARACTER_SPACING
             y += h
 
         filename, _ = os.path.splitext(os.path.basename(perturbed_font))
@@ -167,16 +168,16 @@ class GlyphExtractor:
         if len(GlyphPerturber.characters) != len(boxes):
             raise RuntimeError("OCR was not able to recognize all glyphs.")
 
-        glyphs = ocr.create_glyph_images(boxes, image_base64, 200)
-
-        png_filename = os.path.splitext(os.path.basename(png_path))[0]
-        new_png_path = os.path.join(os.path.dirname(png_path), png_filename)
-        os.makedirs(new_png_path, exist_ok=True)
-
-        for index, glyph in enumerate(glyphs):
-            cv2.imwrite(os.path.join(new_png_path, f"{png_filename}_{index:02}.png"), glyph)
-
-        os.remove(png_path)
+        # glyphs = ocr.create_glyph_images(boxes, image_base64, 200)
+        #
+        # png_filename = os.path.splitext(os.path.basename(png_path))[0]
+        # new_png_path = os.path.join(os.path.dirname(png_path), png_filename)
+        # os.makedirs(new_png_path, exist_ok=True)
+        #
+        # for index, glyph in enumerate(glyphs):
+        #     cv2.imwrite(os.path.join(new_png_path, f"{png_filename}_{index:02}.png"), glyph)
+        #
+        # os.remove(png_path)
 
 
 if __name__ == "__main__":
@@ -223,14 +224,12 @@ if __name__ == "__main__":
 
         if args.train:
             for dpi in args.dpis:
-                dpi = int(dpi)
                 train_path = os.path.join(args.output, "train_data", f"{dpi}dpi")
                 os.makedirs(train_path, exist_ok=True)
 
-                training_png_filepath = PngGenerator.generate_training_data(
+                training_png_filepath = PngGenerator(int(dpi)).generate_training_data(
                     os.path.join(args.output, f"{perturbed_font_filename}{extension}"),
-                    train_path,
-                    dpi
+                    train_path
                 )
 
                 GlyphExtractor.extract_glyphs(training_png_filepath)
