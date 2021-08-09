@@ -51,20 +51,15 @@ def lambda_handler(event, context):
         return client_error("The secret message could not be exposed.")
 
 
-def client_error(error):
+def client_error(error_message):
     return {
-        "statusCode": 400,
+        "statusCode": 200,
         "headers": {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
-        "body": json.dumps(
-            {
-                "error": error,
-            }
-        )
+        "body": json.dumps({"error": error_message})
     }
-
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

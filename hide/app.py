@@ -52,7 +52,7 @@ def lambda_handler(event, context):
 
         buffered = BytesIO()
         image.save(buffered, format="PNG")
-        image_str = base64.b64encode(buffered.getvalue())
+        image_str = str(base64.b64encode(buffered.getvalue()))[2:][:-1]
 
         return {
             "statusCode": 200,
@@ -60,7 +60,7 @@ def lambda_handler(event, context):
                 'Content-Type': 'image/png',
                 'Access-Control-Allow-Origin': '*'
             },
-            "body": image_str,
+            "body": "{\"image\":\""+image_str + "\"}",
             "isBase64Encoded": True
         }
 
@@ -173,18 +173,14 @@ def estimateImageHeight(placeholder, font_size, image_width):
     return int(height_without_margin) + 640
 
 
-def client_error(error):
+def client_error(error_message):
     return {
-        "statusCode": 400,
+        "statusCode": 200,
         "headers": {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
-        "body": json.dumps(
-            {
-                "error": error,
-            }
-        )
+        "body": json.dumps({"error": error_message})
     }
 
 

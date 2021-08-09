@@ -56,17 +56,17 @@
 			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
 			requestOptions
 		)
-			.then((response) => response.text())
+			.then((response) => response.json())
 			.then((result) => {
-				// TODO: that is a weird way of catching an error.
-				if (result.startsWith('{"error":')) {
-					alert(JSON.parse(result).error);
+				console.log(result.image);
+				if (result.error) {
+					alert(result.error);
 				} else {
-					imageWithSecret = "data:image/png;base64," + result;
+					imageWithSecret = "data:image/png;base64," + result.image;
 				}
 				loading = false;
 			})
-			.catch((error) => console.log("error", error));
+			.catch((error) => console.log(error));
 	};
 
 	const validateSecret = () => {
@@ -125,15 +125,17 @@
 			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
 			requestOptions
 		)
-			.then((response) => response.text())
+			.then((response) => response.json())
 			.then((result) => {
-				let parsedResult = JSON.parse(result);
-				exposeResult = parsedResult.exposed_message;
+				console.log(result);
+				if (result.error) {
+					alert(result.error);
+				} else {
+					exposeResult = parsedResult.exposed_message;
+				}
 				loading = false;
 			})
 			.catch((error) => {
-				alert("The secret could not be identified.");
-				loading = false;
 				console.log(error);
 			});
 	};
