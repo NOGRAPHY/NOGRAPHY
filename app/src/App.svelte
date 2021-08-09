@@ -12,6 +12,7 @@
 	let exposeResult = "";
 	let secretValidationError = "";
 	let placeholderValidationError = "";
+	let serverError = "";
 	const allowedChars = "^[a-zA-Z-()`',.?!;: ]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -57,7 +58,12 @@
 		)
 			.then((response) => response.text())
 			.then((result) => {
-				imageWithSecret = "data:image/png;base64," + result;
+				// TODO: that is a weird way of catching an error.
+				if (result.startsWith('{"error":')) {
+					alert(JSON.parse(result).error);
+				} else {
+					imageWithSecret = "data:image/png;base64," + result;
+				}
 				loading = false;
 			})
 			.catch((error) => console.log("error", error));
@@ -125,7 +131,11 @@
 				exposeResult = parsedResult.exposed_message;
 				loading = false;
 			})
-			.catch((error) => console.log("error", error));
+			.catch((error) => {
+				alert("The secret could not be identified.");
+				loading = false;
+				console.log(error);
+			});
 	};
 
 	const resetExposeResult = () => {
