@@ -12,12 +12,10 @@ MARGIN = 640
 ENCODING_DECODING_BASE = 3
 CHARACTER_SPACING = 8
 
+
 def lambda_handler(event, context):
     if 'body' not in event:
-        return {
-            "statusCode": 400,
-            "error": "Missing request body."
-        }
+        return client_error("Missing request body.")
     body = json.loads(event['body'])
     if body.get('wake-up', False):
         return {
@@ -28,34 +26,33 @@ def lambda_handler(event, context):
             }
         }
 
-    secret = body.get('secret', "LOTR is better than GOT")
-    placeholder = body.get('placeholder', "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.")
-    # TODO: check for potential error cases (missing values, wrong types etc.)
-    # TODO: catch too many characters in placeholder - define a limit for the user
+    secret = body.get('secret', '')
+    placeholder = body.get('placeholder', '')
+    if secret == '':
+        return client_error('No secret found.')
+    if placeholder == '':
+        return client_error('No placeholder found.')
 
+    if len(placeholder) > 1600:
+        return client_error("Placeholder is too long. Max is 1600 characters.")
+    if len(secret) > 320:
+        return client_error("Secret is too long. Max is 320 characters.")
     if not secret_fits_in_placeholder(secret, placeholder):
-        return {
-            "statusCode": 400,
-            "error": "Secret is too long. Make it shorter or the placeholder longer."
-        }
-    elif len(placeholder) > 1600:
-        return {
-                "statusCode": 400,
-                "error": "Placeholder is too long. Max is 1600 characters."
-            }
+        return client_error("Secret is too long. Make it shorter or the placeholder longer.")
     else:
         fonts = load_fonts_from_fs(FONT_SIZE)
         encoded_secret = encoder.to_ints(
             encoder.encode(secret, ENCODING_DECODING_BASE))
         letters_and_fonts = get_letters_and_fonts(
             placeholder, encoded_secret, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
+        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(
+            placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
 
         fit_text(image, letters_and_fonts, 'black', MARGIN)
 
         buffered = BytesIO()
         image.save(buffered, format="PNG")
-        image_str = base64.b64encode(buffered.getvalue())
+        image_str = str(base64.b64encode(buffered.getvalue()))[2:][:-1]
 
         return {
             "statusCode": 200,
@@ -63,7 +60,7 @@ def lambda_handler(event, context):
                 'Content-Type': 'image/png',
                 'Access-Control-Allow-Origin': '*'
             },
-            "body": image_str,
+            "body": "{\"image\":\""+image_str + "\"}",
             "isBase64Encoded": True
         }
 
@@ -148,9 +145,11 @@ def break_into_lines(letters_and_fonts, width, font, draw):
 
 
 def secret_fits_in_placeholder(secret, placeholder):
-    return len(secret) * ENCODING_DECODING_BASE <= len(placeholder)
+    return len(secret) * 5 <= len(placeholder)
 
 # Use this if you want to generate new training data (not actively used by hide lambda)
+
+
 def generate_training_data():
     fonts = load_fonts_from_fs(FONT_SIZE)
     placeholder = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
@@ -160,16 +159,30 @@ def generate_training_data():
             list_of_ints.append(i)
         letters_and_fonts = get_letters_and_fonts(
             placeholder, list_of_ints, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
+        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(
+            placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
         fit_text(image, letters_and_fonts, 'black', MARGIN)
         image.save(str(i)+".png", format="PNG")
 
+
 def estimateImageHeight(placeholder, font_size, image_width):
     # if the character spacing or the margin is changed, these values need to be recalibrated!
-    letters_per_line = image_width / font_size / 0.53 
+    letters_per_line = image_width / font_size / 0.53
     number_of_lines = len(placeholder) // letters_per_line + 1
     height_without_margin = 1.1 * font_size * number_of_lines
     return int(height_without_margin) + 640
+
+
+def client_error(error_message):
+    return {
+        "statusCode": 200,
+        "headers": {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        "body": json.dumps({"error": error_message})
+    }
+
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

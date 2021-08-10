@@ -12,7 +12,8 @@
 	let exposeResult = "";
 	let secretValidationError = "";
 	let placeholderValidationError = "";
-	const allowedChars = "^[a-zA-Z-()`',.?!;: ]*$";
+	// Taken from https://stackoverflow.com/questions/6381752/validating-users-utf-8-name-in-javascript
+	const allowedChars = "^[a-zA-Z-()`',.\*\+\/?!$#%&;:@\<\>=_\|\{\}\~  \r\n\t]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
 
@@ -55,12 +56,16 @@
 			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/hide",
 			requestOptions
 		)
-			.then((response) => response.text())
+			.then((response) => response.json())
 			.then((result) => {
-				imageWithSecret = "data:image/png;base64," + result;
+				if (result.error) {
+					alert(result.error);
+				} else {
+					imageWithSecret = "data:image/png;base64," + result.image;
+				}
 				loading = false;
 			})
-			.catch((error) => console.log("error", error));
+			.catch((error) => console.log(error));
 	};
 
 	const validateSecret = () => {
@@ -119,13 +124,18 @@
 			"https://vk6c7sl3d6.execute-api.eu-central-1.amazonaws.com/prod/expose",
 			requestOptions
 		)
-			.then((response) => response.text())
+			.then((response) => response.json())
 			.then((result) => {
-				let parsedResult = JSON.parse(result);
-				exposeResult = parsedResult.exposed_message;
+				if (result.error) {
+					alert(result.error);
+				} else {
+					exposeResult = parsedResult.exposed_message;
+				}
 				loading = false;
 			})
-			.catch((error) => console.log("error", error));
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	const resetExposeResult = () => {
@@ -149,11 +159,12 @@
 		{#if showHint}
 			<div class="hint-box">
 				<p>
-					With NOGRAPHY you can hide a secret text within an image
-					with a placeholder text. You can download and share that
-					image, deceiving outsiders with the placeholder text. You,
-					or any other insider, can expose the secret afterwards with
-					NOGRAPHY. For details visit <a
+					With NOGRAPHY you can hide a secret text within a
+					placeholder text saved as PNG. You can download and share
+					that PNG image, deceiving outsiders with the placeholder
+					text. You, or any other insider, can expose the secret
+					afterwards with NOGRAPHY by uploading the file. For details
+					visit <a
 						href="https://github.com/steganographie-HTWG/steganographie"
 						target="_blank">our Github repo</a
 					>.
@@ -167,13 +178,16 @@
 		{/if}
 
 		{#if imageWithSecret != ""}
-			<img
-				style="border: 1px solid black;"
-				src={imageWithSecret}
-				alt="Secret"
-			/>
-			<p style="text-align: center; font-size: x-large;">
-				⬆️ Download and Share this Image ⬆️
+			<a href={imageWithSecret} download="secret.png">
+				<img
+					style="border: 1px solid black;"
+					src={imageWithSecret}
+					name="helloworld"
+					alt="Secret"
+				/>
+			</a>
+			<p style="text-align: center; font-size: large;">
+				⬆️ Download and share this image (without compression) ⬆️
 			</p>
 			<br /><br />
 			<button
@@ -181,12 +195,12 @@
 				type="button"
 				on:click={exposeButtonPressed}
 			>
-				Upload Image to expose Secret
+				Upload image to expose secret
 			</button>
 			<button
 				class="btn-secondary"
 				type="button"
-				on:click={resetImageWithSecret}>Hide another Secret</button
+				on:click={resetImageWithSecret}>Hide another secret</button
 			>
 		{:else if exposeResult != ""}
 			<p>Exposed secret :</p>
@@ -196,14 +210,14 @@
 			<button
 				class="btn-primary"
 				type="button"
-				on:click={resetExposeResult}>Hide Secret in Image</button
+				on:click={resetExposeResult}>Hide secret in image</button
 			>
 			<button
 				class="btn-secondary"
 				type="button"
 				on:click={exposeButtonPressed}
 			>
-				Expose another Secret
+				Expose another secret
 			</button>
 		{:else}
 			<form>
@@ -229,14 +243,14 @@
 
 				<br />
 				<button class="btn-primary" type="button" on:click={hide}
-					>Hide Secret in Image</button
+					>Hide secret in image</button
 				>
 				<button
 					class="btn-secondary"
 					type="button"
 					on:click={exposeButtonPressed}
 				>
-					Expose Secret from Image
+					Expose secret from image
 				</button>
 			</form>
 		{/if}
