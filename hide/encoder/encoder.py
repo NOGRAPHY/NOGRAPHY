@@ -18,26 +18,17 @@ def encode(plain_string, base=3):
 
     # encode each chunk with error correction
     for chunk in chunks:
-        # old method
-        #tmp.extend(encode_with_ec(chunk, code))
-
         # Encode with error correction
         m = CRC_Port.Message(m_binary=chunk)
         code.encode(m)
         tmp.extend(code.getVals())
 
+    # split bit_string into chunks the length of 3
     for x in tmp:
         result.append(format(x, '03b'))
 
     assert len(result) == len(tmp)
     return result
-
-
-# Encode with error correction
-def encode_with_ec(data, code):
-    m = CRC_Port.Message(m_binary=data)
-    code.encode(m)
-    return code.getVals()
 
 
 def to_ints(encoded):

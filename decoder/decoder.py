@@ -14,9 +14,6 @@ def decode(data):
         code.vals.clear()
         code.vals.extend(tmp_int)
 
-        # old method
-        #result.extend(decode_ec(code))
-
         # decode with error correction
         decoded = CRC_Port.Message()
         # decoding to correct basis
@@ -46,14 +43,6 @@ def decode2(encoded_string):
     decoded_string = b''.join([int(c, 2).to_bytes((len(c) + 7) // 8, byteorder='big') for c in chunks]).decode('utf-8')
 
     return decoded_string
-
-
-# decode with error correction
-def decode_ec(code):
-    decoded = CRC_Port.Message()
-    # decoding
-    code.decode(decoded, 256)
-    return decoded.getChar()
 
 
 def decode_from_font_indexes(indexes_list, base):
