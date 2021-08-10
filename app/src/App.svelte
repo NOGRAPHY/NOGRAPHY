@@ -12,7 +12,6 @@
 	let exposeResult = "";
 	let secretValidationError = "";
 	let placeholderValidationError = "";
-	// Taken from https://stackoverflow.com/questions/6381752/validating-users-utf-8-name-in-javascript
 	const allowedChars = "^[a-zA-Z-()`',.\*\+\/?!$#%&;:@\<\>=_\|\{\}\~  \r\n\t]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -129,7 +128,7 @@
 				if (result.error) {
 					alert(result.error);
 				} else {
-					exposeResult = parsedResult.exposed_message;
+					exposeResult = result.exposed_message;
 				}
 				loading = false;
 			})
