@@ -98,9 +98,8 @@ def get_letters_and_fonts(placeholder, encoded_secret, fonts):
             placeholder = placeholder[:index] + placeholder[index+1:]
     return letters_and_fonts
 
+
 # based on https://stackoverflow.com/questions/58041361/break-long-drawn-text-to-multiple-lines-with-pillow
-
-
 def fit_text(img, letters_and_fonts, color, margin):
     width = img.size[0] - 2 - margin
     draw = ImageDraw.Draw(img)
@@ -147,30 +146,13 @@ def break_into_lines(letters_and_fonts, width, font, draw):
 def secret_fits_in_placeholder(secret, placeholder):
     return len(secret) * 5 <= len(placeholder)
 
-# Use this if you want to generate new training data (not actively used by hide lambda)
-
-
-def generate_training_data():
-    fonts = load_fonts_from_fs(FONT_SIZE)
-    placeholder = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-    for i in range(0, 9):
-        list_of_ints = []
-        for j in range(0, 52):
-            list_of_ints.append(i)
-        letters_and_fonts = get_letters_and_fonts(
-            placeholder, list_of_ints, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(
-            placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
-        fit_text(image, letters_and_fonts, 'black', MARGIN)
-        image.save(str(i)+".png", format="PNG")
-
 
 def estimateImageHeight(placeholder, font_size, image_width):
     # if the character spacing or the margin is changed, these values need to be recalibrated!
     letters_per_line = image_width / font_size / 0.53
     number_of_lines = len(placeholder) // letters_per_line + 1
     height_without_margin = 1.1 * font_size * number_of_lines
-    return int(height_without_margin) + 640
+    return int(height_without_margin) + MARGIN
 
 
 def client_error(error_message):

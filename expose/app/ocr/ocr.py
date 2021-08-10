@@ -13,7 +13,7 @@ import datetime
 # download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
 
 
-def recognize_boxes(image_as_base64):
+def recognize_boxes(image_as_base64, check_whitelist=True):
     image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
     
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
@@ -22,13 +22,19 @@ def recognize_boxes(image_as_base64):
         boxes = api.GetComponentImages(RIL.SYMBOL, True)
         characters = api.GetUTF8Text().replace(' ', '').replace('\n', '')
 
-        boxes_final = []
+        if check_whitelist:
+            if len(boxes) != len(characters):
+                raise RuntimeError("OCR was not able to recognize every character.")
 
-        # Filter boxes, so that only A-Z & a-z gets recognized.
-        whitelist = string.ascii_letters
-        for index, character in enumerate(characters):
-            if character in whitelist:
-                boxes_final.append(boxes[index])
+            boxes_final = []
+
+            # Filter boxes, so that only A-Z & a-z gets recognized.
+            whitelist = string.ascii_letters
+            for index, character in enumerate(characters):
+                if character in whitelist:
+                    boxes_final.append(boxes[index])
+        else:
+            boxes_final = boxes
 
         return boxes_final
 
@@ -72,4 +78,6 @@ def draw_boxes(boxes, image_as_base64):
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
         cv2.rectangle(cv2_img, (x, y), (x + w, y + h), (255, 0, 0), 1)
 
-    cv2.imwrite(f"boxes_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}.png", cv2_img)
+    filename = f"boxes_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}.png"
+    print("draw_boxes: Saved file as:", filename)
+    cv2.imwrite(filename, cv2_img)

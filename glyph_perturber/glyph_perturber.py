@@ -9,9 +9,6 @@ from io import BytesIO
 from tqdm import tqdm
 from fontTools.ttLib import TTFont
 from imgaug import parameters as iap
-from pylatex.base_classes import Command
-from pylatex import Document, Package, NoEscape
-
 from PIL import Image, ImageDraw, ImageFont
 from cv2 import cv2
 
@@ -95,8 +92,7 @@ class PdfGenerator:
 
 class PngGenerator:
     def __init__(self, dpi):
-        self.TEXT = ' '.join([char for char in string.ascii_letters])
-        # self.TEXT = string.ascii_letters
+        self.TEXT = string.ascii_letters
 
         self.CHARACTER_SPACING = int(0.01 * dpi)
         self.FONT_SIZE = int(0.24 * dpi)
@@ -163,21 +159,21 @@ class GlyphExtractor:
             img.save(buffer, format="PNG")
             image_base64 = base64.b64encode(buffer.getvalue())
 
-        boxes = ocr.recognize_boxes(image_base64)
+        boxes = ocr.recognize_boxes(image_base64, check_whitelist=False)
 
         if len(GlyphPerturber.characters) != len(boxes):
             raise RuntimeError("OCR was not able to recognize all glyphs.")
 
-        # glyphs = ocr.create_glyph_images(boxes, image_base64, 200)
-        #
-        # png_filename = os.path.splitext(os.path.basename(png_path))[0]
-        # new_png_path = os.path.join(os.path.dirname(png_path), png_filename)
-        # os.makedirs(new_png_path, exist_ok=True)
-        #
-        # for index, glyph in enumerate(glyphs):
-        #     cv2.imwrite(os.path.join(new_png_path, f"{png_filename}_{index:02}.png"), glyph)
-        #
-        # os.remove(png_path)
+        glyphs = ocr.create_glyph_images(boxes, image_base64, 200)
+
+        png_filename = os.path.splitext(os.path.basename(png_path))[0]
+        new_png_path = os.path.join(os.path.dirname(png_path), png_filename)
+        os.makedirs(new_png_path, exist_ok=True)
+
+        for index, glyph in enumerate(glyphs):
+            cv2.imwrite(os.path.join(new_png_path, f"{png_filename}_{index:02}.png"), glyph)
+
+        os.remove(png_path)
 
 
 if __name__ == "__main__":
@@ -235,6 +231,9 @@ if __name__ == "__main__":
                 GlyphExtractor.extract_glyphs(training_png_filepath)
 
     if args.preview:
+        from pylatex.base_classes import Command
+        from pylatex import Document, Package, NoEscape
+
         PdfGenerator.generate_preview(perturbed_fonts).generate_pdf(
             os.path.join(args.output, f"{original_font_filename}-PerturbedGlyphs-Preview"),
             clean_tex=True, compiler="xelatex"
