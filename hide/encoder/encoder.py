@@ -1,6 +1,5 @@
 from error_correction import CRC_Port
 
-
 def encode(plain_string, base=3):
     bit_string = ''.join([format(c, 'b').zfill(8)
                           for c in plain_string.encode('utf8')])
@@ -19,7 +18,14 @@ def encode(plain_string, base=3):
 
     # encode each chunk with error correction
     for chunk in chunks:
-        tmp.extend(encode_with_ec(chunk, code))
+        # old method
+        #tmp.extend(encode_with_ec(chunk, code))
+
+        # Encode with error correction
+        m = CRC_Port.Message(m_binary=chunk)
+        code.encode(m)
+        tmp.extend(code.getVals())
+
     for x in tmp:
         result.append(format(x, '03b'))
 

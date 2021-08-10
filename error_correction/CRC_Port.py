@@ -493,7 +493,7 @@ def test_maximum_likelihood_decoding():
 if __name__ == "__main__":
     # execute only if run as a script
     Sample()
-    # test_maximum_likelihood_decoding()
+    #test_maximum_likelihood_decoding()
 
 # ToDo:
 # Check Thesis: The encoding function already adds redundancy: because m is

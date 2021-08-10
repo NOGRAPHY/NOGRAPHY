@@ -1,6 +1,5 @@
 from error_correction import CRC_Port
 
-
 def decode(data):
     result = []
     code = CRC_Port.CRTCode([1, 2, 3, 5, 7])
@@ -8,14 +7,21 @@ def decode(data):
     for x in range(0, len(data), 5):
         tmp = data[x:x + 5]
         tmp_int = []
-        # transform into integer representation
+        # transform to integer representation
         for y in tmp:
             tmp_int.append(int(y, 2))
         # clear vals to avoid errors
         code.vals.clear()
         code.vals.extend(tmp_int)
 
-        result.extend(decode_ec(code))
+        # old method
+        #result.extend(decode_ec(code))
+
+        # decode with error correction
+        decoded = CRC_Port.Message()
+        # decoding to correct basis
+        code.decode(decoded, 256)
+        result.extend(decoded.getChar())
 
     return ''.join(result)
 
