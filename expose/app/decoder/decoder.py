@@ -1,4 +1,30 @@
-def decode(encoded_string):
+from error_correction import CRC
+
+
+def decode(data):
+    result = []
+    code = CRC.CRTCode([1, 2, 3, 5, 7])
+    # iterate through message and set vals
+    for x in range(0, len(data), 5):
+        tmp = data[x:x + 5]
+        tmp_int = []
+        # transform to integer representation
+        for y in tmp:
+            tmp_int.append(int(y, 2))
+        # clear vals to avoid errors
+        code.vals.clear()
+        code.vals.extend(tmp_int)
+
+        # decode with error correction
+        decoded = CRC.Message()
+        # decoding to correct basis
+        code.decode(decoded, 256)
+        result.extend(decoded.getChar())
+
+    return ''.join(result)
+
+
+def decode2(encoded_string):
     bit_string = ''.join(encoded_string)
 
     # split bit_string into chunks the length of 8
@@ -19,7 +45,8 @@ def decode(encoded_string):
 
     return decoded_string
 
-def decode_from_font_indexes(indexes_list, base = 3):
+
+def decode_from_font_indexes(indexes_list, base):
     # convert decimal indexes to binary
     indexes_in_binary = [format(i, 'b').zfill(base) for i in indexes_list]
 
