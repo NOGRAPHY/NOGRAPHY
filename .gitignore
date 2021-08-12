@@ -453,3 +453,4 @@ TSWLatexianTemp*
 /imageTemplate
 /zipTemplate
 /.aws-sam
+/expose/app/error_correction

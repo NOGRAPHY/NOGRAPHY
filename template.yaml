@@ -22,6 +22,15 @@ Resources:
           Properties:
             Path: /hide
             Method: post
+      Policies:
+      - Statement:
+        - Effect: "Allow" 
+          Action: 
+            - 'lambda:GetLayerVersion' 
+          Resource: 
+            - 'arn:aws:lambda:*:532688539985:layer:*:*'
+      Layers:
+        - arn:aws:lambda:eu-central-1:532688539985:layer:error_correction:1
   ExposeFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -31,6 +40,17 @@ Resources:
       Dockerfile: Dockerfile
       DockerContext: ./expose
       DockerTag: python3.8-v1
+  ErrorCorrection:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: error_correction
+      Description: Error Correction
+      ContentUri: ./error_correction
+      CompatibleRuntimes:
+        - python3.8
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: makefile
 
 Outputs:
   HideApi:

@@ -1,4 +1,29 @@
-def decode(encoded_string):
+from error_correction import CRC
+
+def decode(data):
+    result = []
+    code = CRC.CRTCode([1, 2, 3, 5, 7])
+    # iterate through message and set vals
+    for x in range(0, len(data), 5):
+        tmp = data[x:x + 5]
+        tmp_int = []
+        # transform to integer representation
+        for y in tmp:
+            tmp_int.append(int(y, 2))
+        # clear vals to avoid errors
+        code.vals.clear()
+        code.vals.extend(tmp_int)
+
+        # decode with error correction
+        decoded = CRC.Message()
+        # decoding to correct basis
+        code.decode(decoded, 256)
+        result.extend(decoded.getChar())
+
+    return ''.join(result)
+
+
+def decode2(encoded_string):
     bit_string = ''.join(encoded_string)
 
     # split bit_string into chunks the length of 8

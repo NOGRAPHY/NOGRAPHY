@@ -21,7 +21,7 @@ NOTE: There is no further need to install tesseract locally on your system, sinc
 ## Invoke Lambdas locally
 In the root folder of the project
 
-1. Run `sam build`
+1. Run `sam build` (if that fails, try `sam build --use-container`)
 2. Run `sam local invoke ExposeFunction -e expose-event.json` to invoke the expose lambda directly
 3. Run `sam local invoke HideFunction -e hide-event.json` to invoke hide lambda directly
 
