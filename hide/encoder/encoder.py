@@ -1,4 +1,4 @@
-from error_correction import CRC
+import CRC
 
 
 def encode(plain_string, base=3):

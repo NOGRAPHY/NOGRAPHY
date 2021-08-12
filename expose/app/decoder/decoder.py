@@ -1,6 +1,5 @@
 from error_correction import CRC
 
-
 def decode(data):
     result = []
     code = CRC.CRTCode([1, 2, 3, 5, 7])
@@ -45,8 +44,7 @@ def decode2(encoded_string):
 
     return decoded_string
 
-
-def decode_from_font_indexes(indexes_list, base):
+def decode_from_font_indexes(indexes_list, base = 3):
     # convert decimal indexes to binary
     indexes_in_binary = [format(i, 'b').zfill(base) for i in indexes_list]
 

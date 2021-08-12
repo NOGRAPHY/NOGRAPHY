@@ -1,4 +1,4 @@
-## crtcode
+# crtcode
 import math
 
 # global variables
@@ -13,12 +13,21 @@ vals = []
 def gcd(a, b):
     return math.gcd(a, b)
 
+def egcd(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return (g, x - (b // a) * y, y)
 
+# This is from https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
 # inverse of a on mod n
 def mod_inv(a, n):
-    # return pow(int(a), -1, n)
-    return pow(int(a), -1, n)
-
+    g, x, y = egcd(a, n)
+    if g != 1:
+        raise Exception('modular inverse does not exist')
+    else:
+        return x % n
 
 # Chinese Remainder Theorem with inverse modulo calculation
 def chinese_remainder_theorem(vals, basis):
@@ -48,7 +57,7 @@ def CRT(vals, basis):
     return int(ans % mm)
 
 
-## CRTCode class
+# CRTCode class
 class CRTCode:
 
     # class constructor
@@ -231,7 +240,7 @@ def co_prime(input, output):
     return max
 
 
-## Message class
+# Message class
 class Message:
 
     def __init__(self, m_integer=None, m_binary=None, m_char=None):
@@ -254,7 +263,8 @@ class Message:
         if m_char is not None:
             assert m_char >= 0
             self.message_char = m_char
-            self.message_int = self.__BinaryToInt(''.join(format(ord(m_char), '08b')))
+            self.message_int = self.__BinaryToInt(
+                ''.join(format(ord(m_char), '08b')))
             self.message_bin = self.__IntToBinary(ord(m_char))
 
     def __IntToBinary(self, n):
@@ -306,6 +316,3 @@ class Message:
         self.message_char = c
         self.message_int = self.__BinaryToInt(''.join(format(ord(c), '08b')))
         self.message_bin = self.__IntToBinary(ord(c))
-
-
-

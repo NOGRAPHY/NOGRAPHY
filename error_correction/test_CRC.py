@@ -56,3 +56,5 @@ def test_CRC():
     print("\nerror decode message: {0} <- {1} <- {2}".format(errordecode.getChar(), errordecode.getBin(),
                                                              errordecode.getInt()))
 
+if __name__ == "__main__":
+    test_CRC()
