@@ -61,5 +61,6 @@ def client_error(error_message):
         "body": json.dumps({"error": error_message})
     }
 
+
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

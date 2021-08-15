@@ -13,8 +13,19 @@ import datetime
 # download poppler from http://blog.alivate.com.au/poppler-windows/ and set /bin folder to PATH
 
 
+def _base64_to_pillow_image(image_as_base64):
+    return Image.open(BytesIO(base64.b64decode(image_as_base64)))
+
+
+def _base64_to_cv_image(image_as_base64):
+    return cv2.cvtColor(
+        np.array(_base64_to_pillow_image(image_as_base64)),
+        cv2.COLOR_RGB2BGR
+    )
+
+
 def recognize_boxes(image_as_base64, check_whitelist=True):
-    image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
+    image = _base64_to_pillow_image(image_as_base64)
     
     # TODO: Do we also need this parameter: oem=OEM.TESSERACT_LSTM_COMBINED ?
     with PyTessBaseAPI(lang='eng') as api:
@@ -40,14 +51,13 @@ def recognize_boxes(image_as_base64, check_whitelist=True):
 
 
 def create_glyph_images(boxes, image_as_base64, output_size):
-    pillow_image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
-    img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
+    image = _base64_to_cv_image(image_as_base64)
 
     glyphs = []
     for index, box in enumerate(boxes):
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        letter_image = img[y:y + h, x:x + w]
+        letter_image = image[y:y + h, x:x + w]
 
         if w > h:
             scaling_factor = output_size / w
@@ -70,14 +80,13 @@ def create_glyph_images(boxes, image_as_base64, output_size):
 
 # This generates an image, where all recognized boxes are framed in a blue rectangle.
 def draw_boxes(boxes, image_as_base64):
-    pillow_image = Image.open(BytesIO(base64.b64decode(image_as_base64)))
-    cv2_img = cv2.cvtColor(np.array(pillow_image), cv2.COLOR_RGB2BGR)
+    image = _base64_to_cv_image(image_as_base64)
 
     for box in boxes:
         box = box[1]
         x, y, w, h = box['x'], box['y'], box['w'], box['h']
-        cv2.rectangle(cv2_img, (x, y), (x + w, y + h), (255, 0, 0), 1)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 1)
 
     filename = f"boxes_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}.png"
     print("draw_boxes: Saved file as:", filename)
-    cv2.imwrite(filename, cv2_img)
+    cv2.imwrite(filename, image)

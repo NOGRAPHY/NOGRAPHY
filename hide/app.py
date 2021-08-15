@@ -45,14 +45,14 @@ def lambda_handler(event, context):
             encoder.encode(secret, ENCODING_DECODING_BASE))
         letters_and_fonts = get_letters_and_fonts(
             placeholder, encoded_secret, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, estimateImageHeight(
+        image = Image.new("RGB", (IMAGE_WIDTH, estimate_image_height(
             placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
 
         fit_text(image, letters_and_fonts, 'black', MARGIN)
 
-        buffered = BytesIO()
-        image.save(buffered, format="PNG")
-        image_str = str(base64.b64encode(buffered.getvalue()))[2:][:-1]
+        with BytesIO() as buffer:
+            image.save(buffer, format="PNG")
+            image_str = str(base64.b64encode(buffer.getvalue()))[2:][:-1]
 
         return {
             "statusCode": 200,
@@ -60,7 +60,7 @@ def lambda_handler(event, context):
                 'Content-Type': 'image/png',
                 'Access-Control-Allow-Origin': '*'
             },
-            "body": "{\"image\":\""+image_str + "\"}",
+            "body": "{\"image\":\"" + image_str + "\"}",
             "isBase64Encoded": True
         }
 
@@ -95,7 +95,7 @@ def get_letters_and_fonts(placeholder, encoded_secret, fonts):
         else:
             letters_and_fonts.append((placeholder[index], fonts[8]))
             # slicing out the non-ASCII character, so it won't block the index
-            placeholder = placeholder[:index] + placeholder[index+1:]
+            placeholder = placeholder[:index] + placeholder[index + 1:]
     return letters_and_fonts
 
 
@@ -147,7 +147,7 @@ def secret_fits_in_placeholder(secret, placeholder):
     return len(secret) * 5 <= len(placeholder)
 
 
-def estimateImageHeight(placeholder, font_size, image_width):
+def estimate_image_height(placeholder, font_size, image_width):
     # if the character spacing or the margin is changed, these values need to be recalibrated!
     letters_per_line = image_width / font_size / 0.53
     number_of_lines = len(placeholder) // letters_per_line + 1
