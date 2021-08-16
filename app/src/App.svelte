@@ -164,7 +164,7 @@
 					text. You, or any other insider, can expose the secret
 					afterwards with NOGRAPHY by uploading the file. For details
 					visit <a
-						href="https://github.com/steganographie-HTWG/steganographie"
+						href="https://github.com/NOGRAPHY/NOGRAPHY"
 						target="_blank">our Github repo</a
 					>.
 				</p>
