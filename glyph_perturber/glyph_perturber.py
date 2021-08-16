@@ -185,7 +185,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--preview", action="store_true", help="Generate a preview PDF file with all perturbed glyphs.")
     parser.add_argument("--train", action="store_true", help="Generate image data for training with all perturbed glyphs.")
-    parser.add_argument("--dpis", nargs='+', default=[300])
+    parser.add_argument("--dpis", nargs='+', default=["300"])
 
     args = parser.parse_args()
 
@@ -199,9 +199,10 @@ if __name__ == "__main__":
         print(f"Output directory '{args.output}' is not empty. Quitting...")
         sys.exit(-1)
 
-    for dpi in args.dpis:
-        if not dpi.isdigit():
-            raise TypeError("Only integers are allowed for dpi.")
+    if args.train:
+        for dpi in args.dpis:
+            if not dpi.isdigit():
+                raise TypeError("Only integers are allowed for dpi.")
 
     perturbed_fonts = []
     original_font_filename, extension = os.path.splitext(args.font)
