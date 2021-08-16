@@ -2,7 +2,7 @@
 
 ## What is NOGRAPHY?
 
-NOGRAPHY is an encoding engine, that uses a placeholder text and assigns different fonts to different letters in order to embed information. These fonts are hardly recognizable by sight but easily differentiable for the neural network of the engine, which also contains an error correction mechanism for better stability.
+NOGRAPHY is an encoding engine, that uses a dummy text and assigns different fonts to different letters in order to embed information. These fonts are hardly recognizable by sight but easily differentiable for the neural network of the engine, which also contains an error correction mechanism for better stability.
 
 You can use the app here: [NOGRAPHY App](https://nography.cc/)
 

@@ -4,14 +4,14 @@
 
 	let secret =
 		"Aragorn broke two of his toes while kicking an Uruk Hai helmet";
-	let placeholder =
+	let dummy =
 		"In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort. It had a perfectly round door like a porthole, painted green, with a shiny yellow brass knob in the exact middle. The door opened on to a tube-shaped hall like a tunnel: a very comfortable tunnel without smoke, with panelled walls, and floors tiled and carpeted, provided with polished chairs, and lots and lots of pegs for hats and coats - the hobbit was fond of visitors.";
 	let loading = false;
 	let showHint = true;
 	let imageWithSecret = "";
 	let exposeResult = "";
 	let secretValidationError = "";
-	let placeholderValidationError = "";
+	let dummyValidationError = "";
 	const allowedChars = "^[a-zA-Z-()`',.\*\+\/?!$#%&;:@\<\>=_\|\{\}\~  \r\n\t]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -44,7 +44,7 @@
 
 	const hide = () => {
 		loading = true;
-		var raw = JSON.stringify({ secret: secret, placeholder: placeholder });
+		var raw = JSON.stringify({ secret: secret, dummy: dummy });
 		var requestOptions = {
 			method: "POST",
 			headers: headers,
@@ -71,23 +71,23 @@
 		if (!secret.match(allowedChars)) {
 			secretValidationError =
 				"Use only letters and punctuation marks for your secret.";
-		} else if (secret.length * 5 > placeholder.length) {
+		} else if (secret.length * 5 > dummy.length) {
 			secretValidationError =
-				"Use a shorter secret or a longer placeholder.";
+				"Use a shorter secret or a longer dummy.";
 		} else {
 			secretValidationError = "";
 		}
 	};
 
-	const validatePlaceholder = () => {
-		if (!placeholder.match(allowedChars)) {
-			placeholderValidationError =
-				"Use only letters and punctuation marks for your placeholder.";
-		} else if (secret.length * 5 > placeholder.length) {
-			placeholderValidationError =
-				"Use a longer placeholder or a shorter secret.";
+	const validateDummy = () => {
+		if (!dummy.match(allowedChars)) {
+			dummyValidationError =
+				"Use only letters and punctuation marks for your dummy.";
+		} else if (secret.length * 5 > dummy.length) {
+			dummyValidationError =
+				"Use a longer dummy or a shorter secret.";
 		} else {
-			placeholderValidationError = "";
+			dummyValidationError = "";
 		}
 	};
 
@@ -159,8 +159,8 @@
 			<div class="hint-box">
 				<p>
 					With NOGRAPHY you can hide a secret text within a
-					placeholder text saved as PNG. You can download and share
-					that PNG image, deceiving outsiders with the placeholder
+					dummy text saved as PNG. You can download and share
+					that PNG image, deceiving outsiders with the dummy
 					text. You, or any other insider, can expose the secret
 					afterwards with NOGRAPHY by uploading the file. For details
 					visit <a
@@ -229,16 +229,16 @@
 					on:keyup={validateSecret}
 				/>
 				<ValidationError validationError={secretValidationError} />
-				<label for="placeholder">Placeholder :</label>
+				<label for="dummy">Dummy :</label>
 				<textarea
-					class="placeholder"
-					name="placeholder"
-					id="placeholder"
+					class="dummy"
+					name="dummy"
+					id="dummy"
 					maxlength="1600"
-					bind:value={placeholder}
-					on:keyup={validatePlaceholder}
+					bind:value={dummy}
+					on:keyup={validateDummy}
 				/>
-				<ValidationError validationError={placeholderValidationError} />
+				<ValidationError validationError={dummyValidationError} />
 
 				<br />
 				<button class="btn-primary" type="button" on:click={hide}

@@ -27,26 +27,26 @@ def lambda_handler(event, context):
         }
 
     secret = body.get('secret', '')
-    placeholder = body.get('placeholder', '')
+    dummy = body.get('dummy', '')
     if secret == '':
         return client_error('No secret found.')
-    if placeholder == '':
-        return client_error('No placeholder found.')
+    if dummy == '':
+        return client_error('No dummy found.')
 
-    if len(placeholder) > 1600:
-        return client_error("Placeholder is too long. Max is 1600 characters.")
+    if len(dummy) > 1600:
+        return client_error("Dummy is too long. Max is 1600 characters.")
     if len(secret) > 320:
         return client_error("Secret is too long. Max is 320 characters.")
-    if not secret_fits_in_placeholder(secret, placeholder):
-        return client_error("Secret is too long. Make it shorter or the placeholder longer.")
+    if not secret_fits_in_dummy(secret, dummy):
+        return client_error("Secret is too long. Make it shorter or the dummy longer.")
     else:
         fonts = load_fonts_from_fs(FONT_SIZE)
         encoded_secret = encoder.to_ints(
             encoder.encode(secret, ENCODING_DECODING_BASE))
         letters_and_fonts = get_letters_and_fonts(
-            placeholder, encoded_secret, fonts)
+            dummy, encoded_secret, fonts)
         image = Image.new("RGB", (IMAGE_WIDTH, estimate_image_height(
-            placeholder, FONT_SIZE, IMAGE_WIDTH)), 'white')
+            dummy, FONT_SIZE, IMAGE_WIDTH)), 'white')
 
         fit_text(image, letters_and_fonts, 'black', MARGIN)
 
@@ -81,21 +81,21 @@ def load_fonts_from_fs(font_size):
     }
 
 
-def get_letters_and_fonts(placeholder, encoded_secret, fonts):
+def get_letters_and_fonts(dummy, encoded_secret, fonts):
     letters_and_fonts = []
     index = 0
-    while index < len(placeholder):
-        if placeholder[index] in string.ascii_letters:
+    while index < len(dummy):
+        if dummy[index] in string.ascii_letters:
             if index < len(encoded_secret):
                 letters_and_fonts.append(
-                    (placeholder[index], fonts[encoded_secret[index]]))
+                    (dummy[index], fonts[encoded_secret[index]]))
             else:
-                letters_and_fonts.append((placeholder[index], fonts[8]))
+                letters_and_fonts.append((dummy[index], fonts[8]))
             index = index + 1
         else:
-            letters_and_fonts.append((placeholder[index], fonts[8]))
+            letters_and_fonts.append((dummy[index], fonts[8]))
             # slicing out the non-ASCII character, so it won't block the index
-            placeholder = placeholder[:index] + placeholder[index + 1:]
+            dummy = dummy[:index] + dummy[index + 1:]
     return letters_and_fonts
 
 
@@ -143,14 +143,14 @@ def break_into_lines(letters_and_fonts, width, font, draw):
     yield from break_into_lines(letters_and_fonts[lo:], width, font, draw)
 
 
-def secret_fits_in_placeholder(secret, placeholder):
-    return len(secret) * 5 <= len(placeholder)
+def secret_fits_in_dummy(secret, dummy):
+    return len(secret) * 5 <= len(dummy)
 
 
-def estimate_image_height(placeholder, font_size, image_width):
+def estimate_image_height(dummy, font_size, image_width):
     # if the character spacing or the margin is changed, these values need to be recalibrated!
     letters_per_line = image_width / font_size / 0.53
-    number_of_lines = len(placeholder) // letters_per_line + 1
+    number_of_lines = len(dummy) // letters_per_line + 1
     height_without_margin = 1.1 * font_size * number_of_lines
     return int(height_without_margin) + MARGIN
 
