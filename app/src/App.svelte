@@ -12,7 +12,7 @@
 	let exposeResult = "";
 	let secretValidationError = "";
 	let dummyValidationError = "";
-	const allowedChars = "^[a-zA-Z-()`',.\*\+\/?!$#%&;:@\<\>=_\|\{\}\~  \r\n\t]*$";
+	const allowedChars = "^[a-zA-Z-()`',.*+/?!$#%&;:@<>=_|{}~  \r\n\t]*$";
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json");
 
@@ -64,7 +64,10 @@
 				}
 				loading = false;
 			})
-			.catch((error) => console.log(error));
+			.catch((error) => {
+				alert("Something went wrong!\n" + error);
+				loading = false;
+			});
 	};
 
 	const validateSecret = () => {
@@ -72,8 +75,7 @@
 			secretValidationError =
 				"Use only letters and punctuation marks for your secret.";
 		} else if (secret.length * 5 > dummy.length) {
-			secretValidationError =
-				"Use a shorter secret or a longer dummy.";
+			secretValidationError = "Use a shorter secret or a longer dummy.";
 		} else {
 			secretValidationError = "";
 		}
@@ -84,8 +86,7 @@
 			dummyValidationError =
 				"Use only letters and punctuation marks for your dummy.";
 		} else if (secret.length * 5 > dummy.length) {
-			dummyValidationError =
-				"Use a longer dummy or a shorter secret.";
+			dummyValidationError = "Use a longer dummy or a shorter secret.";
 		} else {
 			dummyValidationError = "";
 		}
@@ -133,7 +134,8 @@
 				loading = false;
 			})
 			.catch((error) => {
-				console.log(error);
+				alert("Something went wrong!\n" + error);
+				loading = false;
 			});
 	};
 
@@ -158,12 +160,11 @@
 		{#if showHint}
 			<div class="hint-box">
 				<p>
-					With NOGRAPHY you can hide a secret text within a
-					dummy text saved as PNG. You can download and share
-					that PNG image, deceiving outsiders with the dummy
-					text. You, or any other insider, can expose the secret
-					afterwards with NOGRAPHY by uploading the file. For details
-					visit <a
+					With NOGRAPHY you can hide a secret text within a dummy text
+					saved as PNG. You can download and share that PNG image,
+					deceiving outsiders with the dummy text. You, or any other
+					insider, can expose the secret afterwards with NOGRAPHY by
+					uploading the file. For details visit <a
 						href="https://github.com/NOGRAPHY/NOGRAPHY"
 						target="_blank">our Github repo</a
 					>.
@@ -241,8 +242,12 @@
 				<ValidationError validationError={dummyValidationError} />
 
 				<br />
-				<button disabled={dummyValidationError != "" || secretValidationError != ""} class="btn-primary" type="button" on:click={hide}
-					>Hide secret in image</button
+				<button
+					disabled={dummyValidationError != "" ||
+						secretValidationError != ""}
+					class="btn-primary"
+					type="button"
+					on:click={hide}>Hide secret in image</button
 				>
 				<button
 					class="btn-secondary"
@@ -261,4 +266,7 @@
 	{/if}
 </main>
 
-<style></style>
+<style>
+	.ignore_me {
+	}
+</style>

@@ -49,6 +49,8 @@ def lambda_handler(event, context):
         }
     except UnicodeDecodeError as e:
         return client_error("The secret message could not be exposed.")
+    except AssertionError as e:
+        return client_error("Exposing the secret went wrong.")
 
 
 def client_error(error_message):
@@ -60,7 +62,6 @@ def client_error(error_message):
         },
         "body": json.dumps({"error": error_message})
     }
-
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])
