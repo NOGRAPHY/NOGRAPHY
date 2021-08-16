@@ -64,3 +64,11 @@ def client_error(error_message):
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])
+
+    # with open("expose-event.json") as jsonFile:
+    #     jsonObject = json.load(jsonFile)
+    #     jsonFile.close()
+    # body = jsonObject["body"]
+    # print(lambda_handler({"body": body}, None)["body"])
+
+

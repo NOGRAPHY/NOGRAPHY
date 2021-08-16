@@ -1,4 +1,6 @@
-import CRC
+#import CRC
+# comment previous line out and next line in for test purposes
+from error_correction import CRC
 
 def encode(plain_string, base=3):
     bit_string = ''.join([format(c, 'b').zfill(8)
@@ -23,26 +25,12 @@ def encode(plain_string, base=3):
         code.encode(m)
         tmp.extend(code.getVals())
 
-    # TODO: Here fixed base!!!
     # split bit_string into chunks the length of 3
     for x in tmp:
         result.append(format(x, '0'+str(base)+'b'))
 
     assert len(result) == len(tmp)
     return result
-
-def encode2(plain_string, base=3):
-    bit_string = ''.join([format(c, 'b').zfill(8)
-                          for c in plain_string.encode('utf8')])
-
-    # split bit_string into chunks the length of base
-    chunks = [bit_string[::-1][i:i + base]
-              for i in range(0, len(bit_string), base)]
-
-    # reverse list of chunks AND every chunk itself.
-    chunks = [chunk[::-1].zfill(base) for chunk in chunks[::-1]]
-
-    return chunks
 
 def to_ints(encoded):
     return [int(c, 2) for c in encoded]

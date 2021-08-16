@@ -97,7 +97,7 @@ class CRTCode:
     def isValidBasis(self, b):
         for i in range(len(b)):
             for j in range(i + 1, len(b)):
-                if gcd(b[i], b[j]) is not 1:
+                if gcd(b[i], b[j]) != 1:
                     return False
         return True
 
@@ -154,7 +154,7 @@ class CRTCode:
         if isinstance(m, str):
             if m[0] is string.ascii_lowercase or string.ascii_uppercase:
                 m = ord(m)
-            if m[0] is '0' or '1':
+            if m[0] == '0' or '1':
                 m = Message.__BinaryToInt(m)
         if isinstance(m, int):
             m = m
@@ -193,7 +193,7 @@ def is_coprime(input):
         for j in range(i + 1, len(input)):
             if input[i] == input[j]:
                 return False
-            if gcd(input[i], input[j]) is not 1:
+            if gcd(input[i], input[j]) == 1:
                 return False
     return True
 
@@ -209,7 +209,7 @@ def co_prime(input, output):
     while True:
         flag = True
         for i in range(len(current)):
-            if current[i] is not 2:
+            if current[i] != 2:
                 flag = False
 
         if flag:
