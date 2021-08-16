@@ -241,7 +241,7 @@
 				<ValidationError validationError={dummyValidationError} />
 
 				<br />
-				<button class="btn-primary" type="button" on:click={hide}
+				<button disabled={dummyValidationError != "" || secretValidationError != ""} class="btn-primary" type="button" on:click={hide}
 					>Hide secret in image</button
 				>
 				<button
@@ -260,3 +260,5 @@
 		<Loading />
 	{/if}
 </main>
+
+<style></style>

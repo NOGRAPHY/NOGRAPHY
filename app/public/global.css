@@ -6,6 +6,7 @@
 :root {
   --primary-color: #204f6e;
   --dark-color: #333333;
+  --disabled-color: #AAAAAA;
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
   --success-color: #28a745;
@@ -238,6 +239,10 @@ img {
 .alert-primary {
   background: var(--dark-color);
   color: #fff;
+}
+
+.btn-primary:disabled {
+  background: var(--disabled-color);
 }
 
 .btn-light,
