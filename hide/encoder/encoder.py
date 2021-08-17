@@ -1,6 +1,4 @@
-#import CRC
-# comment previous line out and next line in for test purposes
-from error_correction import CRC
+import CRC
 
 def encode(plain_string, base=3):
     bit_string = ''.join([format(c, 'b').zfill(8)
