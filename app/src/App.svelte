@@ -265,8 +265,3 @@
 		<Loading />
 	{/if}
 </main>
-
-<style>
-	.ignore_me {
-	}
-</style>

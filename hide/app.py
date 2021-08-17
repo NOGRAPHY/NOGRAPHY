@@ -1,13 +1,14 @@
 import json
 from encoder import encoder
-from PIL import Image, ImageDraw, ImageFont
+from text_to_image import text_to_image
+from PIL import ImageFont
 import base64
 from io import BytesIO
 import string
 import os
-import copy
 
 FONT_SIZE = 72
+FONT_COLOR = 'black'
 IMAGE_WIDTH = 2480
 MARGIN_LEFT_RIGHT = 248
 MARGIN_TOP_BOTTOM = 248
@@ -48,11 +49,8 @@ def lambda_handler(event, context):
             encoder.encode(secret, ENCODING_DECODING_BASE))
         letters_and_fonts = get_letters_and_fonts(
             dummy, encoded_secret, fonts)
-        image = Image.new("RGB", (IMAGE_WIDTH, estimate_image_height(
-            dummy, FONT_SIZE, LINE_SPACING, IMAGE_WIDTH, MARGIN_TOP_BOTTOM)), 'white')
-
-        fit_text(image, letters_and_fonts, 'black', FONT_SIZE,
-                 CHARACTER_SPACING, LINE_SPACING, MARGIN_LEFT_RIGHT)
+        image = text_to_image.fit_text(letters_and_fonts, FONT_COLOR, FONT_SIZE, IMAGE_WIDTH,
+                 CHARACTER_SPACING, LINE_SPACING, MARGIN_LEFT_RIGHT, MARGIN_TOP_BOTTOM)
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             image_str = str(base64.b64encode(buffer.getvalue()))[2:][:-1]
@@ -67,10 +65,11 @@ def lambda_handler(event, context):
             "isBase64Encoded": True
         }
 
+def secret_fits_in_dummy(secret, dummy):
+    return len(secret) * 5 <= len(dummy)
 
 def load_fonts_from_fs(font_size):
     path, _ = os.path.split(os.path.abspath(__file__))
-
     return {
         0: ImageFont.truetype(os.path.join(path, 'assets', '0.ttf'), font_size),
         1: ImageFont.truetype(os.path.join(path, 'assets', '1.ttf'), font_size),
@@ -100,79 +99,6 @@ def get_letters_and_fonts(dummy, encoded_secret, fonts):
             # slicing out the non-ASCII character, so it won't block the index
             dummy = dummy[:index] + dummy[index + 1:]
     return letters_and_fonts
-
-
-# based on https://stackoverflow.com/questions/58041361/break-long-drawn-text-to-multiple-lines-with-pillow
-def fit_text(img, letters_and_fonts, color, font_size, character_spacing, line_spacing, margin):
-    width = img.size[0] - margin * 2
-    draw = ImageDraw.Draw(img)
-    path, _ = os.path.split(os.path.abspath(__file__))
-    measure_font = ImageFont.truetype(
-        os.path.join(path, 'assets', '0.ttf'), font_size)
-
-    lines = break_into_lines(letters_and_fonts, width,
-                             measure_font, font_size, character_spacing, line_spacing, draw)
-    height = sum(l[2] for l in lines)
-    if height > img.size[1]:
-        raise ValueError("text doesn't fit")
-
-    y = (img.size[1] - height) // 2
-    for t, w, h in lines:
-        x = margin
-        for letter, font in t:
-            draw.text((x, y), letter, font=font, fill=color)
-            x = x + draw.textsize(letter, font=font)[0] + character_spacing
-        y += h
-
-
-def break_into_lines(letters_and_fonts, width, measure_font, font_size, character_spacing, line_spacing, draw):
-    if not letters_and_fonts:
-        return
-    words = split_into_words(letters_and_fonts)
-    lines = []
-    line = []
-    current_line_width = 0
-    for word in words:
-        required_width, _ = draw.textsize(
-            ''.join([letter_and_font[0] for letter_and_font in word]), font=measure_font)
-        required_width += len(word) * character_spacing
-        if current_line_width + required_width <= width:
-            current_line_width += required_width
-            line.extend(word)
-        else:
-            lines.append((copy.copy(line), required_width,
-                         font_size * line_spacing))
-            line.clear()
-            line.extend(word)
-            current_line_width = required_width
-    lines.append((copy.copy(line), required_width, font_size * line_spacing))
-    return lines
-
-
-def split_into_words(letters_and_fonts):
-    words = []
-    word = []
-
-    for letter_and_font in letters_and_fonts:
-        word.append(letter_and_font)
-        if letter_and_font[0] == " ":
-            words.append(copy.copy(word))
-            word.clear()
-    words.append(word)
-    return words
-
-
-def secret_fits_in_dummy(secret, dummy):
-    return len(secret) * 5 <= len(dummy)
-
-
-def estimate_image_height(dummy, font_size, line_spacing, image_width, margin):
-    # if the character spacing or the margin is changed, these values need to be recalibrated!
-    letters_per_line = (image_width - 2 * margin / font_size) // 45
-    number_of_lines = len(dummy) // letters_per_line
-    height_without_margin = line_spacing * font_size * number_of_lines
-    return int(height_without_margin) + 2 * margin
-
 
 def client_error(error_message):
     return {
