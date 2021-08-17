@@ -4,9 +4,9 @@ import copy
 
 def fit_text(letters_and_fonts, color, font_size, image_width, character_spacing, line_spacing, margin_left_right, margin_top_bottom):
     estimated_height = estimate_image_height(
-            letters_and_fonts, font_size, line_spacing, image_width, margin_top_bottom)
+        letters_and_fonts, font_size, line_spacing, image_width, margin_top_bottom)
     image = Image.new("RGB", (image_width, estimated_height), 'white')
-    
+
     width = image.size[0] - margin_left_right * 2
     draw = ImageDraw.Draw(image)
     path, _ = os.path.split(os.path.abspath(__file__))
@@ -37,18 +37,25 @@ def break_into_lines(letters_and_fonts, width, measure_font, font_size, characte
     line = []
     current_line_width = 0
     for word in words:
-        required_width, _ = draw.textsize(
-            ''.join([letter_and_font[0] for letter_and_font in word]), font=measure_font)
+        word_letters_only = ''.join([letter_and_font[0]
+                                    for letter_and_font in word])
+        required_width, _ = draw.textsize(word_letters_only, font=measure_font)
         required_width += len(word) * character_spacing
-        if current_line_width + required_width <= width:
-            current_line_width += required_width
+
+        if "\n" in word_letters_only:
             line.extend(word)
-        else:
             lines.append((copy.copy(line), required_width,
-                         font_size * line_spacing))
+                        font_size * line_spacing))
+            line.clear()
+        elif current_line_width + required_width > width:
+            lines.append((copy.copy(line), required_width,
+                        font_size * line_spacing))
             line.clear()
             line.extend(word)
             current_line_width = required_width
+        else:
+            current_line_width += required_width
+            line.extend(word)
     lines.append((copy.copy(line), required_width, font_size * line_spacing))
     return lines
 
@@ -59,7 +66,7 @@ def split_into_words(letters_and_fonts):
 
     for letter_and_font in letters_and_fonts:
         word.append(letter_and_font)
-        if letter_and_font[0] == " ":
+        if letter_and_font[0] == " " or letter_and_font[0] == "\n":
             words.append(copy.copy(word))
             word.clear()
     words.append(word)
