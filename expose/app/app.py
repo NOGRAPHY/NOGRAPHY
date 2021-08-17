@@ -27,7 +27,7 @@ def lambda_handler(event, context):
 
     # cnn
     glyph_recognizer = GlyphRecognizer()
-    font_indexes, confidence = glyph_recognizer.predict(glyph_images)
+    font_indexes = glyph_recognizer.predict(glyph_images)
 
     # decode
     try:
@@ -43,7 +43,6 @@ def lambda_handler(event, context):
                 {
                     "exposed_message": exposed_message,
                     "font_indexes": font_indexes,
-                    "confidence": confidence,
                 }
             ),
         }
@@ -62,6 +61,7 @@ def client_error(error_message):
         },
         "body": json.dumps({"error": error_message})
     }
+
 
 if __name__ == "__main__":
     print(lambda_handler({"body": "{}"}, None)["body"])

@@ -28,12 +28,11 @@ class GlyphRecognizer:
         if np.max(images) != 1.0:
             images = images / np.max(images)
 
-        predictions = self.model.predict(images, workers=0)
+        predictions = self.model.predict(images)
 
         keras.backend.clear_session()
 
         font_indexes = []
-        confidences = []
 
         for prediction in predictions:
             argmax = np.argmax(prediction).item()
@@ -43,13 +42,5 @@ class GlyphRecognizer:
                 break
 
             font_indexes.append(argmax)
-            confidences.append(np.max(prediction).item())
 
-        confidence = {
-            "mean": np.mean(confidences),
-            "median": np.median(confidences),
-            "min": np.min(confidences),
-            "max": np.max(confidences)
-        }
-
-        return font_indexes, confidence
+        return font_indexes

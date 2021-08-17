@@ -17,7 +17,7 @@ def test_glyph_recognizer():
     glyph_images = np.array(glyph_images)
 
     model = GlyphRecognizer()
-    font_indexes, _ = model.predict(glyph_images)
+    font_indexes = model.predict(glyph_images)
 
     assert len(font_indexes) == 30  # We have 30 relevant glyphs.
 
