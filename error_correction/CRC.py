@@ -137,7 +137,7 @@ class CRTCode:
             m.setInt(minid)
             return True
 
-    # calculate codwords from input message
+    # calculate codewords from input message
     def getCodeWords(self, msgrange, codewords):
         codewords.clear()
         for i in range(msgrange):
@@ -173,7 +173,7 @@ class CRTCode:
                 ans += 1
         return ans
 
-    # calculate minimal hamming distance fro given range
+    # calculate minimal hamming distance from given range
     def minHammingDist(self, range):
         assert not len(self.basis) == 0
         sorted = sorted(self.basis)
