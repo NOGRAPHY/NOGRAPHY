@@ -5,5 +5,5 @@
     <div />
 </div>
 <div class="loading-hint">
-    <p>This takes up to 12 seconds</p>
+    <p>Stay hydrated..</p>
 </div>
