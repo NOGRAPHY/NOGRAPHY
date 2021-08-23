@@ -10,6 +10,7 @@
 	let showHint = true;
 	let imageWithSecret = "";
 	let exposeResult = "";
+	let exposeTimeoutRetry = 0;
 	let secretValidationError = "";
 	let dummyValidationError = "";
 	const allowedChars = "^[a-zA-Z-()`',.*+/?!$#%&;:@<>=_|{}~  \r\n\t]*$";
@@ -126,6 +127,7 @@
 		)
 			.then((response) => response.json())
 			.then((result) => {
+				exposeTimeoutRetry = 0;
 				if (result.error) {
 					alert(result.error);
 				} else {
@@ -134,8 +136,14 @@
 				loading = false;
 			})
 			.catch((error) => {
-				alert("Something went wrong!\n" + error);
-				loading = false;
+				if (exposeTimeoutRetry < 3) {
+					exposeTimeoutRetry++;
+					console.log("Retry " + exposeTimeoutRetry)
+					expose(image);
+				} else {
+					alert("Something went wrong!\n" + error);
+					loading = false;
+				}
 			});
 	};
 
