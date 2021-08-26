@@ -72,7 +72,10 @@
 	};
 
 	const validateSecret = () => {
-		if (secret.length * 5 > dummy.length) {
+		if (!secret.match(allowedChars)) {
+			secretValidationError =
+				"Use only letters and punctuation marks for your secret.";
+		} else if (secret.length * 5 > dummy.length) {
 			secretValidationError = "Use a shorter secret or a longer dummy.";
 		} else {
 			secretValidationError = "";
