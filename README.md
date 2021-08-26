@@ -6,6 +6,8 @@ NOGRAPHY is an encoding engine, that uses a dummy text and assigns different fon
 
 You can use the app here: [NOGRAPHY App](https://nography.cc/)
 
+Find our wiki here: [NOGRAPHY Wiki](https://github.com/NOGRAPHY/NOGRAPHY/wiki)
+
 Boundaries:
 - please use short texts and even shorter secrets
 - The website is like an old diesel engine: it is slow in the beginning, but then it speeds up.
