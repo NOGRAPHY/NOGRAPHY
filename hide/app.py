@@ -53,7 +53,7 @@ def lambda_handler(event, context):
                  CHARACTER_SPACING, LINE_SPACING, MARGIN_LEFT_RIGHT, MARGIN_TOP_BOTTOM)
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
-            image_str = str(base64.b64encode(buffer.getvalue()))[2:][:-1]
+            image_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
         return {
             "statusCode": 200,
@@ -65,8 +65,10 @@ def lambda_handler(event, context):
             "isBase64Encoded": True
         }
 
+
 def secret_fits_in_dummy(secret, dummy):
     return len(secret) * 5 <= len(dummy)
+
 
 def load_fonts_from_fs(font_size):
     path, _ = os.path.split(os.path.abspath(__file__))
@@ -99,6 +101,7 @@ def get_letters_and_fonts(dummy, encoded_secret, fonts):
             # slicing out the non-ASCII character, so it won't block the index
             dummy = dummy[:index] + dummy[index + 1:]
     return letters_and_fonts
+
 
 def client_error(error_message):
     return {
