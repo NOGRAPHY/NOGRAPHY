@@ -1,12 +1,18 @@
 from error_correction import CRC
-from numpy import random
+
 
 def decode(data):
     # if length of font indexes is lower than five times secret message, raise error
-    #assert len(data) % 5 == 0, "Binary secret data to be decoded is to short (-{0}).".format(5-(len(data) % 5))
+    # assert len(data) % 5 == 0, "Binary secret data to be decoded is to short (-{0}).".format(5-(len(data) % 5))
     # and insert dummy value at first position
+    # if len(data) % 5 != 0:
+    #     data.insert(0, format(0, 'b').zfill(3))
+
+    # remove last few codewords if data length is not modulo 5
     if len(data) % 5 != 0:
-        data.insert(0, format(0, 'b').zfill(3))
+        remainder = len(data) % 5
+        data = data[:-remainder]
+
     result = []
     # CRTCode Object is used for error correction
     code = CRC.CRTCode([1, 2, 3, 5, 7])
@@ -29,7 +35,8 @@ def decode(data):
 
     return ''.join(result)
 
-def decode_from_font_indexes(indexes_list, base = 3):
+
+def decode_from_font_indexes(indexes_list, base=3):
     # convert decimal indexes to binary
     indexes_in_binary = [format(i, 'b').zfill(base) for i in indexes_list]
 
